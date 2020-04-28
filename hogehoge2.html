@@ -40,14 +40,20 @@
 			var cube = new THREE.Mesh( geometry, material );
 			scene.add( cube );
 			
+			// cubeの情報を表示
 			console.log( cube );
 			
+			// 時計
 			clock = new THREE.Clock();
+			
 			function animate() {
 				window.requestAnimationFrame( animate );
+				// 現在の1フレームの長さを取得
 				var frameTime = clock.getDelta();
+				// 毎秒 20度ずつ回転させる
 				cube.rotation.x += frameTime * THREE.Math.degToRad( 20 );
 				cube.rotation.y += frameTime * THREE.Math.degToRad( 20 );
+				// シーンを描画
 				renderer.render( scene, camera );
 			}
 			animate();
