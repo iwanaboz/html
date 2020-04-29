@@ -12,7 +12,6 @@
 		<div id="info">
 		Copyright
 		<a href="https://github.com/takahirox/MMDLoader-app#readme" target="_blank">MMD Assets license</a>
-		<a href="http://www.geocities.jp/higuchuu4/index_e.htm" target="_blank">Model Data</a>
 		<a href="http://www.nicovideo.jp/mylist/1713647" target="_blank">Motion Data</a>
 		<a href="http://nicomas.main.jp/mmddata/" target="_blank">Motion/Pose Data</a>
 		<p>WASDで動きます。クリックで視点移動</p>
@@ -66,52 +65,51 @@
 			
 			
 			// pmd/pmxファイルの読み込み
-			
-			var seiten;
+			var miku;
 			var mesh_loaded = 0;
-			
-			
+				
 			// Load a MMD model
-			
 			modelFile = 'https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd';
+			
+			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
 				{ name: 'walk', loop: true, filePath: [ './vmd/walk/walk.vmd' ], vmdClip: null },
 				{ name: 'run', loop: true, filePath: [ './vmd/walk/run.vmd'],vmdClip: null }
 			];
 			
 			
+			// load のためのオブジェクトを作る
+			const loader = new THREE.MMDLoader(); 
 			var helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
-			const loader = new THREE.MMDLoader();
-			
-
+						
+			// ロード部分本体
 			loader.load( modelFile, function (mesh) {
 				// モデルファイルの読み込み
-		        seiten = mesh;
+		        miku = mesh;
 		        
 				// モーションファイル(vmd:Vocaloid Motion Data)
 		   		
-		        LoadVmd( 0, seiten );
-		        LoadVmd( 1, seiten );
-		        scene.add( seiten );
+		        LoadVmd( 0, miku );
+		        LoadVmd( 1, miku );
+		        scene.add( miku );
 		        
 				mesh_loaded +=1;
 				console.log(motionFiles);
 		        
 		    }, onProgress, onError);
 			
-			
+			// モーションファイル読み込み
 			function LoadVmd( motionId, mesh ){
-			  vmdPath = motionFiles[motionId].filePath;
-
-			  loader.loadAnimation(vmdPath, mesh, function(vmd){
-				motionFiles[motionId].vmdClip = vmd;
-				
-			  },
-			  onProgress,
-			  onError);
-			  
+				vmdPath = motionFiles[motionId].filePath;
+				// アニメーションファイルを読み込んで保持しておく
+				loader.loadAnimation(vmdPath, mesh, function(vmd){
+					motionFiles[motionId].vmdClip = vmd;
+				},
+				onProgress,
+				onError);
 			}
 			
+			// helperを新しく作り直し mesh と vmd を指定して動かす
 			function ApplyAnimation( motionId, mesh){
 				helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
 				vmd = motionFiles[motionId].vmdClip;
@@ -136,9 +134,7 @@
 			function onError( xhr ) {
 			};
 			
-			
-			
-			
+
 			
 			
 			// player という名前で作ったobject を1つ用意する
@@ -166,7 +162,7 @@
 				// 現在の1フレームの長さを取得
 				var frameTime = clock.getDelta();
 				if(mesh_loaded>0){
-					userMove(frameTime, seiten, player);
+					userMove(frameTime, miku, player);
 					if(player.isStop==0){
 						helper.update( frameTime );
 					}
