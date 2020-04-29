@@ -124,7 +124,7 @@
 				player.rotationRight += frameTime * THREE.Math.degToRad( 20 );
 				
 				userMove(frameTime, cube, player);
-				cameraUpDate(mesh);
+				cameraUpDate(cube);
 				// シーンを描画
 				renderer.render( scene, camera );
 			}
