@@ -12,12 +12,18 @@ var MyAgent = function(){
 	this.viewVect = new THREE.Vector3(0, 0, 0); // 向いている方向
 	this.rotationUp = 0;						// 向いている上下の角度
 	this.rotationRight = THREE.Math.degToRad( -90 );// 向いている水平方向の角度
+	this.offsetPosition = new THREE.Vector3(0, 0, 0);
+	this.offsetRotationUp	= 0;
+	this.offsetRotationRight= 0;
+	this.isRunning =0;
+	this.isWalking =0;
+	this.isStop =1;
 	
 	// 向いている角度から向いている方向を計算する
 	this.updateView = function(){
-		var y_ = Math.sin(this.rotationUp);
-		var x_ = Math.cos(this.rotationUp) * Math.cos(this.rotationRight);
-		var z_ = Math.cos(this.rotationUp) * Math.sin(this.rotationRight); 
+		var y_ = Math.sin(this.rotationUp+this.offsetRotationUp);
+		var x_ = Math.cos(this.rotationUp+this.offsetRotationUp) * Math.cos(this.rotationRight+this.offsetRotationRight);
+		var z_ = Math.cos(this.rotationUp+this.offsetRotationUp) * Math.sin(this.rotationRight+this.offsetRotationRight); 
 		this.viewVect = new THREE.Vector3(x_, y_, z_);
 	}
 }

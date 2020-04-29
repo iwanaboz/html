@@ -19,25 +19,36 @@ function userMove(frameTime, mesh, agent) {
 	}
 	//　向きを更新
 	agent.updateView();
+	var isWalk_ = 0;
 	//w (前進)
 	if(key_on[87]>0){
 		agent.position.z += frameTime * 5 * agent.viewVect.z;
 		agent.position.x += frameTime * 5 * agent.viewVect.x;
+		isWalk_ = 1;
 	}
 	//a
 	if(key_on[65]>0){
 		agent.position.z -= frameTime * 5 * agent.viewVect.x;
 		agent.position.x += frameTime * 5 * agent.viewVect.z;
+		isWalk_ = 1;
 	}
 	//s (後退)
 	if(key_on[83]>0){
 		agent.position.z -= frameTime * 5 * agent.viewVect.z;
 		agent.position.x -= frameTime * 5 * agent.viewVect.x;
+		isWalk_ = 1;
 	}
 	//d (右)
 	if(key_on[68]>0){
 		agent.position.z += frameTime * 5 * agent.viewVect.x;
 		agent.position.x -= frameTime * 5 * agent.viewVect.z;
+		isWalk_ = 1;
+	}
+	if(player.isStop==1 && isWalk_ > 0){
+		ApplyAnimation( 0, mesh);
+		player.isStop=0;
+	}else if(player.isStop==0 && isWalk_ == 0){
+		player.isStop=1;
 	}
 	
 	// 反映する
