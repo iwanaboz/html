@@ -42,5 +42,7 @@ function userMove(frameTime, mesh, agent) {
 	
 	// 反映する
 	mesh.rotation.y = -agent.rotationRight;
-	mesh.position = agent.position;
+	mesh.position.x = agent.position.x;
+	mesh.position.y = agent.position.y;
+	mesh.position.z = agent.position.z;
 }
