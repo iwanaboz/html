@@ -72,15 +72,15 @@
 			console.log( player );
 			
 			//カメラの再設置
-			function cameraUpDate() {
+			function cameraUpDate(mesh) {
 				canvasWidth = renderer.domElement.offsetWidth;
 				canvasHeight = renderer.domElement.offsetHeight;
 				// 向いている方向を計算
 				player.updateView();
 				// カメラの場所をプレイヤーの後ろに
-				camera.position.x = cube.position.x -player.viewVect.x *5;
-				camera.position.y = cube.position.y -player.viewVect.y *5+2;
-				camera.position.z = cube.position.z -player.viewVect.z *5;
+				camera.position.x = mesh.position.x -player.viewVect.x *5;
+				camera.position.y = mesh.position.y -player.viewVect.y *5+2;
+				camera.position.z = mesh.position.z -player.viewVect.z *5;
 				// プレイヤーの方向を向く
 				camera.lookAt( cube.position);
 			}
