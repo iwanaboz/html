@@ -10,7 +10,7 @@ renderer.domElement.addEventListener('mousedown', e => {
   	console.log( mousex +','+mousey );
 });
 // マウスが離されたとき
-renderer.domElement.addEventListener('mousedown', e => {
+renderer.domElement.addEventListener('mouseup', e => {
   	mouseDrag = 0;
 });
 			
