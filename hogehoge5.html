@@ -71,46 +71,38 @@
 			player = new MyAgent();
 			console.log( player );
 			
-			//カメラの再設置
-			function cameraUpDate(mesh) {
-				canvasWidth = renderer.domElement.offsetWidth;
-				canvasHeight = renderer.domElement.offsetHeight;
-				// 向いている方向を計算
-				player.updateView();
-				// カメラの場所をプレイヤーの後ろに
-				camera.position.x = mesh.position.x -player.viewVect.x *5;
-				camera.position.y = mesh.position.y -player.viewVect.y *5+2;
-				camera.position.z = mesh.position.z -player.viewVect.z *5;
-				// プレイヤーの方向を向く
-				camera.lookAt( cube.position);
-			}
+			player.position = cube.position;
+			
 			
 			//プレーヤーの移動
 			function userMove(frameTime, mesh, agent) {
 				
-				// 方向
-				mesh.rotation.y = -player.rotationRight;
-				
+				//　向きを更新
+				agent.updateView();
 				//w (前進)
 				if(key_on[87]>0){
-					mesh.position.z += frameTime * 5 * agent.viewVect.z;
-					mesh.position.x += frameTime * 5 * agent.viewVect.x;
+					agent.position.z += frameTime * 5 * agent.viewVect.z;
+					agent.position.x += frameTime * 5 * agent.viewVect.x;
 				}
 				//a
 				if(key_on[65]>0){
-					mesh.position.z -= frameTime * 5 * agent.viewVect.x;
-					mesh.position.x += frameTime * 5 * agent.viewVect.z;
+					agent.position.z -= frameTime * 5 * agent.viewVect.x;
+					agent.position.x += frameTime * 5 * agent.viewVect.z;
 				}
 				//s (後退)
 				if(key_on[83]>0){
-					mesh.position.z -= frameTime * 5 * agent.viewVect.z;
-					mesh.position.x -= frameTime * 5 * agent.viewVect.x;
+					agent.position.z -= frameTime * 5 * agent.viewVect.z;
+					agent.position.x -= frameTime * 5 * agent.viewVect.x;
 				}
 				//d (右)
 				if(key_on[68]>0){
-					mesh.position.z += frameTime * 5 * agent.viewVect.x;
-					mesh.position.x -= frameTime * 5 * agent.viewVect.z;
+					agent.position.z += frameTime * 5 * agent.viewVect.x;
+					agent.position.x -= frameTime * 5 * agent.viewVect.z;
 				}
+				
+				// 反映する
+				mesh.rotation.y = -agent.rotationRight;
+				mesh.position = agent.position;
 			}
 			
 			// 時計
@@ -122,9 +114,8 @@
 				
 				// とりあえず回転させる
 				player.rotationRight += frameTime * THREE.Math.degToRad( 20 );
-				
 				userMove(frameTime, cube, player);
-				cameraUpDate(cube);
+
 				// シーンを描画
 				renderer.render( scene, camera );
 			}
@@ -137,3 +128,4 @@
 		<script src="mouseCallBack.js"></script>
 	</body>
 </html>
+
