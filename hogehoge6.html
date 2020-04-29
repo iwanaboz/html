@@ -9,7 +9,7 @@
 		</style>
 	</head>
 	<body>
-		<p>WASDでうごきます</p>
+		<p>WASDで動きます。クリックで視点移動</p>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.min.js"></script>
 		<script src="keyCallBack.js"></script>
 		<script>
@@ -138,7 +138,6 @@
 				// 現在の1フレームの長さを取得
 				var frameTime = clock.getDelta();
 				
-				// とりあえず回転させる
 				//player.rotationRight += frameTime * THREE.Math.degToRad( 20 );
 				
 				userMove(frameTime, cube, player);
