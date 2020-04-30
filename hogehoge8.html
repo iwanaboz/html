@@ -13,7 +13,7 @@
 		Copyright
 		<a href="https://github.com/takahirox/MMDLoader-app#readme" target="_blank">MMD Assets license</a>
 		<a href="http://www.nicovideo.jp/mylist/1713647" target="_blank">Motion Data</a>
-		<a href="http://nicomas.main.jp/mmddata/" target="_blank">Motion/Pose Data</a>
+		<a href="https://bowlroll.net/file/71805" target="_blank">Motion Data</a>
 		<p>WASDで動きます。クリックで視点移動</p>
 		</div>
 		
@@ -58,7 +58,7 @@
 			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 			// 形と素材を指定した cubeをつくってシーンに追加
 			var cube = new THREE.Mesh( geometry, material );
-			scene.add( cube );
+			//scene.add( cube );
 			// 床グリッドを追加
 			var gridHelper = new THREE.GridHelper(500, 100);
 			scene.add(gridHelper);
@@ -74,8 +74,8 @@
 			
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
-				'./vmd/walk/walk.vmd',
-				'./vmd/walk/run.vmd'
+				{filePath : './vmd/walk/walk.vmd', physics : true},	
+				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/走る/走る：チルノ1（普通の走り）x10.vmd',  physics : false}
 			];
 	
 	
@@ -100,26 +100,31 @@
 			
 			// モーションファイル読み込み
 			function LoadVmd( motionId, mesh ){
-				vmdPath = motionFiles[motionId];
+				vmdPath = motionFiles[motionId].filePath;
 				// アニメーションファイルを読み込む
 				loader.loadAnimation(vmdPath, mesh, function(vmd){
 					// motion helper を用意する
 					helpers[motionId] = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
 					// motionをセットする
 					helpers[motionId].add(mesh,{
-				      animation: vmd.optimize(),
-				      physics: true,
+				      animation: vmd,
+				      physics: motionFiles[motionId].physics,
 				    });
+				    // https://threejs.org/docs/#api/en/animation/AnimationAction
+				    //var mixer = helpers[motionId].objects.get( mesh ).mixer;
+				    //mixer.existingAction(vmd).setLoop(THREE.LoopRepeat);
+				    
 				    // インバースキネマティクス(IK)の bone連動
 				    ikHelper = helpers[motionId].objects.get( mesh ).ikSolver.createHelper();
 					ikHelper.visible = false;
 					scene.add( ikHelper );
 					// 物理演算の helper
-					physicsHelper = helpers[motionId].objects.get( mesh ).physics.createHelper();
-					physicsHelper.visible = false;
-					scene.add( physicsHelper );
-
-					console.log(helpers)
+					if (motionFiles[motionId].physics){
+						physicsHelper = helpers[motionId].objects.get( mesh ).physics.createHelper();
+						physicsHelper.visible = false;
+						scene.add( physicsHelper );
+					}					
+					
 				}, onProgress, onError);
 			}
 
@@ -165,7 +170,7 @@
 				var frameTime = clock.getDelta();
 				if(mesh_loaded>0){
 					userMove(frameTime, miku, player);
-					if(player.isStop==0){
+					if(player.isStop==0 && helpers[selectmotion]){
 						helpers[selectmotion].update( frameTime );
 					}
 					cameraUpDate(player);
