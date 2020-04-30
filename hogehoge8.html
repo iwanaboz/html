@@ -14,7 +14,7 @@
 		<a href="https://github.com/takahirox/MMDLoader-app#readme" target="_blank">MMD Assets license</a>
 		<a href="http://www.nicovideo.jp/mylist/1713647" target="_blank">Motion Data</a>
 		<a href="https://bowlroll.net/file/71805" target="_blank">Motion Data</a>
-		<p>WASDで動きます。クリックで視点移動</p>
+		<p>WASDで動きます。SHIFT+WASDでダッシュ、クリックで視点移動</p>
 		</div>
 		
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.min.js"></script>
@@ -78,7 +78,6 @@
 				{filePath : './vmd/walk/run.vmd',  physics : true}
 			];
 	
-	
 			// load のためのオブジェクトを作る
 			const loader = new THREE.MMDLoader(); 
 			var helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
@@ -122,11 +121,9 @@
 						physicsHelper.visible = false;
 						scene.add( physicsHelper );
 					}					
-					
 				}, onProgress, onError);
 			}
 
-			
 			//MMD loading progress
 			function onProgress( xhr ) {
 			  if ( xhr.lengthComputable ) {
@@ -140,8 +137,6 @@
 			};
 			
 
-			
-			
 			// player という名前で作ったobject を1つ用意する
 			player = new MyAgent();
 			player.offsetRotationRight = THREE.Math.degToRad( 90 );
