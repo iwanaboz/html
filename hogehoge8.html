@@ -47,7 +47,7 @@
 			camera.position.z = 5;
 			
 			//描画するシステムを用意
-			var renderer = new THREE.WebGLRenderer();
+			var renderer = new THREE.WebGLRenderer( { antialias: true } );;
 			//描画サイズをwindowサイズに
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
@@ -69,58 +69,60 @@
 			var mesh_loaded = 0;
 				
 			// Load a MMD model
+			//modelFile = './models/seiten_ver112/斉天大聖ver1.12.pmx';
 			modelFile = 'https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd';
 			
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
-				{ name: 'walk', loop: true, filePath: [ './vmd/walk/walk.vmd' ], vmdClip: null },
-				{ name: 'run', loop: true, filePath: [ './vmd/walk/run.vmd'],vmdClip: null }
+				'./vmd/walk/walk.vmd',
+				'./vmd/walk/run.vmd'
 			];
-			
-			
+	
+	
 			// load のためのオブジェクトを作る
 			const loader = new THREE.MMDLoader(); 
 			var helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
-						
+			var helpers = [];		
 			// ロード部分本体
 			loader.load( modelFile, function (mesh) {
 				// モデルファイルの読み込み
 		        miku = mesh;
 		        
 				// モーションファイル(vmd:Vocaloid Motion Data)
-		   		
 		        LoadVmd( 0, miku );
 		        LoadVmd( 1, miku );
 		        scene.add( miku );
 		        
 				mesh_loaded +=1;
-				console.log(motionFiles);
+				console.log(miku);
 		        
 		    }, onProgress, onError);
 			
 			// モーションファイル読み込み
 			function LoadVmd( motionId, mesh ){
-				vmdPath = motionFiles[motionId].filePath;
-				// アニメーションファイルを読み込んで保持しておく
+				vmdPath = motionFiles[motionId];
+				// アニメーションファイルを読み込む
 				loader.loadAnimation(vmdPath, mesh, function(vmd){
-					motionFiles[motionId].vmdClip = vmd;
-				},
-				onProgress,
-				onError);
-			}
-			
-			// helperを新しく作り直し mesh と vmd を指定して動かす
-			function ApplyAnimation( motionId, mesh){
-				helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
-				vmd = motionFiles[motionId].vmdClip;
-				if (vmd && mesh){
-					helper.add(mesh,{
-				      animation: vmd,
+					// motion helper を用意する
+					helpers[motionId] = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
+					// motionをセットする
+					helpers[motionId].add(mesh,{
+				      animation: vmd.optimize(),
 				      physics: true,
 				    });
-			    }else{return false;}
+				    // インバースキネマティクス(IK)の bone連動
+				    ikHelper = helpers[motionId].objects.get( mesh ).ikSolver.createHelper();
+					ikHelper.visible = false;
+					scene.add( ikHelper );
+					// 物理演算の helper
+					physicsHelper = helpers[motionId].objects.get( mesh ).physics.createHelper();
+					physicsHelper.visible = false;
+					scene.add( physicsHelper );
+
+					console.log(helpers)
+				}, onProgress, onError);
 			}
-			
+
 			
 			//MMD loading progress
 			function onProgress( xhr ) {
@@ -164,7 +166,7 @@
 				if(mesh_loaded>0){
 					userMove(frameTime, miku, player);
 					if(player.isStop==0){
-						helper.update( frameTime );
+						helpers[selectmotion].update( frameTime );
 					}
 					cameraUpDate(player);
 					

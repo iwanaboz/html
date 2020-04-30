@@ -6,6 +6,9 @@ var key_on;
 var mousex, mousey;
 var mouseDrag=0;
 
+// モーション（仮）
+var selectmotion = 0;
+
 // Agent object
 var MyAgent = function(){
 	this.position = new THREE.Vector3(0, 0, 0);	// 場所
