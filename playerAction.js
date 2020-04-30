@@ -53,8 +53,8 @@ function userMove(frameTime, mesh, agent) {
 	}
 	//d (右)
 	if(key_on[68]>0){
-		agent.position.z += frameTime * 5 * agent.viewVect.x;
-		agent.position.x -= frameTime * 5 * agent.viewVect.z;
+		agent.position.z += frameTime * speed * agent.viewVect.x;
+		agent.position.x -= frameTime * speed * agent.viewVect.z;
 		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( +90 );
 		
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
