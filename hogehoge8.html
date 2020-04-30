@@ -75,7 +75,7 @@
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
 				{filePath : './vmd/walk/walk.vmd', physics : true},	
-				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/走る/走る：チルノ1（普通の走り）x10.vmd',  physics : false}
+				{filePath : './vmd/walk/run.vmd',  physics : true}
 			];
 	
 	
@@ -111,8 +111,6 @@
 				      physics: motionFiles[motionId].physics,
 				    });
 				    // https://threejs.org/docs/#api/en/animation/AnimationAction
-				    //var mixer = helpers[motionId].objects.get( mesh ).mixer;
-				    //mixer.existingAction(vmd).setLoop(THREE.LoopRepeat);
 				    
 				    // インバースキネマティクス(IK)の bone連動
 				    ikHelper = helpers[motionId].objects.get( mesh ).ikSolver.createHelper();
