@@ -20,11 +20,11 @@ function userMove(frameTime, mesh, agent) {
 	//　向きを更新
 	agent.updateView();
 	var isMove_ = 0;
-	var speed = 12;
+	var speed = 48;
 	
 	// Dash
 	if(key_on[16]>0){
-		speed = 48;
+		speed = 16;
 	}
 	
 	// Jump
@@ -112,8 +112,8 @@ function userMove(frameTime, mesh, agent) {
 		
 		
 	// walk
-	if(isMove_==1){selectmotion = 0;}
-	if(isMove_==2){selectmotion = 1;}
+	if(isMove_==2){selectmotion = 0;}
+	if(isMove_==1){selectmotion = 1;}
 	if(isMove_==3){selectmotion = 2;}
 	if(isMove_==4){selectmotion = 2;}
 	// 反映する
