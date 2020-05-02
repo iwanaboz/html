@@ -79,19 +79,18 @@
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
 				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/歩く/歩く：17式ミクx10.vmd',
-				loop : THREE.LoopOnce, ik: true, action : null, fadein: 0.1, fadeOut: 0.1  },	
+				loop : THREE.LoopOnce, action : null, fadeIn: 0.1, fadeOut: 0.1  },	
 				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/走る/走る：大妖精1（個性のある走り）x10.vmd',
-				loop : THREE.LoopOnce, ik: true, action : null, fadein: 0.1, fadeOut: 0.1 },
+				loop : THREE.LoopOnce, action : null, fadeIn: 0.1, fadeOut: 0.1 },
 				{filePath : './vmd/Lat式移動モーション配布v1.3/3.ジャンプ・落下・アクロバット/1.段差に飛び乗る/2.ジャンプ_(11f_上移動3~10の間_前移動0~10の間).vmd', 
-				loop : THREE.LoopOnce, ik: true, action : null , fadein: 0.1, fadeOut: 1.0},
+				loop : THREE.LoopOnce, action : null , fadeIn: 0.1, fadeOut: 1.0},
 				{filePath : './vmd/Lat式移動モーション配布v1.3/3.ジャンプ・落下・アクロバット/1.段差に飛び乗る/3.着地_(8f_移動なし).vmd',  
-				loop : THREE.LoopOnce, ik: true, action : null , fadein: 0.1, fadeOut: 0.1}
+				loop : THREE.LoopOnce, action : null , fadein: 0.1, fadeOut: 0.1}
 			];
 	
 			// load のためのオブジェクトを作る
 			const loader = new THREE.MMDLoader(); 
 			var helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
-			var helpers = [];
 			var animations = [];
 			
 
@@ -132,13 +131,16 @@
 			
 			var init = function(){
 				scene.add( miku );
-				
+				// 全てのモーションがセットされているmixer
 				let mixer = helper.objects.get( miku ).mixer;
+				// 全てのモーションの停止
 				mixer.stopAllAction();
 		    	for(let i=0;i<4; i++){
-		    		//
+		    		// ばらばらに取り出す
 					let action = mixer.clipAction( animations[i] );
+					// Loopさせるかどうか
 					action.setLoop( motionFiles[i].loop );
+					// 保持しておく
 					motionFiles[i].action= action;
 					console.log(action);
 				}
@@ -233,3 +235,4 @@
 		<script src="mouseCallBack.js"></script>
 	</body>
 </html>
+
