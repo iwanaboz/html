@@ -114,8 +114,8 @@ function userMove(frameTime, mesh, agent) {
 	// walk
 	if(isMove_==1){selectmotion = 0;}
 	if(isMove_==2){selectmotion = 1;}
-	if(isMove_==3){selectmotion = 3;}
-	if(isMove_==4){selectmotion = 3;}
+	if(isMove_==3){selectmotion = 2;}
+	if(isMove_==4){selectmotion = 2;}
 	// 反映する
 	mesh.rotation.y = -agent.lookingRight;
 	mesh.position.x = agent.position.x;
