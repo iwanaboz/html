@@ -136,12 +136,14 @@
 				// 全てのモーションの停止
 				mixer.stopAllAction();
 		    	for(let i=0;i<motionFiles.length; i++){
-		    		// ばらばらに取り出す
-					let action = mixer.clipAction( animations[i] );
-					// Loopさせるかどうか
-					action.setLoop( motionFiles[i].loop );
-					// 保持しておく
-					motionFiles[i].action= action;
+		    		if(animations[i]){
+			    		// ばらばらに取り出す
+						let action = mixer.clipAction( animations[i] );
+						// Loopさせるかどうか
+						action.setLoop( motionFiles[i].loop );
+						// 保持しておく
+						motionFiles[i].action= action;
+					}else{return false;}
 					//console.log(i);
 				}
 				
