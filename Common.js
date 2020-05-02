@@ -24,6 +24,8 @@ var MyAgent = function(){
 	this.isWalking =0;
 	this.isStop =1;
 	this.lastMotion=0;
+	this.isOnGround =1;
+	this.ySpeed = 0;
 	
 	// 向いている角度から向いている方向を計算する
 	this.updateView = function(){

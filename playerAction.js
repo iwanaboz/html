@@ -14,16 +14,40 @@ function userMove(frameTime, mesh, agent) {
 	if( Math.abs(dest_angleUp) > THREE.Math.degToRad( 5 ) && 
 		Math.abs(dest_angleRight) < Math.abs(dest_angleUp) && mouseDrag>0){
 		player.rotationUp 	-= frameTime * dest_angleUp *4;
-		if(player.rotationUp >= THREE.Math.degToRad( 45 )){player.rotationUp= THREE.Math.degToRad( 45 );}
-		if(player.rotationUp <= THREE.Math.degToRad( -60 )){player.rotationUp= THREE.Math.degToRad( -60 );}
+		if(agent.rotationUp >= THREE.Math.degToRad( 45 )){agent.rotationUp= THREE.Math.degToRad( 45 );}
+		if(agent.rotationUp <= THREE.Math.degToRad( -60 )){agent.rotationUp= THREE.Math.degToRad( -60 );}
 	}
 	//　向きを更新
 	agent.updateView();
 	var isMove_ = 0;
-	var speed = 8;
+	var speed = 12;
+	
+	// Dash
 	if(key_on[16]>0){
-		speed = 24;
+		speed = 48;
 	}
+	
+	// Jump
+	if(key_on[32]>0){
+		if(agent.isOnGround==1){
+			agent.ySpeed=120;
+			agent.isOnGround =0;
+		}
+	}
+	
+	// 落下 or jump
+	if(agent.isOnGround==0){
+		agent.ySpeed -= 300*frameTime;
+		agent.position.y += agent.ySpeed*frameTime;
+		
+	}
+	//
+	if ( agent.position.y <= 0){
+		agent.position.y =0;
+		agent.isOnGround =1;
+	}
+	
+	
 	
 	var dest_lookRight;
 	//w (前進)
@@ -34,7 +58,7 @@ function userMove(frameTime, mesh, agent) {
 		
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
 		
-	}
+	}else
 	//a
 	if(key_on[65]>0){
 		agent.position.z -= frameTime * speed * agent.viewVect.x;
@@ -42,7 +66,7 @@ function userMove(frameTime, mesh, agent) {
 		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( -90 );
 		
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
-	}
+	}else
 	//s (後退)
 	if(key_on[83]>0){
 		agent.position.z -= frameTime * speed * agent.viewVect.z;
@@ -50,7 +74,7 @@ function userMove(frameTime, mesh, agent) {
 		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( -180 );
 		
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
-	}
+	}else
 	//d (右)
 	if(key_on[68]>0){
 		agent.position.z += frameTime * speed * agent.viewVect.x;
@@ -81,11 +105,17 @@ function userMove(frameTime, mesh, agent) {
 	}else if(player.isStop==0 && isMove_ == 0){
 		player.isStop=1;
 	}
-	
+	if(agent.isOnGround==0){
+		player.isStop=0;
+		if ( agent.ySpeed >0){isMove_=3;}else{isMove_=4;}
+	}
+		
+		
 	// walk
 	if(isMove_==1){selectmotion = 0;}
 	if(isMove_==2){selectmotion = 1;}
-	
+	if(isMove_==3){selectmotion = 3;}
+	if(isMove_==4){selectmotion = 3;}
 	// 反映する
 	mesh.rotation.y = -agent.lookingRight;
 	mesh.position.x = agent.position.x;
