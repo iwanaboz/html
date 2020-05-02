@@ -30,7 +30,7 @@
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/effects/OutlineEffect.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/CCDIKSolver.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/MMDPhysics.js"></script>
-
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/TDSLoader.js"></script>
 		
 		<script src="Common.js"></script>
 		<script src="keyCallBack.js"></script>
@@ -51,7 +51,9 @@
 			camera.position.z = 5;
 			
 			//描画するシステムを用意
-			var renderer = new THREE.WebGLRenderer( { antialias: true } );;
+			var renderer = new THREE.WebGLRenderer( { antialias: true } );
+			
+			
 			//描画サイズをwindowサイズに
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
@@ -61,12 +63,26 @@
 			// 表面の素材を用意
 			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 			// 形と素材を指定した cubeをつくってシーンに追加
-			var cube = new THREE.Mesh( geometry, material );
+			//var cube = new THREE.Mesh( geometry, material );
 			//scene.add( cube );
+			
+			// field
+
+		    var floader = new THREE.TDSLoader();
+		 	floader.load('models/field/Cartoon_land.3DS',  (object) => {
+		 	  console.log(object);
+		 	  object.rotation.x = THREE.Math.degToRad( -90 );
+		 	  object.scale.x = 15;
+		 	  object.scale.y = 15;
+		 	  object.scale.z = 15;
+			  scene.add(object);
+			});
+
+			
 			// 床グリッドを追加
 			var gridHelper = new THREE.GridHelper(500, 100);
 			scene.add(gridHelper);
-			
+
 			
 			// pmd/pmxファイルの読み込み
 			var miku;
