@@ -79,11 +79,11 @@
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
 				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/歩く/歩く：17式ミクx10.vmd', 
-				physics : true, ik: true, aniClip : null },	
+				physics : true, ik: true, aniClip : null, warmup : 6 },	
 				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/走る/走る：大妖精1（個性のある走り）x10.vmd',  
-				physics : true, ik: true, aniClip : null },
+				physics : true, ik: true, aniClip : null, warmup : 3 },
 				{filePath : './vmd/Lat式移動モーション配布v1.3/3.ジャンプ・落下・アクロバット/1.段差に飛び乗る/2.ジャンプ_(11f_上移動3~10の間_前移動0~10の間).vmd',  
-				physics : true, ik: true, aniClip : null }
+				physics : true, ik: true, aniClip : null, warmup : 5 }
 			];
 	
 			// load のためのオブジェクトを作る
@@ -125,7 +125,8 @@
 					helpers[motionId].add(mesh,{
 				      animation: vmd,
 				      physics: motionFiles[motionId].physics,
-				      warmup  : 5
+				      warmup  : motionFiles[motionId].warmup,
+				      unitStep : 1/120
 				    });
 				    // animationをtrueに
 				    helpers[motionId].enable( 'animation', true);	    
@@ -171,9 +172,9 @@
 			//カメラの再設置
 			function cameraUpDate(agent) {
 				// カメラの場所をプレイヤーの後ろに
-				camera.position.x = agent.position.x -agent.viewVect.x *50;
-				camera.position.y = agent.position.y -agent.viewVect.y *50+20;
-				camera.position.z = agent.position.z -agent.viewVect.z *50;
+				camera.position.x = agent.position.x -agent.viewVect.x *35;
+				camera.position.y = agent.position.y -agent.viewVect.y *35+30;
+				camera.position.z = agent.position.z -agent.viewVect.z *35;
 				// プレイヤーの方向を向く
 				camera.lookAt( agent.position);
 			}
