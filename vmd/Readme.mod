@@ -1,1 +1,2 @@
-これらはお借りしたモデルです。再配布ではありませんので利用については配布元を参照してください。
+ここからの再配布については配布元と同じ条件とします。
+When redistributing from here, the terms and conditions are the same as the distributor.
