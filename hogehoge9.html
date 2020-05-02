@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -77,80 +78,85 @@
 			
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
-				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/歩く/歩く：17式ミクx10.vmd', 
-				physics : true, ik: true, action : null, warmup : 6 },	
-				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/走る/走る：大妖精1（個性のある走り）x10.vmd',  
-				physics : true, ik: true, action : null, warmup : 3 },
-				{filePath : './vmd/Lat式移動モーション配布v1.3/3.ジャンプ・落下・アクロバット/1.段差に飛び乗る/2.ジャンプ_(11f_上移動3~10の間_前移動0~10の間).vmd',  
-				physics : true, ik: true, action : null, warmup : 5 }
+				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/歩く/歩く：17式ミクx10.vmd',
+				loop : THREE.LoopOnce, ik: true, action : null, fadein: 0.1, fadeOut: 0.1  },	
+				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/走る/走る：大妖精1（個性のある走り）x10.vmd',
+				loop : THREE.LoopOnce, ik: true, action : null, fadein: 0.1, fadeOut: 0.1 },
+				{filePath : './vmd/Lat式移動モーション配布v1.3/3.ジャンプ・落下・アクロバット/1.段差に飛び乗る/2.ジャンプ_(11f_上移動3~10の間_前移動0~10の間).vmd', 
+				loop : THREE.LoopOnce, ik: true, action : null , fadein: 0.1, fadeOut: 1.0},
+				{filePath : './vmd/Lat式移動モーション配布v1.3/3.ジャンプ・落下・アクロバット/1.段差に飛び乗る/3.着地_(8f_移動なし).vmd',  
+				loop : THREE.LoopOnce, ik: true, action : null , fadein: 0.1, fadeOut: 0.1}
 			];
 	
 			// load のためのオブジェクトを作る
 			const loader = new THREE.MMDLoader(); 
 			var helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
-			var helpers = [];		
+			var helpers = [];
+			var animations = [];
+			
+
 			// ロード部分本体
 			loader.load( modelFile, function (mesh) {
 				// モデルファイルの読み込み
 		        miku = mesh;
 		        
 				// モーションファイル(vmd:Vocaloid Motion Data)
+				LoadVmd( 3, miku );
 		        LoadVmd( 2, miku );
 		        LoadVmd( 1, miku );
 		        LoadVmd( 0, miku );
 		        
-		        scene.add( miku );
-		        
-				mesh_loaded +=1;
-				console.log(miku);
-		        
+		        // motionをセットする
+				helper.add(mesh,{
+			      animation: animations,
+			      physics: true,
+			      warmup  : 6,
+			      unitStep : 1/120
+			    });
+			    mesh_loaded =1;
+				//console.log(miku);			        
 		    }, onProgress, onError);
-			
+
+
 			// モーションファイル読み込み
 			function LoadVmd( motionId, mesh ){
 				vmdPath = motionFiles[motionId].filePath;
 				// アニメーションファイルを読み込む
 				loader.loadAnimation(vmdPath, mesh, function(vmd){
-					// motion helper を用意する
-					helpers[motionId] = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
-					
-					// animationをいったん止める
-					helpers[motionId].enable( 'animation', false );
-					helpers[motionId].enable( 'cameraAnimation', false );
-					
-					// motionをセットする
-					helpers[motionId].add(mesh,{
-				      animation: vmd,
-				      physics: motionFiles[motionId].physics,
-				      warmup  : motionFiles[motionId].warmup,
-				      unitStep : 1/120
-				    });
-				    // animationをtrueに
-				    helpers[motionId].enable( 'animation', true);	    
-				    helpers[motionId].enable( 'ik', motionFiles[motionId].ik );
-				    
-				    let mixer = helpers[motionId].objects.get( mesh ).mixer;
-					let action = mixer.existingAction( vmd );
-					motionFiles[motionId].action= action;
-						 
-				    // インバースキネマティクス(IK)の bone連動
-				    
-				    ikHelper = helpers[motionId].objects.get( mesh ).ikSolver.createHelper();
-					ikHelper.visible = true;
-					scene.add( ikHelper );
-			
-					// 物理演算の helper
-					if (motionFiles[motionId].physics){
-						physicsHelper = helpers[motionId].objects.get( mesh ).physics.createHelper();
-						physicsHelper.visible = false;
-						scene.add( physicsHelper );
-					}
-					
-					console.log(helpers[motionId])
+					// vmdを保持しておく
+					animations[motionId] = vmd;
 				}, onProgress, onError);
 				return true;
 			}
+			
+			
+			var init = function(){
+				scene.add( miku );
+				
+				let mixer = helper.objects.get( miku ).mixer;
+				mixer.stopAllAction();
+		    	for(let i=0;i<4; i++){
+		    		//
+					let action = mixer.clipAction( animations[i] );
+					action.setLoop( motionFiles[i].loop );
+					motionFiles[i].action= action;
+					console.log(action);
+				}
+				
+				// インバースキネマティクス(IK)の bone連動
+				ikHelper = helper.objects.get( miku  ).ikSolver.createHelper();
+				ikHelper.visible = true;
+				scene.add( ikHelper );
+				
+				// 物理演算の helper
+				physicsHelper = helper.objects.get( miku  ).physics.createHelper();
+				physicsHelper.visible = false;
+				scene.add( physicsHelper );
+				mesh_loaded +=1;
+				
+			}
 
+					
 			//MMD loading progress
 			function onProgress( xhr ) {
 			  if ( xhr.lengthComputable ) {
@@ -188,7 +194,7 @@
 				window.requestAnimationFrame( animate );
 				// 現在の1フレームの長さを取得
 				var frameTime = Math.min(clock.getDelta(), 0.3);
-				if(mesh_loaded>0){
+				if(mesh_loaded>1){
 					userMove(frameTime, miku, player);
 					
 					if(player.isStop==0 ){
@@ -196,19 +202,24 @@
 						if(player.lastMotion != selectmotion){
 							 //
 							 motionFiles[player.lastMotion].action.weight =0.3;
-							 helpers[player.lastMotion].update( frameTime );
+							 helper.update( frameTime );
+							 motionFiles[player.lastMotion].action.fadeOut(motionFiles[selectmotion].fadeOut);
 							 //
 							 motionFiles[selectmotion].action.reset();
+							 motionFiles[selectmotion].action.play();
+							 motionFiles[selectmotion].action.fadeIn(motionFiles[selectmotion].fadeIn);
 							 motionFiles[selectmotion].action.weight =0.3;
 						}else{
 							 motionFiles[selectmotion].action.weight =1;
 						}
 						
-						helpers[selectmotion].update( frameTime );
+						helper.update( frameTime );
 						player.lastMotion = selectmotion;
 					}
 					cameraUpDate(player);
 					
+				}else if(mesh_loaded==1 && animations[0]){
+					init();
 				}
 				// シーンを描画
 				renderer.render( scene, camera );
@@ -222,4 +233,3 @@
 		<script src="mouseCallBack.js"></script>
 	</body>
 </html>
-
