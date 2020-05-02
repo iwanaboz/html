@@ -87,7 +87,7 @@
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/3.着地_(8f_移動なし).vmd',  
 				loop : THREE.LoopOnce,  action : null , fadeIn: 0.1, fadeOut: 0.1}
 			];
-	
+			console.log(motionFiles.length);
 			// load のためのオブジェクトを作る
 			const loader = new THREE.MMDLoader(); 
 			var helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
@@ -128,21 +128,21 @@
 				return true;
 			}
 			
-			
-			var initAction = function(){
+			//
+			function initAction(){
 				scene.add( miku );
 				// 全てのモーションがセットされているmixer
 				let mixer = helper.objects.get( miku ).mixer;
 				// 全てのモーションの停止
 				mixer.stopAllAction();
-		    	for(let i=0;i<4; i++){
+		    	for(let i=0;i<motionFiles.length; i++){
 		    		// ばらばらに取り出す
 					let action = mixer.clipAction( animations[i] );
 					// Loopさせるかどうか
 					action.setLoop( motionFiles[i].loop );
 					// 保持しておく
 					motionFiles[i].action= action;
-					console.log(i);
+					//console.log(i);
 				}
 				
 				// インバースキネマティクス(IK)の bone連動
@@ -155,7 +155,7 @@
 				physicsHelper.visible = false;
 				scene.add( physicsHelper );
 				mesh_loaded +=1;
-				
+				return true;
 			}
 
 					
