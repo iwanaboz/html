@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 	<head>
@@ -17,7 +16,7 @@
 		<a href="https://bowlroll.net/file/71805" target="_blank">Motion Data</a>
 		<a href="https://bowlroll.net/file/154665" target="_blank">Motion Data</a>
 		<a href="https://github.com/miu200521358/vmd_sizing/blob/master/README.md" target="_blank">vmd_sizing</a>
-		<p>WASDで動きます。SHIFT+WASDで歩くスペースでジャンプ、クリックで視点移動</p>
+		<p>WASD:走る、 SHIFT+WASD:歩く、スペース:ジャンプ、クリックで視点移動</p>
 		</div>
 		
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/106/three.min.js"></script>
@@ -79,11 +78,11 @@
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
 				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/歩く/歩く：17式ミクx10.vmd', 
-				physics : true, ik: true, aniClip : null, warmup : 6 },	
+				physics : true, ik: true, action : null, warmup : 6 },	
 				{filePath : './vmd/ゆきはね式モーションパックver1.1.1/走る/走る：大妖精1（個性のある走り）x10.vmd',  
-				physics : true, ik: true, aniClip : null, warmup : 3 },
+				physics : true, ik: true, action : null, warmup : 3 },
 				{filePath : './vmd/Lat式移動モーション配布v1.3/3.ジャンプ・落下・アクロバット/1.段差に飛び乗る/2.ジャンプ_(11f_上移動3~10の間_前移動0~10の間).vmd',  
-				physics : true, ik: true, aniClip : null, warmup : 5 }
+				physics : true, ik: true, action : null, warmup : 5 }
 			];
 	
 			// load のためのオブジェクトを作る
@@ -97,9 +96,9 @@
 		        
 				// モーションファイル(vmd:Vocaloid Motion Data)
 		        LoadVmd( 2, miku );
-		        LoadVmd( 0, miku );
 		        LoadVmd( 1, miku );
-
+		        LoadVmd( 0, miku );
+		        
 		        scene.add( miku );
 		        
 				mesh_loaded +=1;
@@ -114,8 +113,6 @@
 				loader.loadAnimation(vmdPath, mesh, function(vmd){
 					// motion helper を用意する
 					helpers[motionId] = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
-					// セットするmotionを保持しておく
-					motionFiles[motionId].aniClip= vmd;
 					
 					// animationをいったん止める
 					helpers[motionId].enable( 'animation', false );
@@ -132,10 +129,14 @@
 				    helpers[motionId].enable( 'animation', true);	    
 				    helpers[motionId].enable( 'ik', motionFiles[motionId].ik );
 				    
+				    let mixer = helpers[motionId].objects.get( mesh ).mixer;
+					let action = mixer.existingAction( vmd );
+					motionFiles[motionId].action= action;
+						 
 				    // インバースキネマティクス(IK)の bone連動
 				    
 				    ikHelper = helpers[motionId].objects.get( mesh ).ikSolver.createHelper();
-					ikHelper.visible = false;
+					ikHelper.visible = true;
 					scene.add( ikHelper );
 			
 					// 物理演算の helper
@@ -193,9 +194,14 @@
 					if(player.isStop==0 ){
 						// motionが切り替わった時
 						if(player.lastMotion != selectmotion){
-							 let mixer = helpers[selectmotion].objects.get( miku ).mixer;
-							 let action = mixer.existingAction( motionFiles[selectmotion].aniClip );
-							 action.reset();
+							 //
+							 motionFiles[player.lastMotion].action.weight =0.3;
+							 helpers[player.lastMotion].update( frameTime );
+							 //
+							 motionFiles[selectmotion].action.reset();
+							 motionFiles[selectmotion].action.weight =0.3;
+						}else{
+							 motionFiles[selectmotion].action.weight =1;
 						}
 						
 						helpers[selectmotion].update( frameTime );
