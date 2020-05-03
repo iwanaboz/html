@@ -224,10 +224,11 @@
 			function cameraUpDate(agent) {
 				// カメラの場所をプレイヤーの後ろに
 				camera.position.x = agent.position.x -agent.viewVect.x *35;
-				camera.position.y = agent.position.y -agent.viewVect.y *35+30;
+				camera.position.y = agent.position.y -agent.viewVect.y *35+10;
 				camera.position.z = agent.position.z -agent.viewVect.z *35;
 				// プレイヤーの方向を向く
-				camera.lookAt( agent.position);
+				let lookPosition = agent.position.clone().add(new THREE.Vector3(0, agent.mesh.geometry.boundingSphere.radius, 0));
+				camera.lookAt( lookPosition );
 			}
 			
 			
