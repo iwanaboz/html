@@ -121,7 +121,6 @@ function userMove(frameTime, mesh, agent) {
 		}
 	}
 		
-		
 	// walk
 	if(agent.isStop==1 && script_version >= 10){selectmotion = 4;}
 	if(isMove_==2){selectmotion = 0;}
@@ -160,9 +159,9 @@ function fieldCollision(agent){
 	const XRayOrigin = bsCenter.clone().addScaledVector(XRayVect, -200);
 	const YRayOrigin = bsCenter.clone().addScaledVector(YRayVect, -200);
 	// 水平2軸は頭と足も用意する
-	let ZRayOriginHead = ZRayOrigin.clone().add(new THREE.Vector3(0,  bSphere.radius*0.7, 0));
+	let ZRayOriginHead = ZRayOrigin.clone().add(new THREE.Vector3(0,  bSphere.radius*0.9, 0));
 	let ZRayOriginFoot = ZRayOrigin.clone().add(new THREE.Vector3(0, -bSphere.radius*0.7, 0));
-	let XRayOriginHead = XRayOrigin.clone().add(new THREE.Vector3(0,  bSphere.radius*0.7, 0));
+	let XRayOriginHead = XRayOrigin.clone().add(new THREE.Vector3(0,  bSphere.radius*0.9, 0));
 	let XRayOriginFoot = XRayOrigin.clone().add(new THREE.Vector3(0, -bSphere.radius*0.7, 0));
 	
 	// Ray
@@ -247,9 +246,8 @@ function fieldCollision(agent){
 	}
 	
 	
-	
 	// 処理をかく
-	// 足もと------------------------------------
+	// 足もとに踏み越えられない壁がある場合、近ければ押し戻す------------------------------------
 	//  radius*30%の高さにZ衝突面がある場合、近ければ押し出す
 	
 	if ( Math.abs(footNearestZLocal) < bSphere.radius*0.2){
@@ -273,7 +271,7 @@ function fieldCollision(agent){
 		}
 	}
 	
-	// 頭------------------------------------
+	// 頭付近に壁がある場合、近ければ押し戻す------------------------------------
 	
 	//  radius*170%の高さにZ衝突面がある場合、近ければ押し出す
 	if ( Math.abs(headNearestZLocal) < bSphere.radius*0.2){
@@ -297,15 +295,14 @@ function fieldCollision(agent){
 	}
 	
 	
-	//
-	
+	// 天井が頭より下の場合押し戻す
 	if (headLowestYLocal <= 0){
 		// 頭をぶつける
 		agent.position.y += headLowestYLocal;
 
 	}
 	
-	//
+	// 床が足より上の場合押し戻す
 	if (footHighestYLocal >= -bSphere.radius*0.01){
 		// ここまで弾かれていないなら乗り越える
 		agent.position.y += footHighestYLocal;
