@@ -36,10 +36,12 @@
 		<script src="keyCallBack.js"></script>
 		<script src="playerAction.js"></script>
 		<script>
+			script_version = 10; 
 			// Our Javascript will go here.
 			console.log("ﾄﾞｯ！");
 			//シーンを用意
 			var scene = new THREE.Scene();
+			
 			//光源を用意してシーンに追加
 			const ambient = new THREE.AmbientLight(0xeeeeee);
   			scene.add(ambient);
@@ -58,26 +60,40 @@
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
 			
+			
+			
 			// 箱の形を用意
 			var geometry = new THREE.BoxGeometry();
 			// 表面の素材を用意
 			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+			material.side = THREE.DoubleSide;
 			// 形と素材を指定した cubeをつくってシーンに追加
-			//var cube = new THREE.Mesh( geometry, material );
-			//scene.add( cube );
-			
-			// field
+			var cube = new THREE.Mesh( geometry, material );
+			cube.position.y = 30;
+			cube.scale.x = 5;
+			cube.scale.y = 5;
+			cube.scale.z = 5;
 
+			fieldObjs.add( cube );
+			//
 		    var floader = new THREE.TDSLoader();
 		 	floader.load('models/field/Cartoon_land.3DS',  (object) => {
-		 	  console.log(object);
+		 	  
 		 	  object.rotation.x = THREE.Math.degToRad( -90 );
+		 	  let fldChild = object.children;
+		 	  for (let i = 0; i < fldChild.length; i++){
+		 	  	fldChild[i].material.side = THREE.DoubleSide;
+		 	  }
 		 	  object.scale.x = 15;
 		 	  object.scale.y = 15;
 		 	  object.scale.z = 15;
-			  scene.add(object);
-			});
 
+			  fieldObjs.add(object);
+			  
+			});
+			scene.add(fieldObjs);
+			
+			
 			
 			// 床グリッドを追加
 			var gridHelper = new THREE.GridHelper(500, 100);
@@ -146,6 +162,7 @@
 			
 			//
 			function initAction(){
+				player.mesh = miku;
 				scene.add( miku );
 				// 全てのモーションがセットされているmixer
 				let mixer = helper.objects.get( miku ).mixer;

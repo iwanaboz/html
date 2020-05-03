@@ -11,12 +11,13 @@ var selectmotion = 0;
 
 // Agent object
 var MyAgent = function(){
+	this.mesh;
 	this.position = new THREE.Vector3(0, 0, 0);	// 場所
 	this.viewVect = new THREE.Vector3(0, 0, 0); // 向いている方向
 	this.rotationUp = 0;						// 向いている上下の角度
 	this.rotationRight = THREE.Math.degToRad( -90 );// 向いている水平方向の角度
-	this.lookingUp = 0;
-	this.lookingRight = THREE.Math.degToRad( -90 );// 向いている水平方向の角度
+	this.lookingUp = 0;								//見ている方向
+	this.lookingRight = THREE.Math.degToRad( -90 );// 見ている方向
 	this.offsetPosition = new THREE.Vector3(0, 0, 0);
 	this.offsetRotationUp	= 0;
 	this.offsetRotationRight= 0;
@@ -35,3 +36,7 @@ var MyAgent = function(){
 		this.viewVect = new THREE.Vector3(x_, y_, z_);
 	}
 }
+
+// field
+var script_version = 0; 
+var fieldObjs = new THREE.Group();
