@@ -70,10 +70,12 @@
 			material.side = THREE.DoubleSide;
 			// 形と素材を指定した cubeをつくってシーンに追加
 			var cube = new THREE.Mesh( geometry, material );
-			cube.position.y = 30;
-			cube.scale.x = 5;
-			cube.scale.y = 5;
-			cube.scale.z = 5;
+			cube.position.x = 50;
+			cube.position.z = -40;
+			cube.position.y = 40;
+			cube.scale.x = 10;
+			cube.scale.y = 10;
+			cube.scale.z = 10;
 
 			fieldObjs.add( cube );
 			//

@@ -8,7 +8,7 @@ function userMove(frameTime, mesh, agent) {
 	var dest_angleUp 	= Math.atan2(mousey, canvasHeight);
 	// 水平方向（マウスを押しているとき）
 	if( dest_angleRight && mouseDrag>0){
-		player.rotationRight += frameTime * dest_angleRight *5;
+		player.rotationRight += frameTime * dest_angleRight *8;
 	}
 	// 上下（マウスを押しているとき）
 	if( Math.abs(dest_angleUp) > THREE.Math.degToRad( 5 ) && 
@@ -86,6 +86,7 @@ function userMove(frameTime, mesh, agent) {
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
 	}
 	
+	// muki
 	if(isMove_ > 0){
 		dest_lookRight = dest_lookRight%THREE.Math.degToRad(360);
 		agent.lookingRight = agent.lookingRight%THREE.Math.degToRad(360);
@@ -98,7 +99,7 @@ function userMove(frameTime, mesh, agent) {
 			diff_angle -=THREE.Math.degToRad(360);
 		}
 		//if(Math.abs(diff_angle)<THREE.Math.degToRad( 180 )){
-			agent.lookingRight += diff_angle*frameTime*4;
+			agent.lookingRight += diff_angle*frameTime*8;
 
 	}
 	//
