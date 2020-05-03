@@ -13,6 +13,7 @@
 		<div id="info">
 		Copyright
 		<a href="https://github.com/takahirox/MMDLoader-app#readme" target="_blank">MMD Assets license</a>
+		<a href="https://www.turbosquid.com/ja/3d-model/free/city" target="_blank">Field Map Data</a>
 		<a href="https://seiga.nicovideo.jp/seiga/im7587363" target="_blank">Model Data</a>
 		<a href="http://www.nicovideo.jp/mylist/1713647" target="_blank">Motion Data</a>
 		<a href="https://bowlroll.net/file/154665" target="_blank">Motion Data</a>
@@ -111,13 +112,15 @@
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
 				{filePath : './vmd/walk/walk.vmd', 
-				loop : THREE.LoopOnce,  action : null, fadeIn: 0.1, fadeOut: 0.1  },	
+				loop : THREE.LoopRepeat,  action : null, fadeIn: 0.1, fadeOut: 0.1  },	
 				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12x40.vmd',  
-				loop : THREE.LoopOnce,  action : null, fadeIn: 0.1, fadeOut: 0.1 },
+				loop : THREE.LoopRepeat,  action : null, fadeIn: 0.1, fadeOut: 0.1 },
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/jump_斉天大聖ver1.12.vmd',  
 				loop : THREE.LoopOnce,  action : null , fadeIn: 0.1, fadeOut: 1.0},
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/3.着地_(8f_移動なし).vmd',  
-				loop : THREE.LoopOnce,  action : null , fadeIn: 0.1, fadeOut: 0.1}
+				loop : THREE.LoopOnce,  action : null , fadeIn: 0.1, fadeOut: 0.1},
+				{filePath : './vmd/Lat式/Idle_resized/idle.vmd',  
+				loop : THREE.LoopRepeat,  action : null , fadeIn: 0.1, fadeOut: 0.1}
 			];
 			console.log(motionFiles.length);
 			// load のためのオブジェクトを作る
@@ -132,10 +135,12 @@
 		        miku = mesh;
 		        
 				// モーションファイル(vmd:Vocaloid Motion Data)
+				
 				LoadVmd( 3, miku );
 		        LoadVmd( 2, miku );
 		        LoadVmd( 1, miku );
 		        LoadVmd( 0, miku );
+		        LoadVmd( 4, miku );
 		        
 		        // motionをセットする
 				helper.add(mesh,{
@@ -234,7 +239,7 @@
 				if(mesh_loaded>1){
 					userMove(frameTime, miku, player);
 					
-					if(player.isStop==0 ){
+					
 						// motionが切り替わった時
 						if(player.lastMotion != selectmotion){
 							 //
@@ -252,7 +257,7 @@
 						
 						helper.update( frameTime );
 						player.lastMotion = selectmotion;
-					}
+		
 					cameraUpDate(player);
 					
 				}else if(mesh_loaded==1 && animations[0]){

@@ -122,6 +122,7 @@ function userMove(frameTime, mesh, agent) {
 		
 		
 	// walk
+	if(agent.isStop==1 && script_version >= 10){selectmotion = 4;}
 	if(isMove_==2){selectmotion = 0;}
 	if(isMove_==1){selectmotion = 1;}
 	if(isMove_==3){selectmotion = 2;}
