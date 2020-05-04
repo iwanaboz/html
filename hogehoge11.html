@@ -36,6 +36,7 @@
 		<script src="./scripts/v10/Common.js"></script>
 		<script src="./scripts/v10/keyCallBack.js"></script>
 		<script src="./scripts/v10/playerAction.js"></script>
+		<script src="./scripts/v10/mainLoop.js"></script>
 		<script>
 			script_version = 10; 
 			// Our Javascript will go here.
@@ -108,95 +109,92 @@
 			var mesh_loaded = 0;
 				
 			// Load a MMD model
-			modelFile = './models/seiten_ver112/斉天大聖ver1.12.pmx';
+			//modelFile = './models/seiten_ver112/斉天大聖ver1.12.pmx';
 			//modelFile = 'https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd';
 			
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
 				{filePath : './vmd/walk/walk.vmd', 
-				loop : THREE.LoopRepeat,  action : null, fadeIn: 0.1, fadeOut: 0.1  },	
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1  },	
 				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12x40.vmd',  
-				loop : THREE.LoopRepeat,  action : null, fadeIn: 0.1, fadeOut: 0.1 },
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1 },
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/jump_斉天大聖ver1.12.vmd',  
-				loop : THREE.LoopOnce,  action : null , fadeIn: 0.1, fadeOut: 1.0},
+				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 1.0},
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/3.着地_(8f_移動なし).vmd',  
-				loop : THREE.LoopOnce,  action : null , fadeIn: 0.1, fadeOut: 0.1},
+				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.1},
 				{filePath : './vmd/Lat式/Idle_resized/idle.vmd',  
-				loop : THREE.LoopRepeat,  action : null , fadeIn: 0.1, fadeOut: 0.1}
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1}
 			];
 			console.log(motionFiles.length);
 			// load のためのオブジェクトを作る
 			const loader = new THREE.MMDLoader(); 
-			var helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
-			var animations = [];
+			var seiten 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
+			var miku 	= new MyCharacter('https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd', motionFiles);
 			
-
-			// ロード部分本体
-			loader.load( modelFile, function (mesh) {
-				// モデルファイルの読み込み
-		        miku = mesh;
-		        
-				// モーションファイル(vmd:Vocaloid Motion Data)
-				
-				LoadVmd( 3, miku );
-		        LoadVmd( 2, miku );
-		        LoadVmd( 1, miku );
-		        LoadVmd( 0, miku );
-		        LoadVmd( 4, miku );
-		        
-		        // motionをセットする
-				helper.add(mesh,{
-			      animation: animations,
-			      physics: true,
-			      warmup  : 6,
-			      unitStep : 1/120
-			    });
-			    mesh_loaded =1;
-				//console.log(miku);			        
-		    }, onProgress, onError);
-
+			// キャラクターのロード
+			function LoadCharacter(chara){
+				loader.load( chara.modelFile, function (mesh) {
+					
+					chara.mesh = mesh;
+					// モーションファイル(vmd:Vocaloid Motion Data)
+					for(let i=0;i<motionFiles.length; i++){
+						LoadVmd( i, chara );
+					}
+			        // motionをセットする
+					chara.helper.add(mesh,{
+				      animation: chara.animations,
+				      physics: true,
+				      warmup  : 6,
+				      unitStep : 1/120
+				    });
+				    chara._isLoaded =1;
+				        
+			    }, onProgress, onError);
+			}
 
 			// モーションファイル読み込み
-			function LoadVmd( motionId, mesh ){
-				vmdPath = motionFiles[motionId].filePath;
+			function LoadVmd( motionId, chara ){
+				vmdPath = chara.motionFiles[motionId].filePath;
 				// アニメーションファイルを読み込む
-				loader.loadAnimation(vmdPath, mesh, function(vmd){
+				loader.loadAnimation(vmdPath, chara.mesh, function(vmd){
 					// vmdを保持しておく
-					animations[motionId] = vmd;
+					chara.animations[motionId] = vmd;
 				}, onProgress, onError);
 				return true;
 			}
 			
+			LoadCharacter(seiten);
+			LoadCharacter(miku);
+			
 			//
-			function initAction(){
-				player.mesh = miku;
-				scene.add( miku );
+			function initAction(chara){
+				scene.add( chara.mesh );
 				// 全てのモーションがセットされているmixer
-				let mixer = helper.objects.get( miku ).mixer;
+				let mixer = chara.helper.objects.get( chara.mesh ).mixer;
 				// 全てのモーションの停止
 				mixer.stopAllAction();
-		    	for(let i=0;i<motionFiles.length; i++){
-		    		if(animations[i]){
+		    	for(let i=0;i<chara.motionFiles.length; i++){
+		    		if(chara.animations[i]){
 			    		// ばらばらに取り出す
-						let action = mixer.clipAction( animations[i] );
+						let action = mixer.clipAction( chara.animations[i] );
 						// Loopさせるかどうか
-						action.setLoop( motionFiles[i].loop );
+						action.setLoop( chara.motionFiles[i].loop );
 						// 保持しておく
-						motionFiles[i].action= action;
-					}else{return false;}
-					//console.log(i);
+						chara.actions[i] = action;
+					}else{return false;}	
 				}
-				
-				// インバースキネマティクス(IK)の bone連動
-				ikHelper = helper.objects.get( miku  ).ikSolver.createHelper();
+				//chara.animations = null;
+				// インバースキネマティクス(IK)のhelper
+				ikHelper = chara.helper.objects.get( chara.mesh ).ikSolver.createHelper();
 				ikHelper.visible = false;
-				scene.add( ikHelper );
+				//scene.add( ikHelper );
 				
 				// 物理演算の helper
-				physicsHelper = helper.objects.get( miku  ).physics.createHelper();
+				physicsHelper = chara.helper.objects.get( chara.mesh  ).physics.createHelper();
 				physicsHelper.visible = false;
-				scene.add( physicsHelper );
-				mesh_loaded +=1;
+				//scene.add( physicsHelper );
+				//console.log(chara);
+				chara._isLoaded +=1;
 				return true;
 			}
 
@@ -216,9 +214,10 @@
 
 			// player という名前で作ったobject を1つ用意する
 			player = new MyAgent();
-			player.offsetRotationRight = THREE.Math.degToRad( 90 );
+			player.chara = seiten;
 			
-
+			friend = new MyAgent();
+			friend.chara = miku;
 			
 			//カメラの再設置
 			function cameraUpDate(agent) {
@@ -232,48 +231,21 @@
 			}
 			
 			
-			
 			// 時計
 			clock = new THREE.Clock();
 			function animate() {
 				window.requestAnimationFrame( animate );
 				// 現在の1フレームの長さを取得
 				var frameTime = Math.min(clock.getDelta(), 0.3);
-				if(mesh_loaded>1){
-					userMove(frameTime, miku, player);
-					
-					
-						// motionが切り替わった時
-						if(player.lastMotion != selectmotion){
-							 //
-							 motionFiles[player.lastMotion].action.weight =0.3;
-							 helper.update( frameTime );
-							 motionFiles[player.lastMotion].action.fadeOut(motionFiles[selectmotion].fadeOut);
-							 //
-							 motionFiles[selectmotion].action.reset();
-							 motionFiles[selectmotion].action.play();
-							 motionFiles[selectmotion].action.fadeIn(motionFiles[selectmotion].fadeIn);
-							 motionFiles[selectmotion].action.weight =0.3;
-						}else{
-							 motionFiles[selectmotion].action.weight =1;
-						}
-						
-						helper.update( frameTime );
-						player.lastMotion = selectmotion;
-		
-					cameraUpDate(player);
-					
-				}else if(mesh_loaded==1 && animations[0]){
-					initAction();
-				}
+				//MainLoop.js
+				mainLoop(frameTime);
 				// シーンを描画
 				renderer.render( scene, camera );
 			}
 			animate();
 			
 			
-					 
-   
+
 		</script>
 		<script src="./scripts/v10/mouseCallBack.js"></script>
 	</body>

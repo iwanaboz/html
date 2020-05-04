@@ -1,6 +1,7 @@
 //プレーヤーの移動
-function userMove(frameTime, mesh, agent) {
+function userMove(frameTime, agent) {
 	
+	if(!agent.mesh){agent.mesh=	agent.chara.mesh;}
 	//　マウス位置で方向転換
 	var canvasWidth = renderer.domElement.offsetWidth;
 	var canvasHeight = renderer.domElement.offsetHeight;
@@ -8,12 +9,12 @@ function userMove(frameTime, mesh, agent) {
 	var dest_angleUp 	= Math.atan2(mousey, canvasHeight);
 	// 水平方向（マウスを押しているとき）
 	if( dest_angleRight && mouseDrag>0){
-		player.rotationRight += frameTime * dest_angleRight *8;
+		agent.rotationRight += frameTime * dest_angleRight *8;
 	}
 	// 上下（マウスを押しているとき）
 	if( Math.abs(dest_angleUp) > THREE.Math.degToRad( 5 ) && 
 		Math.abs(dest_angleRight) < Math.abs(dest_angleUp) && mouseDrag>0){
-		player.rotationUp 	-= frameTime * dest_angleUp *4;
+		agent.rotationUp 	-= frameTime * dest_angleUp *4;
 		if(agent.rotationUp >= THREE.Math.degToRad( 45 )){agent.rotationUp= THREE.Math.degToRad( 45 );}
 		if(agent.rotationUp <= THREE.Math.degToRad( -60 )){agent.rotationUp= THREE.Math.degToRad( -60 );}
 	}
@@ -102,18 +103,19 @@ function userMove(frameTime, mesh, agent) {
 			agent.lookingRight += diff_angle*frameTime*8;
 
 	}
-	//
+	
+	// 衝突判定(defined below)
 	if (script_version >= 10){
 		fieldCollision(agent);
 	}
 	
-	if(player.isStop==1 && isMove_ > 0){
-		player.isStop=0;
-	}else if(player.isStop==0 && isMove_ == 0){
-		player.isStop=1;
+	if(agent.isStop==1 && isMove_ > 0){
+		agent.isStop=0;
+	}else if(agent.isStop==0 && isMove_ == 0){
+		agent.isStop=1;
 	}
 	if(agent.isOnGround==0){
-		player.isStop=0;
+		agent.isStop=0;
 		if ( agent.ySpeed >0){
 			isMove_=3;
 		}else if(agent.ySpeed < -300 * 0.2){
@@ -122,24 +124,43 @@ function userMove(frameTime, mesh, agent) {
 	}
 		
 	// walk
-	if(agent.isStop==1 && script_version >= 10){selectmotion = 4;}
-	if(isMove_==2){selectmotion = 0;}
-	if(isMove_==1){selectmotion = 1;}
-	if(isMove_==3){selectmotion = 2;}
-	if(isMove_==4){selectmotion = 2;}
+	if(agent.isStop==1 && script_version >= 10){agent.selectMotion = 4;}
+	if(isMove_==2){agent.selectMotion= 0;}
+	if(isMove_==1){agent.selectMotion = 1;}
+	if(isMove_==3){agent.selectMotion = 2;}
+	if(isMove_==4){agent.selectMotion = 2;}
 	// 反映する
-	mesh.rotation.y = -agent.lookingRight;
-	mesh.position.x = agent.position.x;
-	mesh.position.y = agent.position.y;
-	mesh.position.z = agent.position.z;
+	agent.chara.mesh.rotation.y = -agent.lookingRight;
+	agent.chara.mesh.position.x = agent.position.x;
+	agent.chara.mesh.position.y = agent.position.y;
+	agent.chara.mesh.position.z = agent.position.z;
 }
 
 
+// モーションを更新
+function updateAction(frameTime, agent){
+	let actions = agent.chara.actions;
+	// motionが切り替わった時
+	if(agent.lastMotion != agent.selectMotion){
+		 //
+		 actions[agent.lastMotion].weight =0.3;
+		 agent.chara.helper.update( frameTime );
+		 actions[agent.lastMotion].fadeOut(agent.chara.motionFiles[agent.lastMotion].fadeOut);
+		 //
+		 actions[agent.selectMotion].reset();
+		 actions[agent.selectMotion].play();
+		 actions[agent.selectMotion].fadeIn(agent.chara.motionFiles[agent.selectMotion].fadeIn);
+		 actions[agent.selectMotion].weight =0.3;
+	}else{
+		 actions[agent.selectMotion].weight =1;
+	}
+	
+	agent.chara.helper.update( frameTime );
+	agent.lastMotion = agent.selectMotion;
+}
 
 
-
-
-//
+// 衝突判定
 function fieldCollision(agent){
 	// 下準備--------------------------------------------------------------
 	// boundingSphere から頭と足もとの位置を決める
