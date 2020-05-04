@@ -1,16 +1,17 @@
 // マウスが動いたとき
-renderer.domElement.addEventListener('mousemove', e => {
+var canvas2d_ = document.getElementById('canvas2d');
+canvas2d_.addEventListener('mousemove', e => {
 	//描画画面中心からの差をマウスの x, y とする
-    mousex = e.clientX - renderer.domElement.offsetWidth/2 - renderer.domElement.offsetLeft;
-    mousey = e.clientY - renderer.domElement.offsetHeight/2 - renderer.domElement.offsetTop;
+    mousex = e.clientX - canvas2d_.offsetWidth/2 - canvas2d_.offsetLeft;
+    mousey = e.clientY - canvas2d_.offsetHeight/2 - canvas2d_.offsetTop;
 });
 // マウスが押されたとき
-renderer.domElement.addEventListener('mousedown', e => {
+canvas2d_.addEventListener('mousedown', e => {
   	mouseDrag = 1;
-  	console.log( mousex +','+mousey );
+  	//console.log( mousex +','+mousey );
 });
 // マウスが離されたとき
-renderer.domElement.addEventListener('mouseup', e => {
+canvas2d_.addEventListener('mouseup', e => {
   	mouseDrag = 0;
 });
 			

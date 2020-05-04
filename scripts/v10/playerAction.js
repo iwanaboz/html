@@ -21,37 +21,31 @@ function userMove(frameTime, agent) {
 	//　向きを更新
 	agent.updateView();
 	var isMove_ = 0;
-	var speed = 48;
+	var speed = 48*scaleOfWorld;
 	
 	// Dash
 	if(key_on[16]>0){
-		speed = 16;
+		speed = 16*scaleOfWorld;
 	}
 	
 	// Jump
 	if(key_on[32]>0){
 		if(agent.isOnGround==1){
-			agent.ySpeed=120;
+			agent.ySpeed=120*scaleOfWorld;
 			agent.isOnGround =0;
 		}
 	}
 	
 	// 落下 or jump
 	if(agent.isOnGround==0){
-		agent.ySpeed -= 300*frameTime;
+		agent.ySpeed -= 300*frameTime*scaleOfWorld;
 		agent.position.y += agent.ySpeed*frameTime;
 	}else{
 		agent.ySpeed = 0;
 	}
 	
-	// 最下点着地
-	if ( agent.position.y <= 0){
-		agent.position.y =0;
-		agent.isOnGround =1;
-	}
-	
-	
-	
+
+
 	var dest_lookRight;
 	//w (前進)
 	if(key_on[87]>0){
@@ -109,32 +103,133 @@ function userMove(frameTime, agent) {
 		fieldCollision(agent);
 	}
 	
+	// 最下点着地
+	if ( agent.position.y <= 0){
+		agent.position.y =0;
+		agent.isOnGround =1;
+	}
+	
 	if(agent.isStop==1 && isMove_ > 0){
 		agent.isStop=0;
 	}else if(agent.isStop==0 && isMove_ == 0){
 		agent.isStop=1;
 	}
+
+	//
 	if(agent.isOnGround==0){
 		agent.isStop=0;
-		if ( agent.ySpeed >0){
+		if ( agent.ySpeed >0 ){
 			isMove_=3;
-		}else if(agent.ySpeed < -300 * 0.2){
-			isMove_=4;
+		}else{
+			
 		}
 	}
 		
 	// walk
 	if(agent.isStop==1 && script_version >= 10){agent.selectMotion = 4;}
-	if(isMove_==2){agent.selectMotion= 0;}
-	if(isMove_==1){agent.selectMotion = 1;}
-	if(isMove_==3){agent.selectMotion = 2;}
-	if(isMove_==4){agent.selectMotion = 2;}
+	if(agent.isStop==0){
+		if(isMove_==2){agent.selectMotion = 0;}
+		if(isMove_==1){agent.selectMotion = 1;}
+		if(isMove_==3){agent.selectMotion = 2;}
+		if(isMove_==4){agent.selectMotion = 3;}
+		
+	}	
+
 	// 反映する
 	agent.chara.mesh.rotation.y = -agent.lookingRight;
 	agent.chara.mesh.position.x = agent.position.x;
 	agent.chara.mesh.position.y = agent.position.y;
 	agent.chara.mesh.position.z = agent.position.z;
 }
+
+
+
+//プレーヤーの移動
+function npcMove(frameTime, agent) {
+	
+	if(!agent.mesh){agent.mesh=	agent.chara.mesh;}
+
+
+	//　向きを更新
+	agent.updateView();
+	var isMove_ = 0;
+	var speed = 48;
+	
+	
+	// 落下 or jump
+	if(agent.isOnGround==0){
+		agent.ySpeed -= 300*frameTime;
+		agent.position.y += agent.ySpeed*frameTime;
+	}else{
+		agent.ySpeed = 0;
+	}
+	
+	
+	// 衝突判定(defined below)
+	if (script_version >= 10){
+		fieldCollision(agent);
+	}
+	
+	// 最下点着地
+	if ( agent.position.y <= 0){
+		agent.position.y =0;
+		agent.isOnGround =1;
+	}
+	
+	if(agent.isStop==1 && isMove_ > 0){
+		agent.isStop=0;
+	}else if(agent.isStop==0 && isMove_ == 0){
+		agent.isStop=1;
+	}
+
+	//
+	if(agent.isOnGround==0){
+		agent.isStop=0;
+		if ( agent.ySpeed >0 ){
+			isMove_=3;
+		}else{
+			
+		}
+	}
+		
+	// walk
+	if(agent.isStop==1 && script_version >= 10){agent.selectMotion = 4;}
+	if(agent.isStop==0){
+		if(isMove_==2){agent.selectMotion = 0;}
+		if(isMove_==1){agent.selectMotion = 1;}
+		if(isMove_==3){agent.selectMotion = 2;}
+		if(isMove_==4){agent.selectMotion = 3;}
+		
+	}	
+
+	// 反映する
+	agent.chara.mesh.rotation.y = -agent.lookingRight;
+	agent.chara.mesh.position.x = agent.position.x;
+	agent.chara.mesh.position.y = agent.position.y;
+	agent.chara.mesh.position.z = agent.position.z;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // モーションを更新
@@ -163,6 +258,8 @@ function updateAction(frameTime, agent){
 // 衝突判定
 function fieldCollision(agent){
 	// 下準備--------------------------------------------------------------
+	
+	searchLength = 200*scaleOfWorld;
 	// boundingSphere から頭と足もとの位置を決める
 	const bSphere = agent.mesh.geometry.boundingSphere;
 	const bsCenterLocal = new THREE.Vector3(bSphere.center.x, bSphere.center.y, bSphere.center.z);
@@ -176,9 +273,9 @@ function fieldCollision(agent){
 	let YRayVect = new THREE.Vector3( 0, -1, 0); //上から下
 	
 	// Rayの始点（後方、左、上）
-	const ZRayOrigin = bsCenter.clone().addScaledVector(ZRayVect, -200);
-	const XRayOrigin = bsCenter.clone().addScaledVector(XRayVect, -200);
-	const YRayOrigin = bsCenter.clone().addScaledVector(YRayVect, -200);
+	const ZRayOrigin = bsCenter.clone().addScaledVector(ZRayVect, -searchLength);
+	const XRayOrigin = bsCenter.clone().addScaledVector(XRayVect, -searchLength);
+	const YRayOrigin = bsCenter.clone().addScaledVector(YRayVect, -searchLength);
 	// 水平2軸は頭と足も用意する
 	let ZRayOriginHead = ZRayOrigin.clone().add(new THREE.Vector3(0,  bSphere.radius*0.9, 0));
 	let ZRayOriginFoot = ZRayOrigin.clone().add(new THREE.Vector3(0, -bSphere.radius*0.7, 0));
@@ -197,17 +294,17 @@ function fieldCollision(agent){
 	
 	// 足Y: 足側で最も高いものを探す
 	// 頭Y: 頭側で最も低いものを探す
-	var footHighestYLocal = -200;
-	var headLowestYLocal  =  200;
+	var footHighestYLocal = -searchLength;
+	var headLowestYLocal  =  searchLength;
 	//
 	for (let i = 0; i < intersects.length; i++) {
 		// 相対位置
-		let footYLocal = 200-intersects[i].distance + bSphere.radius;
+		let footYLocal = searchLength-intersects[i].distance + bSphere.radius;
 	    if( footYLocal > footHighestYLocal && footYLocal <= bSphere.radius){
 	    	footHighestYLocal = footYLocal;
 	    }
 	    // 相対位置
-	    let headYLocal = 200-intersects[i].distance - bSphere.radius;
+	    let headYLocal = searchLength-intersects[i].distance - bSphere.radius;
 	    if( headYLocal < headLowestYLocal && headYLocal > -bSphere.radius){
 	    	headLowestYLocal = headYLocal;
 	    }
@@ -217,11 +314,11 @@ function fieldCollision(agent){
 	// (2)衝突検出Z-----------------------
 	intersects = ZrayFoot.intersectObjects(fieldObjs.children, true);
 	// z: 最も距離が近いもの
-	var footNearestZLocal =200;
+	var footNearestZLocal =searchLength;
 	//
 	for (let i = 0; i < intersects.length; i++) {
 		// 相対位置
-		let footZLocal = intersects[i].distance - 200;
+		let footZLocal = intersects[i].distance - searchLength;
 	    if( Math.abs(footZLocal) < Math.abs(footNearestZLocal) ){
 	    	footNearestZLocal = footZLocal;
 	    }
@@ -229,11 +326,11 @@ function fieldCollision(agent){
 	// 頭
 	intersects = ZrayHead.intersectObjects(fieldObjs.children, true);
 	// z: 最も距離が近いもの
-	var headNearestZLocal =200;
+	var headNearestZLocal =searchLength;
 	//
 	for (let i = 0; i < intersects.length; i++) {
 		// 相対位置
-		let headZLocal = intersects[i].distance - 200;
+		let headZLocal = intersects[i].distance - searchLength;
 	    if( Math.abs(headZLocal) < Math.abs(headNearestZLocal) ){
 	    	headNearestZLocal = headZLocal;
 	    }
@@ -243,11 +340,11 @@ function fieldCollision(agent){
 	intersects = XrayFoot.intersectObjects(fieldObjs.children, true);
 	var intersectsFX = intersects;
 	// x: 最も距離が近いもの
-	var footNearestXLocal =200;
+	var footNearestXLocal =searchLength;
 	//
 	for (let i = 0; i < intersects.length; i++) {
 		// 相対位置
-		let footXLocal = intersects[i].distance - 200;
+		let footXLocal = intersects[i].distance - searchLength;
 	    if( Math.abs(footXLocal) < Math.abs(footNearestXLocal) ){
 	    	footNearestXLocal = footXLocal;
 	    }
@@ -256,11 +353,11 @@ function fieldCollision(agent){
 	// 頭
 	intersects = XrayHead.intersectObjects(fieldObjs.children, true);
 	// x: 最も距離が近いもの
-	var headNearestXLocal =200;
+	var headNearestXLocal =searchLength;
 	//
 	for (let i = 0; i < intersects.length; i++) {
 		// 相対位置
-		let headXLocal = intersects[i].distance - 200;
+		let headXLocal = intersects[i].distance - searchLength;
 	    if( Math.abs(headXLocal) < Math.abs(headNearestXLocal) ){
 	    	headNearestXLocal = headXLocal;
 	    }
@@ -332,8 +429,7 @@ function fieldCollision(agent){
 	}
 	
 	if(mouseDrag>0){
-		console.log(intersectsFX);
 		//console.log(footNearestZLocal);
-		console.log(footNearestXLocal);
+		//console.log(footNearestXLocal);
 	}
 }

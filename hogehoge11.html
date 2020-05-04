@@ -20,8 +20,10 @@
 		<a href="https://github.com/miu200521358/vmd_sizing/blob/master/README.md" target="_blank">vmd_sizing</a>
 		<p>WASD:走る、 SHIFT+WASD:歩く、スペース:ジャンプ、クリックで視点移動</p>
 		</div>
-		
+		<div id="canvas3d" style="position:fixed; top:0px; left:0px; width:100%; height:100%; z-index: 1; background-color: #000000;"></div>
+		<canvas id="canvas2d" style="position:fixed; top:0px; left:0px; width:100%; height:100%; z-index: 100; background-color:rgba(0,0,0,0);"></canvas>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/106/three.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/libs/stats.min.js"></script>
 
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/libs/mmdparser.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r103/examples/js/libs/ammo.js"></script>
@@ -39,6 +41,7 @@
 		<script src="./scripts/v10/mainLoop.js"></script>
 		<script>
 			script_version = 10; 
+			scaleOfWorld =1;
 			// Our Javascript will go here.
 			console.log("ﾄﾞｯ！");
 			//シーンを用意
@@ -48,21 +51,27 @@
 			const ambient = new THREE.AmbientLight(0xeeeeee);
   			scene.add(ambient);
   			//カメラの場所 (画角、縦横比、写す手前と後ろの限界)
-			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 10, 500 );
 			//カメラの場所（右手座標系）
 			camera.position.x = 0;
 			camera.position.y = 2;
 			camera.position.z = 5;
 			
+			//
+			const stats = new Stats();
+			stats.setMode(0);
+			stats.domElement.style.position = "absolute";
+			stats.domElement.style.left = "0px";
+			stats.domElement.style.top  = "0px";
+			document.getElementById('canvas3d').appendChild(stats.domElement);
 			//描画するシステムを用意
-			var renderer = new THREE.WebGLRenderer( { antialias: true } );
+			var renderer = new THREE.WebGLRenderer();
 			
 			
 			//描画サイズをwindowサイズに
 			renderer.setSize( window.innerWidth, window.innerHeight );
-			document.body.appendChild( renderer.domElement );
-			
-			
+			document.getElementById('canvas3d').appendChild( renderer.domElement );
+
 			
 			// 箱の形を用意
 			var geometry = new THREE.BoxGeometry();
@@ -71,12 +80,12 @@
 			material.side = THREE.DoubleSide;
 			// 形と素材を指定した cubeをつくってシーンに追加
 			var cube = new THREE.Mesh( geometry, material );
-			cube.position.x = 50;
-			cube.position.z = -40;
-			cube.position.y = 40;
-			cube.scale.x = 10;
-			cube.scale.y = 10;
-			cube.scale.z = 10;
+			cube.position.x = 50*scaleOfWorld;
+			cube.position.z = -40*scaleOfWorld;
+			cube.position.y = 40*scaleOfWorld;
+			cube.scale.x = 10*scaleOfWorld;
+			cube.scale.y = 10*scaleOfWorld;
+			cube.scale.z = 10*scaleOfWorld
 
 			fieldObjs.add( cube );
 			//
@@ -88,24 +97,23 @@
 		 	  for (let i = 0; i < fldChild.length; i++){
 		 	  	fldChild[i].material.side = THREE.DoubleSide;
 		 	  }
-		 	  object.scale.x = 15;
-		 	  object.scale.y = 15;
-		 	  object.scale.z = 15;
+		 	  
+		 	  object.scale.x = 10*scaleOfWorld;
+		 	  object.scale.y = 10*scaleOfWorld;
+		 	  object.scale.z = 10*scaleOfWorld;
 
 			  fieldObjs.add(object);
-			  
+			  console.log(object)
 			});
 			scene.add(fieldObjs);
 			
-			
-			
+
 			// 床グリッドを追加
-			var gridHelper = new THREE.GridHelper(500, 100);
+			var gridHelper = new THREE.GridHelper(500*scaleOfWorld, 100*scaleOfWorld);
 			scene.add(gridHelper);
 
 			
 			// pmd/pmxファイルの読み込み
-			var miku;
 			var mesh_loaded = 0;
 				
 			// Load a MMD model
@@ -115,26 +123,29 @@
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
 				{filePath : './vmd/walk/walk.vmd', 
-				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1  },	
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1  },	
 				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12x40.vmd',  
-				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1 },
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/jump_斉天大聖ver1.12.vmd',  
-				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 1.0},
+				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.6, timeScale: 0.7},
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/3.着地_(8f_移動なし).vmd',  
-				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.1},
+				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1},
 				{filePath : './vmd/Lat式/Idle_resized/idle.vmd',  
-				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1}
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1}
 			];
 			console.log(motionFiles.length);
 			// load のためのオブジェクトを作る
 			const loader = new THREE.MMDLoader(); 
+			
 			var seiten 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
 			var miku 	= new MyCharacter('https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd', motionFiles);
 			
 			// キャラクターのロード
-			function LoadCharacter(chara){
+			function LoadCharacter(chara, physics_){
 				loader.load( chara.modelFile, function (mesh) {
-					
+					mesh.scale.x = scaleOfWorld;
+					mesh.scale.y = scaleOfWorld;
+					mesh.scale.z = scaleOfWorld;
 					chara.mesh = mesh;
 					// モーションファイル(vmd:Vocaloid Motion Data)
 					for(let i=0;i<motionFiles.length; i++){
@@ -143,7 +154,7 @@
 			        // motionをセットする
 					chara.helper.add(mesh,{
 				      animation: chara.animations,
-				      physics: true,
+				      physics: physics_,
 				      warmup  : 6,
 				      unitStep : 1/120
 				    });
@@ -158,13 +169,13 @@
 				// アニメーションファイルを読み込む
 				loader.loadAnimation(vmdPath, chara.mesh, function(vmd){
 					// vmdを保持しておく
-					chara.animations[motionId] = vmd;
+					chara.animations[motionId] = vmd.optimize();
 				}, onProgress, onError);
 				return true;
 			}
 			
-			LoadCharacter(seiten);
-			LoadCharacter(miku);
+			LoadCharacter(seiten, true);
+			LoadCharacter(miku, false);
 			
 			//
 			function initAction(chara){
@@ -179,19 +190,20 @@
 						let action = mixer.clipAction( chara.animations[i] );
 						// Loopさせるかどうか
 						action.setLoop( chara.motionFiles[i].loop );
+						action.timeScale = chara.motionFiles[i].timeScale;
 						// 保持しておく
 						chara.actions[i] = action;
 					}else{return false;}	
 				}
-				//chara.animations = null;
+				chara.animations = null;
 				// インバースキネマティクス(IK)のhelper
 				ikHelper = chara.helper.objects.get( chara.mesh ).ikSolver.createHelper();
 				ikHelper.visible = false;
 				//scene.add( ikHelper );
 				
 				// 物理演算の helper
-				physicsHelper = chara.helper.objects.get( chara.mesh  ).physics.createHelper();
-				physicsHelper.visible = false;
+				//physicsHelper = chara.helper.objects.get( chara.mesh  ).physics.createHelper();
+				//physicsHelper.visible = false;
 				//scene.add( physicsHelper );
 				//console.log(chara);
 				chara._isLoaded +=1;
@@ -216,15 +228,15 @@
 			player = new MyAgent();
 			player.chara = seiten;
 			
-			friend = new MyAgent();
-			friend.chara = miku;
+			friend[0] = new MyAgent();
+			friend[0].chara = miku;
 			
 			//カメラの再設置
 			function cameraUpDate(agent) {
 				// カメラの場所をプレイヤーの後ろに
-				camera.position.x = agent.position.x -agent.viewVect.x *35;
-				camera.position.y = agent.position.y -agent.viewVect.y *35+10;
-				camera.position.z = agent.position.z -agent.viewVect.z *35;
+				camera.position.x = agent.position.x - agent.viewVect.x *35*scaleOfWorld;
+				camera.position.y = agent.position.y -(agent.viewVect.y *35-10)*scaleOfWorld;
+				camera.position.z = agent.position.z - agent.viewVect.z *35*scaleOfWorld;
 				// プレイヤーの方向を向く
 				let lookPosition = agent.position.clone().add(new THREE.Vector3(0, agent.mesh.geometry.boundingSphere.radius, 0));
 				camera.lookAt( lookPosition );
@@ -239,6 +251,8 @@
 				var frameTime = Math.min(clock.getDelta(), 0.3);
 				//MainLoop.js
 				mainLoop(frameTime);
+				// stats (fpsメーター)
+				stats.update();
 				// シーンを描画
 				renderer.render( scene, camera );
 			}

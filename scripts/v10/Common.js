@@ -18,23 +18,11 @@ var MyCharacter = function(modelFile_, motionFiles_){
 	this._isLoaded = 0;	//最低限変数がつくられているか
 	this.helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
 	
-	this.clone = function(){
-		var clone_chara = new MyCharacter(modelFile_, motionFiles_);
-		clone_chara.mesh = this.mesh.clone();
-		clone_chara.helper.add(mesh,{
-	      animation: this.animations,
-	      physics: true,
-	      warmup  : 6,
-	      unitStep : 1/120
-	    });
-	    clone_chara._isLoaded =1;
-		return clone_chara;
-	}
 }
 // Agent object
 var MyAgent = function(){
 	this.mesh;
-	this.chara;
+	this.chara = new MyCharacter(null, null);
 	
 	this.position = new THREE.Vector3(0, 0, 0);	// 場所
 	this.viewVect = new THREE.Vector3(0, 0, 0); // 向いている方向
@@ -46,6 +34,7 @@ var MyAgent = function(){
 	this.offsetRotationUp	= 0;
 	this.offsetRotationRight= THREE.Math.degToRad( 90 );
 	
+	this.isJoin = 0;
 	this.isRunning =0;
 	this.isWalking =0;
 	this.isStop =1;
@@ -69,3 +58,4 @@ var fieldObjs = new THREE.Group();
 var player;
 var friend =[];
 var enemy =[];
+var scaleOfWorld;
