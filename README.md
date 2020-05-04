@@ -12,6 +12,6 @@ In chrome local environment, you need to launch the browser with the following o
 --allow-file-access-from-files
 
 ## Licence
-
-
+models, vmds are originally provided by others.
+please read Readme for each file
 
