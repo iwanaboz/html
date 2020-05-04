@@ -13,6 +13,7 @@
 		<div id="info">
 		Copyright
 		<a href="https://github.com/takahirox/MMDLoader-app#readme" target="_blank">MMD Assets license</a>
+		<a href="https://www.turbosquid.com/ja/3d-model/free/city" target="_blank">Field Map Data</a>
 		<a href="https://seiga.nicovideo.jp/seiga/im7587363" target="_blank">Model Data</a>
 		<a href="http://www.nicovideo.jp/mylist/1713647" target="_blank">Motion Data</a>
 		<a href="https://bowlroll.net/file/154665" target="_blank">Motion Data</a>
@@ -32,9 +33,9 @@
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/MMDPhysics.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/TDSLoader.js"></script>
 		
-		<script src="Common.js"></script>
-		<script src="keyCallBack.js"></script>
-		<script src="playerAction.js"></script>
+		<script src="./scripts/v10/Common.js"></script>
+		<script src="./scripts/v10/keyCallBack.js"></script>
+		<script src="./scripts/v10/playerAction.js"></script>
 		<script>
 			script_version = 10; 
 			// Our Javascript will go here.
@@ -69,10 +70,12 @@
 			material.side = THREE.DoubleSide;
 			// 形と素材を指定した cubeをつくってシーンに追加
 			var cube = new THREE.Mesh( geometry, material );
-			cube.position.y = 30;
-			cube.scale.x = 5;
-			cube.scale.y = 5;
-			cube.scale.z = 5;
+			cube.position.x = 50;
+			cube.position.z = -40;
+			cube.position.y = 40;
+			cube.scale.x = 10;
+			cube.scale.y = 10;
+			cube.scale.z = 10;
 
 			fieldObjs.add( cube );
 			//
@@ -105,19 +108,21 @@
 			var mesh_loaded = 0;
 				
 			// Load a MMD model
-			//modelFile = './models/seiten_ver112/斉天大聖ver1.12.pmx';
-			modelFile = 'https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd';
+			modelFile = './models/seiten_ver112/斉天大聖ver1.12.pmx';
+			//modelFile = 'https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd';
 			
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
 				{filePath : './vmd/walk/walk.vmd', 
-				loop : THREE.LoopOnce,  action : null, fadeIn: 0.1, fadeOut: 0.1  },	
+				loop : THREE.LoopRepeat,  action : null, fadeIn: 0.1, fadeOut: 0.1  },	
 				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12x40.vmd',  
-				loop : THREE.LoopOnce,  action : null, fadeIn: 0.1, fadeOut: 0.1 },
+				loop : THREE.LoopRepeat,  action : null, fadeIn: 0.1, fadeOut: 0.1 },
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/jump_斉天大聖ver1.12.vmd',  
 				loop : THREE.LoopOnce,  action : null , fadeIn: 0.1, fadeOut: 1.0},
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/3.着地_(8f_移動なし).vmd',  
-				loop : THREE.LoopOnce,  action : null , fadeIn: 0.1, fadeOut: 0.1}
+				loop : THREE.LoopOnce,  action : null , fadeIn: 0.1, fadeOut: 0.1},
+				{filePath : './vmd/Lat式/Idle_resized/idle.vmd',  
+				loop : THREE.LoopRepeat,  action : null , fadeIn: 0.1, fadeOut: 0.1}
 			];
 			console.log(motionFiles.length);
 			// load のためのオブジェクトを作る
@@ -132,10 +137,12 @@
 		        miku = mesh;
 		        
 				// モーションファイル(vmd:Vocaloid Motion Data)
+				
 				LoadVmd( 3, miku );
 		        LoadVmd( 2, miku );
 		        LoadVmd( 1, miku );
 		        LoadVmd( 0, miku );
+		        LoadVmd( 4, miku );
 		        
 		        // motionをセットする
 				helper.add(mesh,{
@@ -217,10 +224,11 @@
 			function cameraUpDate(agent) {
 				// カメラの場所をプレイヤーの後ろに
 				camera.position.x = agent.position.x -agent.viewVect.x *35;
-				camera.position.y = agent.position.y -agent.viewVect.y *35+30;
+				camera.position.y = agent.position.y -agent.viewVect.y *35+10;
 				camera.position.z = agent.position.z -agent.viewVect.z *35;
 				// プレイヤーの方向を向く
-				camera.lookAt( agent.position);
+				let lookPosition = agent.position.clone().add(new THREE.Vector3(0, agent.mesh.geometry.boundingSphere.radius, 0));
+				camera.lookAt( lookPosition );
 			}
 			
 			
@@ -234,7 +242,7 @@
 				if(mesh_loaded>1){
 					userMove(frameTime, miku, player);
 					
-					if(player.isStop==0 ){
+					
 						// motionが切り替わった時
 						if(player.lastMotion != selectmotion){
 							 //
@@ -252,7 +260,7 @@
 						
 						helper.update( frameTime );
 						player.lastMotion = selectmotion;
-					}
+		
 					cameraUpDate(player);
 					
 				}else if(mesh_loaded==1 && animations[0]){
@@ -267,7 +275,7 @@
 					 
    
 		</script>
-		<script src="mouseCallBack.js"></script>
+		<script src="./scripts/v10/mouseCallBack.js"></script>
 	</body>
 </html>
 
