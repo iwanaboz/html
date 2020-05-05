@@ -14,17 +14,19 @@ function mainLoop(frameTime) {
 		//friend[0].chara = player.chara.clone();
 	}
 	
-	
-	
-	// 他キャラ
-	if(friend[0].chara._isLoaded>1){
-		// playerAction.js
-		npcMove(frameTime, friend[0]);
-		updateAction(frameTime, friend[0]);
-		
-	}else if(friend[0].chara._isLoaded==1 && friend[0].chara.animations[0]){
-		initAction(friend[0].chara);
-		console.log(friend[0]);
+	/*
+	for (let i=0;i<3;i++){
+		// 他キャラ
+		if(friend[i].chara._isLoaded>1){
+			// playerAction.js
+			npcMove(frameTime, friend[i]);
+			updateAction(frameTime, friend[i]);
+			
+		}else if(friend[i].chara._isLoaded==1 && friend[i].chara.animations[i]){
+			initAction(friend[i].chara);
+			console.log(friend[i]);
+		}
 	}
+	*/
 	
 }

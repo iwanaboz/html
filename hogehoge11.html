@@ -37,6 +37,7 @@
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/MMDPhysics.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/TDSLoader.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/ColladaLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/GLTFLoader.js"></script>
 		
 		<script src="./scripts/v10/Common.js"></script>
 		<script src="./scripts/v10/keyCallBack.js"></script>
@@ -112,6 +113,7 @@
 			});
 			*/
 			//
+			
 		    var floader = new THREE.TDSLoader();
 		 	floader.load('models/field/Cartoon_land.3DS',  (object) => {
 		 	  
@@ -127,12 +129,25 @@
 			  fieldObjs.add(object);
 			  
 			});
-			scene.add(fieldObjs);
+			
+			/*
+			//glTFの読み込み
+			var gloader = new THREE.GLTFLoader();
+			 
+			gloader.load('models/field/untitled.glb',function(data){
+			    var gltf = data;
+			    var obj = gltf.scene;
+			    obj.scale.x = 100;
+		 	    obj.scale.y = 100;
+		 	    obj.scale.z = 100;
+			    fieldObjs.add(obj);
+			});
+			 renderer.gammaOutput = true;
+			*/
 			scene.add(fieldObjs);
 			
-
 			// 床グリッドを追加
-			var gridHelper = new THREE.GridHelper(500*scaleOfWorld, 100*scaleOfWorld);
+			var gridHelper = new THREE.GridHelper(350*scaleOfWorld, 100*scaleOfWorld);
 			scene.add(gridHelper);
 
 			
@@ -162,6 +177,8 @@
 			
 			var seiten 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
 			var miku 	= new MyCharacter('https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd', motionFiles);
+			var seiten2 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
+			var seiten3 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
 			
 			// キャラクターのロード
 			function LoadCharacter(chara, physics_){
@@ -199,7 +216,8 @@
 			
 			LoadCharacter(seiten, true);
 			LoadCharacter(miku, false);
-			
+			LoadCharacter(seiten2, false);
+			LoadCharacter(seiten3, false);
 			//
 			function initAction(chara){
 				scene.add( chara.mesh );
@@ -252,7 +270,11 @@
 			player.chara = seiten;
 			
 			friend[0] = new MyAgent();
+			friend[1] = new MyAgent();
+			friend[2] = new MyAgent();
 			friend[0].chara = miku;
+			friend[1].chara = seiten2;
+			friend[2].chara = seiten3;
 			
 			//カメラの再設置
 			function cameraUpDate(agent) {
