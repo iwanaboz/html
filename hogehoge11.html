@@ -10,6 +10,9 @@
 		</style>
 	</head>
 	<body>
+		
+		<div id="canvas3d" style="position:fixed; top:60px; left:0px; width:100%; height:100%; z-index: 1; background-color: #000000;"></div>
+		<canvas id="canvas2d" style="position:fixed; top:60px; left:0px; width:100%; height:100%; z-index: 100; background-color:rgba(0,0,0,0);"></canvas>
 		<div id="info">
 		Copyright
 		<a href="https://github.com/takahirox/MMDLoader-app#readme" target="_blank">MMD Assets license</a>
@@ -20,8 +23,7 @@
 		<a href="https://github.com/miu200521358/vmd_sizing/blob/master/README.md" target="_blank">vmd_sizing</a>
 		<p>WASD:走る、 SHIFT+WASD:歩く、スペース:ジャンプ、クリックで視点移動</p>
 		</div>
-		<div id="canvas3d" style="position:fixed; top:0px; left:0px; width:100%; height:100%; z-index: 1; background-color: #000000;"></div>
-		<canvas id="canvas2d" style="position:fixed; top:0px; left:0px; width:100%; height:100%; z-index: 100; background-color:rgba(0,0,0,0);"></canvas>
+		
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/106/three.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/libs/stats.min.js"></script>
 
@@ -34,6 +36,7 @@
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/CCDIKSolver.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/MMDPhysics.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/TDSLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/ColladaLoader.js"></script>
 		
 		<script src="./scripts/v10/Common.js"></script>
 		<script src="./scripts/v10/keyCallBack.js"></script>
@@ -42,6 +45,7 @@
 		<script>
 			script_version = 10; 
 			scaleOfWorld =1;
+			
 			// Our Javascript will go here.
 			console.log("ﾄﾞｯ！");
 			//シーンを用意
@@ -88,6 +92,25 @@
 			cube.scale.z = 10*scaleOfWorld
 
 			fieldObjs.add( cube );
+			
+			/*
+			// dae ファイル読み込み
+			const dloader = new THREE.ColladaLoader();
+			dloader.load('models/field/untitled.dae', (collada) => {
+			  const obj = collada.scene;
+			  
+			  let fldChild = obj.children;
+		 	  for (let i = 0; i < fldChild.length; i++){
+		 	  //console.log(fldChild[i].material)
+		 	  	fldChild[i].material.side = THREE.DoubleSide;
+		 	  }
+				obj.scale.x = 600*scaleOfWorld;
+				obj.scale.y = 600*scaleOfWorld;
+				obj.scale.z = 600*scaleOfWorld;
+			  fieldObjs.add(obj);
+			  console.log(obj)
+			});
+			*/
 			//
 		    var floader = new THREE.TDSLoader();
 		 	floader.load('models/field/Cartoon_land.3DS',  (object) => {
@@ -97,14 +120,14 @@
 		 	  for (let i = 0; i < fldChild.length; i++){
 		 	  	fldChild[i].material.side = THREE.DoubleSide;
 		 	  }
-		 	  
-		 	  object.scale.x = 10*scaleOfWorld;
-		 	  object.scale.y = 10*scaleOfWorld;
-		 	  object.scale.z = 10*scaleOfWorld;
+		 	  object.scale.x = 15;
+		 	  object.scale.y = 15;
+		 	  object.scale.z = 15;
 
 			  fieldObjs.add(object);
-			  console.log(object)
+			  
 			});
+			scene.add(fieldObjs);
 			scene.add(fieldObjs);
 			
 

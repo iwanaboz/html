@@ -15,7 +15,7 @@ function mainLoop(frameTime) {
 	}
 	
 	
-	/*
+	
 	// 他キャラ
 	if(friend[0].chara._isLoaded>1){
 		// playerAction.js
@@ -26,5 +26,5 @@ function mainLoop(frameTime) {
 		initAction(friend[0].chara);
 		console.log(friend[0]);
 	}
-	*/
+	
 }
