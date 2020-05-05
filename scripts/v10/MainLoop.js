@@ -14,8 +14,8 @@ function mainLoop(frameTime) {
 		//friend[0].chara = player.chara.clone();
 	}
 	
-	/*
-	for (let i=0;i<3;i++){
+	
+	for (let i=0;i<1;i++){
 		// 他キャラ
 		if(friend[i].chara._isLoaded>1){
 			// playerAction.js
@@ -27,6 +27,6 @@ function mainLoop(frameTime) {
 			console.log(friend[i]);
 		}
 	}
-	*/
+	
 	
 }

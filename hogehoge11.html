@@ -112,7 +112,7 @@
 			  console.log(obj)
 			});
 			*/
-			//
+			//https://blackthread.io/gltf-converter/
 			
 		    var floader = new THREE.TDSLoader();
 		 	floader.load('models/field/Cartoon_land.3DS',  (object) => {
@@ -160,12 +160,12 @@
 			
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
-				{filePath : './vmd/walk/walk.vmd', 
-				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1  },	
-				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12x40.vmd',  
+				{filePath : './vmd/walk/walk_short.vmd', 
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },	
+				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12_short.vmd',  
 				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/jump_斉天大聖ver1.12.vmd',  
-				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.6, timeScale: 0.7},
+				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.6, timeScale: 0.8},
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/3.着地_(8f_移動なし).vmd',  
 				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1},
 				{filePath : './vmd/Lat式/Idle_resized/idle.vmd',  
@@ -215,9 +215,9 @@
 			}
 			
 			LoadCharacter(seiten, true);
-			LoadCharacter(miku, false);
-			LoadCharacter(seiten2, false);
-			LoadCharacter(seiten3, false);
+			LoadCharacter(miku, true);
+			//LoadCharacter(seiten2, true);
+			//LoadCharacter(seiten3, true);
 			//
 			function initAction(chara){
 				scene.add( chara.mesh );
@@ -231,6 +231,9 @@
 						let action = mixer.clipAction( chara.animations[i] );
 						// Loopさせるかどうか
 						action.setLoop( chara.motionFiles[i].loop );
+						// ループなしなら終了後のポーズを維持
+						if (chara.motionFiles[i].loop == THREE.LoopOnce){ action.clampWhenFinished = true;}
+						// 再生スピード
 						action.timeScale = chara.motionFiles[i].timeScale;
 						// 保持しておく
 						chara.actions[i] = action;
@@ -242,10 +245,6 @@
 				ikHelper.visible = false;
 				//scene.add( ikHelper );
 				
-				// 物理演算の helper
-				//physicsHelper = chara.helper.objects.get( chara.mesh  ).physics.createHelper();
-				//physicsHelper.visible = false;
-				//scene.add( physicsHelper );
 				//console.log(chara);
 				chara._isLoaded +=1;
 				return true;

@@ -18,12 +18,12 @@ function userMove(frameTime, agent) {
 		if(agent.rotationUp >= THREE.Math.degToRad( 45 )){agent.rotationUp= THREE.Math.degToRad( 45 );}
 		if(agent.rotationUp <= THREE.Math.degToRad( -60 )){agent.rotationUp= THREE.Math.degToRad( -60 );}
 	}
-	//　向きを更新
+	// 向きを更新
 	agent.updateView();
 	var isMove_ = 0;
 	var speed = 48*scaleOfWorld;
 	
-	// Dash
+	// 歩く
 	if(key_on[16]>0){
 		speed = 16*scaleOfWorld;
 	}
@@ -45,14 +45,14 @@ function userMove(frameTime, agent) {
 	}
 	
 
-
 	var dest_lookRight;
+	let direction = 0; //stop
 	//w (前進)
 	if(key_on[87]>0){
 		agent.position.z += frameTime * speed * agent.viewVect.z;
 		agent.position.x += frameTime * speed * agent.viewVect.x;
 		dest_lookRight = agent.rotationRight;
-		
+		direction = 1;
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
 		
 	}else
@@ -61,7 +61,7 @@ function userMove(frameTime, agent) {
 		agent.position.z -= frameTime * speed * agent.viewVect.x;
 		agent.position.x += frameTime * speed * agent.viewVect.z;
 		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( -90 );
-		
+		direction = 3;
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
 	}else
 	//s (後退)
@@ -69,7 +69,7 @@ function userMove(frameTime, agent) {
 		agent.position.z -= frameTime * speed * agent.viewVect.z;
 		agent.position.x -= frameTime * speed * agent.viewVect.x;
 		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( -180 );
-		
+		direction = 2;
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
 	}else
 	//d (右)
@@ -77,7 +77,7 @@ function userMove(frameTime, agent) {
 		agent.position.z += frameTime * speed * agent.viewVect.x;
 		agent.position.x -= frameTime * speed * agent.viewVect.z;
 		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( +90 );
-		
+		direction = 3;
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
 	}
 	
@@ -100,7 +100,7 @@ function userMove(frameTime, agent) {
 	
 	// 衝突判定(defined below)
 	if (script_version >= 10){
-		fieldCollision(agent);
+		fieldCollision(agent, direction);
 	}
 	
 	// 最下点着地
@@ -167,7 +167,7 @@ function npcMove(frameTime, agent) {
 	
 	// 衝突判定(defined below)
 	if (script_version >= 10){
-		fieldCollision(agent);
+		fieldCollision(agent,0);
 	}
 	
 	// 最下点着地
@@ -256,7 +256,7 @@ function updateAction(frameTime, agent){
 
 
 // 衝突判定
-function fieldCollision(agent){
+function fieldCollision(agent, direction){
 	// 下準備--------------------------------------------------------------
 	
 	searchLength = 200*scaleOfWorld;
@@ -283,12 +283,13 @@ function fieldCollision(agent){
 	let XRayOriginFoot = XRayOrigin.clone().add(new THREE.Vector3(0, -bSphere.radius*0.7, 0));
 	
 	// Ray
-	let ZrayHead = new THREE.Raycaster(ZRayOriginHead, ZRayVect);
-	let XrayHead = new THREE.Raycaster(XRayOriginHead, XRayVect);
+	//let ZrayHead = new THREE.Raycaster(ZRayOriginHead, ZRayVect);
+	//let XrayHead = new THREE.Raycaster(XRayOriginHead, XRayVect);
 	let ZrayFoot = new THREE.Raycaster(ZRayOriginFoot, ZRayVect);
 	let XrayFoot = new THREE.Raycaster(XRayOriginFoot, XRayVect);
 	let Yray	 = new THREE.Raycaster(YRayOrigin, YRayVect);
 	//-------------------------------------------------------------------
+	
 	// (1)衝突検出Y-----------------------
 	var intersects = Yray.intersectObjects(fieldObjs.children, true); 
 	
@@ -312,18 +313,21 @@ function fieldCollision(agent){
 	
 
 	// (2)衝突検出Z-----------------------
-	intersects = ZrayFoot.intersectObjects(fieldObjs.children, true);
-	// z: 最も距離が近いもの
 	var footNearestZLocal =searchLength;
-	//
-	for (let i = 0; i < intersects.length; i++) {
-		// 相対位置
-		let footZLocal = intersects[i].distance - searchLength;
-	    if( Math.abs(footZLocal) < Math.abs(footNearestZLocal) ){
-	    	footNearestZLocal = footZLocal;
-	    }
+	if (direction ==1){
+		intersects = ZrayFoot.intersectObjects(fieldObjs.children, true);
+		// z: 最も距離が近いもの
+		//
+		for (let i = 0; i < intersects.length; i++) {
+			// 相対位置
+			let footZLocal = intersects[i].distance - searchLength;
+		    if( Math.abs(footZLocal) < Math.abs(footNearestZLocal) ){
+		    	footNearestZLocal = footZLocal;
+		    }
+		}
 	}
 	// 頭
+	/*
 	intersects = ZrayHead.intersectObjects(fieldObjs.children, true);
 	// z: 最も距離が近いもの
 	var headNearestZLocal =searchLength;
@@ -335,21 +339,23 @@ function fieldCollision(agent){
 	    	headNearestZLocal = headZLocal;
 	    }
 	}
-	
+	*/
 	// (3)衝突検出X-----------------------
-	intersects = XrayFoot.intersectObjects(fieldObjs.children, true);
-	var intersectsFX = intersects;
-	// x: 最も距離が近いもの
 	var footNearestXLocal =searchLength;
-	//
-	for (let i = 0; i < intersects.length; i++) {
-		// 相対位置
-		let footXLocal = intersects[i].distance - searchLength;
-	    if( Math.abs(footXLocal) < Math.abs(footNearestXLocal) ){
-	    	footNearestXLocal = footXLocal;
-	    }
+	if (direction ==3){
+		intersects = XrayFoot.intersectObjects(fieldObjs.children, true);
+		var intersectsFX = intersects;
+		// x: 最も距離が近いもの
+		//
+		for (let i = 0; i < intersects.length; i++) {
+			// 相対位置
+			let footXLocal = intersects[i].distance - searchLength;
+		    if( Math.abs(footXLocal) < Math.abs(footNearestXLocal) ){
+		    	footNearestXLocal = footXLocal;
+		    }
+		}
 	}
-	
+	/*
 	// 頭
 	intersects = XrayHead.intersectObjects(fieldObjs.children, true);
 	// x: 最も距離が近いもの
@@ -362,7 +368,7 @@ function fieldCollision(agent){
 	    	headNearestXLocal = headXLocal;
 	    }
 	}
-	
+	*/
 	
 	// 処理をかく
 	// 足もとに踏み越えられない壁がある場合、近ければ押し戻す------------------------------------
@@ -390,7 +396,7 @@ function fieldCollision(agent){
 	}
 	
 	// 頭付近に壁がある場合、近ければ押し戻す------------------------------------
-	
+	/*
 	//  radius*170%の高さにZ衝突面がある場合、近ければ押し出す
 	if ( Math.abs(headNearestZLocal) < bSphere.radius*0.2){
 		if(headNearestZLocal>0){
@@ -411,7 +417,7 @@ function fieldCollision(agent){
 			agent.position.x += bSphere.radius*0.2 * ZRayVect.z;
 		}
 	}
-	
+	*/
 	// 天井が頭より下の場合押し戻す
 	if (headLowestYLocal <= 0){
 		// 頭をぶつける
