@@ -24,20 +24,20 @@
 		<p>WASD:走る、 SHIFT+WASD:歩く、スペース:ジャンプ、クリックで視点移動</p>
 		</div>
 		
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/106/three.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/libs/stats.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/libs/stats.min.js"></script>
 
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/libs/mmdparser.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r103/examples/js/libs/ammo.js"></script>
-		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/TGALoader.js"></script>
-		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/MMDLoader.js"></script>
-		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/MMDAnimationHelper.js"></script>
-		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/effects/OutlineEffect.js"></script>
-		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/CCDIKSolver.js"></script>
-		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/animation/MMDPhysics.js"></script>
-		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/TDSLoader.js"></script>
-		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/ColladaLoader.js"></script>
-		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/loaders/GLTFLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/TGALoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/MMDLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/animation/MMDAnimationHelper.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/effects/OutlineEffect.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/animation/CCDIKSolver.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/animation/MMDPhysics.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/TDSLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/ColladaLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/GLTFLoader.js"></script>
 		
 		<script src="./scripts/v10/Common.js"></script>
 		<script src="./scripts/v10/keyCallBack.js"></script>
@@ -53,8 +53,12 @@
 			var scene = new THREE.Scene();
 			
 			//光源を用意してシーンに追加
-			const ambient = new THREE.AmbientLight(0xeeeeee);
-  			scene.add(ambient);
+			const light = new THREE.DirectionalLight(0xFFFFFF, 1);
+			light.position.x=0.2;
+			light.position.z=0.2;
+  			scene.add(light);
+  			
+  			
   			//カメラの場所 (画角、縦横比、写す手前と後ろの限界)
 			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 10, 500 );
 			//カメラの場所（右手座標系）
@@ -86,32 +90,14 @@
 			// 形と素材を指定した cubeをつくってシーンに追加
 			var cube = new THREE.Mesh( geometry, material );
 			cube.position.x = 50*scaleOfWorld;
-			cube.position.z = -40*scaleOfWorld;
-			cube.position.y = 40*scaleOfWorld;
-			cube.scale.x = 10*scaleOfWorld;
-			cube.scale.y = 10*scaleOfWorld;
-			cube.scale.z = 10*scaleOfWorld
+			cube.position.z = -30*scaleOfWorld;
+			cube.position.y = 10*scaleOfWorld;
+			cube.scale.x = 20*scaleOfWorld;
+			cube.scale.y = 15*scaleOfWorld;
+			cube.scale.z = 25*scaleOfWorld
 
 			fieldObjs.add( cube );
 			
-			/*
-			// dae ファイル読み込み
-			const dloader = new THREE.ColladaLoader();
-			dloader.load('models/field/untitled.dae', (collada) => {
-			  const obj = collada.scene;
-			  
-			  let fldChild = obj.children;
-		 	  for (let i = 0; i < fldChild.length; i++){
-		 	  //console.log(fldChild[i].material)
-		 	  	fldChild[i].material.side = THREE.DoubleSide;
-		 	  }
-				obj.scale.x = 600*scaleOfWorld;
-				obj.scale.y = 600*scaleOfWorld;
-				obj.scale.z = 600*scaleOfWorld;
-			  fieldObjs.add(obj);
-			  console.log(obj)
-			});
-			*/
 			//https://blackthread.io/gltf-converter/
 			
 		    var floader = new THREE.TDSLoader();
@@ -121,6 +107,7 @@
 		 	  let fldChild = object.children;
 		 	  for (let i = 0; i < fldChild.length; i++){
 		 	  	fldChild[i].material.side = THREE.DoubleSide;
+				fldChild[i].material.opacity = 1;
 		 	  }
 		 	  object.scale.x = 15;
 		 	  object.scale.y = 15;
@@ -292,7 +279,7 @@
 			function animate() {
 				window.requestAnimationFrame( animate );
 				// 現在の1フレームの長さを取得
-				var frameTime = Math.min(clock.getDelta(), 0.3);
+				var frameTime = Math.min(clock.getDelta(), 0.05);
 				//MainLoop.js
 				mainLoop(frameTime);
 				// stats (fpsメーター)

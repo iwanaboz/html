@@ -7,6 +7,8 @@ function userMove(frameTime, agent) {
 	var canvasHeight = renderer.domElement.offsetHeight;
 	var dest_angleRight = Math.atan2(mousex, canvasWidth);
 	var dest_angleUp 	= Math.atan2(mousey, canvasHeight);
+	
+	// 視点変更-------------------------------------------------
 	// 水平方向（マウスを押しているとき）
 	if( dest_angleRight && mouseDrag>0){
 		agent.rotationRight += frameTime * dest_angleRight *8;
@@ -20,6 +22,7 @@ function userMove(frameTime, agent) {
 	}
 	// 向きを更新
 	agent.updateView();
+	//--------------------------------------------------------------
 	var isMove_ = 0;
 	var speed = 48*scaleOfWorld;
 	
@@ -36,7 +39,7 @@ function userMove(frameTime, agent) {
 		}
 	}
 	
-	// 落下 or jump
+	// 落下 or jump（高さの計算）
 	if(agent.isOnGround==0){
 		agent.ySpeed -= 300*frameTime*scaleOfWorld;
 		agent.position.y += agent.ySpeed*frameTime;
@@ -44,7 +47,8 @@ function userMove(frameTime, agent) {
 		agent.ySpeed = 0;
 	}
 	
-
+	
+	// WASD----------------------------------------------------------
 	var dest_lookRight;
 	let direction = 0; //stop
 	//w (前進)
@@ -80,8 +84,9 @@ function userMove(frameTime, agent) {
 		direction = 3;
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
 	}
+	//--------------------------------------------------------------
 	
-	// muki
+	// 向きの計算
 	if(isMove_ > 0){
 		dest_lookRight = dest_lookRight%THREE.Math.degToRad(360);
 		agent.lookingRight = agent.lookingRight%THREE.Math.degToRad(360);
@@ -109,6 +114,7 @@ function userMove(frameTime, agent) {
 		agent.isOnGround =1;
 	}
 	
+	// 状態確定---------------------------------
 	if(agent.isStop==1 && isMove_ > 0){
 		agent.isStop=0;
 	}else if(agent.isStop==0 && isMove_ == 0){
@@ -144,19 +150,98 @@ function userMove(frameTime, agent) {
 
 
 
-//プレーヤーの移動
+
+
+//NPCの移動
 function npcMove(frameTime, agent) {
 	
 	if(!agent.mesh){agent.mesh=	agent.chara.mesh;}
 
+	// ターゲット決定
+	let target = player;
+		
+	// 目標地点設定------------------------------
+	
+	searchLength = 200*scaleOfWorld;
+	// boundingSphere から頭と足もとの位置を決める
+	const bSphere = agent.mesh.geometry.boundingSphere;
+	const bsCenterLocal = new THREE.Vector3(bSphere.center.x, bSphere.center.y, bSphere.center.z);
+	const bsCenter = bsCenterLocal.clone().add(agent.position);
 
-	//　向きを更新
-	agent.updateView();
+	if(!target.chara.mesh){return false;}
+	// Rayの向き
+	const bSphere_t = target.chara.mesh.geometry.boundingSphere;
+	let destPosition = target.position;
+	let destVect_ = destPosition.clone().sub(agent.position);
+	let destlength = destVect_.length();
+	let destVect = destVect_.clone().normalize();
+	Vray = new THREE.Raycaster(bsCenter, destVect);
+	
+	// agent から target への衝突判定
+	let intersects=[];
+	let bSphere_o;
+	// 至近距離なら無視
+	if( destlength > bSphere.radius/2 + bSphere_t.radius/2){
+		intersects = Vray.intersectObjects(fieldObjs.children, true); 
+	}
+	
+	// 処理
+	let bsCenter_o=null;	//衝突オブジェクトの中心
+	let hitPoint=null;
+	if (intersects.length>0){
+		// 障害物があるとき
+		if( intersects[0].distance < destlength){
+			hitPoint = intersects[0].point;
+			// 障害物のboundingSphere を取得
+			bSphere_o = intersects[0].object.geometry.boundingSphere;
+			bsCenter_o = intersects[0].object.localToWorld(bSphere_o.center.clone());
+			let bsVectLocal_ = bsCenter_o.clone().sub(agent.position);
+			let bsVectLocalZX_ = new THREE.Vector3(bsVectLocal_.x, 0, bsVectLocal_.z).normalize();
+			
+			// 目標地点を修正(boundingSphereの接線に沿って動く mergin:2)
+			let reset_angle = Math.asin( (bSphere_o.radius+2) / bsVectLocal_.length() );
+			let bs_angle = Math.atan2(bsVectLocalZX_.z, bsVectLocalZX_.x);
+			agent.rotationRight = bs_angle+reset_angle;
+			agent.updateView();
+			destVect = agent.viewVect;
+		
+		}
+	}
+	//-----------------------------------------------------------------
+
+	if(mouseDrag>0){
+	//	console.log(hitPoint);
+	//	console.log(destPosition);
+	}
+	//-----------------------------------------------------------------
 	var isMove_ = 0;
-	var speed = 48;
+	var speed = 48*scaleOfWorld;
+
 	
 	
-	// 落下 or jump
+	//　向きを更新
+	agent.viewVect = destVect;
+	let vVectZX = new THREE.Vector3(destVect.x, 0, destVect.z).normalize();
+	agent.rotationRight = Math.atan2(vVectZX.z, vVectZX.x) - agent.offsetRotationRight;
+	agent.lookingRight = agent.rotationRight;
+	
+	// 移動
+	let lengthNear = 4*scaleOfWorld + bSphere.radius + bSphere_t.radius/2;
+	if( destlength > lengthNear ){
+		if( destlength < lengthNear+10){
+			speed = 16*scaleOfWorld;
+			isMove_ = 2;
+		}else{
+			isMove_ = 1;
+		}
+		agent.position.z += frameTime * speed * agent.viewVect.z;
+		agent.position.x += frameTime * speed * agent.viewVect.x;
+		direction = 1;
+	}
+	
+	
+	
+	// 落下 or jump(高さの計算)
 	if(agent.isOnGround==0){
 		agent.ySpeed -= 300*frameTime;
 		agent.position.y += agent.ySpeed*frameTime;
@@ -176,6 +261,7 @@ function npcMove(frameTime, agent) {
 		agent.isOnGround =1;
 	}
 	
+	// 状態確定---------------------------------
 	if(agent.isStop==1 && isMove_ > 0){
 		agent.isStop=0;
 	}else if(agent.isStop==0 && isMove_ == 0){
@@ -208,9 +294,6 @@ function npcMove(frameTime, agent) {
 	agent.chara.mesh.position.y = agent.position.y;
 	agent.chara.mesh.position.z = agent.position.z;
 }
-
-
-
 
 
 
@@ -314,7 +397,7 @@ function fieldCollision(agent, direction){
 
 	// (2)衝突検出Z-----------------------
 	var footNearestZLocal =searchLength;
-	if (direction ==1){
+	if (direction ==1 || direction ==2){
 		intersects = ZrayFoot.intersectObjects(fieldObjs.children, true);
 		// z: 最も距離が近いもの
 		//

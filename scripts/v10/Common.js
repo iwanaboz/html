@@ -50,6 +50,7 @@ var MyAgent = function(){
 		var z_ = Math.cos(this.rotationUp+this.offsetRotationUp) * Math.sin(this.rotationRight+this.offsetRotationRight); 
 		this.viewVect = new THREE.Vector3(x_, y_, z_);
 	}
+	
 }
 
 // field
