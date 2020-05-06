@@ -149,7 +149,7 @@
 			var motionFiles = [
 				{filePath : './vmd/walk/walk_short.vmd', 
 				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },	
-				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12_short.vmd',  
+				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12x40.vmd',  
 				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/jump_斉天大聖ver1.12.vmd',  
 				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.6, timeScale: 0.8},
@@ -265,9 +265,9 @@
 			//カメラの再設置
 			function cameraUpDate(agent) {
 				// カメラの場所をプレイヤーの後ろに
-				camera.position.x = agent.position.x - agent.viewVect.x *35*scaleOfWorld;
-				camera.position.y = agent.position.y -(agent.viewVect.y *35-10)*scaleOfWorld;
-				camera.position.z = agent.position.z - agent.viewVect.z *35*scaleOfWorld;
+				camera.position.x = agent.position.x - agent.viewVect.x *40*scaleOfWorld;
+				camera.position.y = agent.position.y -(agent.viewVect.y *40-10)*scaleOfWorld;
+				camera.position.z = agent.position.z - agent.viewVect.z *40*scaleOfWorld;
 				// プレイヤーの方向を向く
 				let lookPosition = agent.position.clone().add(new THREE.Vector3(0, agent.mesh.geometry.boundingSphere.radius, 0));
 				camera.lookAt( lookPosition );

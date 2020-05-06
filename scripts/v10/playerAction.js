@@ -215,7 +215,7 @@ function npcMove(frameTime, agent) {
 	}
 	//-----------------------------------------------------------------
 	var isMove_ = 0;
-	var speed = 48*scaleOfWorld;
+	var speed = 40*scaleOfWorld;
 
 	
 	
@@ -228,7 +228,7 @@ function npcMove(frameTime, agent) {
 	// 移動
 	let lengthNear = 4*scaleOfWorld + bSphere.radius + bSphere_t.radius/2;
 	if( destlength > lengthNear ){
-		if( destlength < lengthNear+5){
+		if( destlength < lengthNear){
 			speed = 16*scaleOfWorld;
 			isMove_ = 2;
 		}else{
