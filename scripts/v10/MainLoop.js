@@ -14,15 +14,13 @@ function mainLoop(frameTime) {
 		//friend[0].chara = player.chara.clone();
 	}
 	
-	if(script_version>11){
+	if(script_version>11 && script_version<13){
 		for (let i=0;i<1;i++){
 			// 他キャラ
 			if(friend[i].chara._isLoaded>1){
 				// playerAction.js
-				if(script_version<13){
 					npcMove(frameTime, friend[i]);
 					updateAction(frameTime, friend[i]);
-				}
 			}else if(friend[i].chara._isLoaded==1 && friend[i].chara.animations[i]){
 				initAction(friend[i].chara);
 				console.log(friend[i]);

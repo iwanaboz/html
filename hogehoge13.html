@@ -100,23 +100,24 @@
 			
 			//https://blackthread.io/gltf-converter/
 			
-		    var floader = new THREE.TDSLoader();
-		 	floader.load('models/field/Cartoon_land.3DS',  (object) => {
-		 	  
-		 	  object.rotation.x = THREE.Math.degToRad( -90 );
-		 	  let fldChild = object.children;
-		 	  for (let i = 0; i < fldChild.length; i++){
-		 	  	fldChild[i].material.side = THREE.DoubleSide;
-				fldChild[i].material.opacity = 1;
-		 	  }
-		 	  object.scale.x = 15;
-		 	  object.scale.y = 15;
-		 	  object.scale.z = 15;
+			if( script_version<13){
+			    var floader = new THREE.TDSLoader();
+			 	floader.load('models/field/Cartoon_land.3DS',  (object) => {
+			 	  
+			 	  object.rotation.x = THREE.Math.degToRad( -90 );
+			 	  let fldChild = object.children;
+			 	  for (let i = 0; i < fldChild.length; i++){
+			 	  	fldChild[i].material.side = THREE.DoubleSide;
+					fldChild[i].material.opacity = 1;
+			 	  }
+			 	  object.scale.x = 15;
+			 	  object.scale.y = 15;
+			 	  object.scale.z = 15;
 
-			  fieldObjs.add(object);
-			  console.log(object)
-			});
-			
+				  fieldObjs.add(object);
+				  console.log(object)
+				});
+			}
 			/*
 			//glTFの読み込み
 			var gloader = new THREE.GLTFLoader();
