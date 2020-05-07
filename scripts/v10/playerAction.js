@@ -104,7 +104,7 @@ function userMove(frameTime, agent) {
 	}
 	
 	// 衝突判定(defined below)
-	if (script_version >= 10 && script_version<13){
+	if (script_version >= 10 && script_version<14){
 		fieldCollision(agent, direction);
 	}
 	
