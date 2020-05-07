@@ -4,7 +4,7 @@ function mainLoop(frameTime) {
 	
 	if(player.chara._isLoaded>1){
 		// playerAction.js
-		if(script_version<13){userMove(frameTime, player);}
+		userMove(frameTime, player);
 		updateAction(frameTime, player);
 		cameraUpDate(player);
 		
