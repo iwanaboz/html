@@ -163,7 +163,7 @@ function npcMove(frameTime, agent) {
 	// 目標地点設定------------------------------
 	
 	searchLength = 200*scaleOfWorld;
-	// boundingSphere から頭と足もとの位置を決める
+	// boundingSphere
 	const bSphere = agent.mesh.geometry.boundingSphere;
 	const bsCenterLocal = new THREE.Vector3(bSphere.center.x, bSphere.center.y, bSphere.center.z);
 	const bsCenter = bsCenterLocal.clone().add(agent.position);
