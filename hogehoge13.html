@@ -60,7 +60,7 @@
   			
   			
   			//カメラの場所 (画角、縦横比、写す手前と後ろの限界)
-			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 10, 500 );
+			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 10, 500 );
 			//カメラの場所（右手座標系）
 			camera.position.x = 0;
 			camera.position.y = 2;
@@ -75,7 +75,7 @@
 			document.getElementById('canvas3d').appendChild(stats.domElement);
 			//描画するシステムを用意
 			var renderer = new THREE.WebGLRenderer();
-			renderer.setPixelRatio(1);
+			renderer.setPixelRatio( window.devicePixelRatio );
 			
 			//描画サイズをwindowサイズに
 			renderer.setSize( window.innerWidth, window.innerHeight );
@@ -266,9 +266,9 @@
 			//カメラの再設置
 			function cameraUpDate(agent) {
 				// カメラの場所をプレイヤーの後ろに
-				camera.position.x = agent.position.x - agent.viewVect.x *40*scaleOfWorld;
-				camera.position.y = agent.position.y -(agent.viewVect.y *40-10)*scaleOfWorld;
-				camera.position.z = agent.position.z - agent.viewVect.z *40*scaleOfWorld;
+				camera.position.x = agent.position.x - agent.viewVect.x *50*scaleOfWorld;
+				camera.position.y = agent.position.y -(agent.viewVect.y *50-15)*scaleOfWorld;
+				camera.position.z = agent.position.z - agent.viewVect.z *50*scaleOfWorld;
 				// プレイヤーの方向を向く
 				let lookPosition = agent.position.clone().add(new THREE.Vector3(0, agent.mesh.geometry.boundingSphere.radius, 0));
 				camera.lookAt( lookPosition );
