@@ -106,8 +106,11 @@
 		 	  object.rotation.x = THREE.Math.degToRad( -90 );
 		 	  let fldChild = object.children;
 		 	  for (let i = 0; i < fldChild.length; i++){
-		 	  	fldChild[i].material.side = THREE.DoubleSide;
-				fldChild[i].material.opacity = 1;
+		 	  	var m = new THREE.MeshLambertMaterial();
+				m.copy( fldChild[i].material );
+		 	  	m.side = THREE.DoubleSide;
+				m.opacity = 1;
+				fldChild[i].material = m;
 		 	  }
 		 	  object.scale.x = 15;
 		 	  object.scale.y = 15;
@@ -149,7 +152,7 @@
 			var motionFiles = [
 				{filePath : './vmd/walk/walk_short.vmd', 
 				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },	
-				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12x40.vmd',  
+				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12.vmd',  
 				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },
 				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/jump_斉天大聖ver1.12.vmd',  
 				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.6, timeScale: 0.8},
