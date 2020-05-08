@@ -107,8 +107,11 @@
 			 	  object.rotation.x = THREE.Math.degToRad( -90 );
 			 	  let fldChild = object.children;
 			 	  for (let i = 0; i < fldChild.length; i++){
-			 	  	fldChild[i].material.side = THREE.DoubleSide;
-					fldChild[i].material.opacity = 1;
+			 	  	var m = new THREE.MeshLambertMaterial();
+					m.copy( fldChild[i].material );
+			 	  	m.side = THREE.DoubleSide;
+					m.opacity = 1;
+					fldChild[i].material = m;
 			 	  }
 			 	  object.scale.x = 15;
 			 	  object.scale.y = 15;
