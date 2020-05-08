@@ -46,6 +46,15 @@
 		<script>
 			script_version = 13;
 			scaleOfWorld =1;
+			let canvas_ = document.getElementById('canvas2d');
+			let ctx = canvas_.getContext("2d");;
+			const chara = new Image();
+			chara.src = "./canvas/sousa.png";  // 画像のURLを指定
+			chara.onload = () => {
+				ctx.drawImage(chara, canvas_.width*0.1, canvas_.height*0.7,
+							 canvas_.width*0.2, canvas_.height*0.2);
+			};
+			
 			
 			// Our Javascript will go here.
 			console.log("ﾄﾞｯ！");
@@ -177,6 +186,15 @@
 					mesh.scale.x = scaleOfWorld;
 					mesh.scale.y = scaleOfWorld;
 					mesh.scale.z = scaleOfWorld;
+					let array = [];
+					let materials = mesh.material;
+					for ( var i = 0, il = materials.length; i < il; i ++ ) {
+						let m = new THREE.MeshToonMaterial();
+						m.copy( materials[ i ] );
+						//m.needsUpdate = true;
+						array.push( m );
+					}
+					mesh.material = array;
 					chara.mesh = mesh;
 					// モーションファイル(vmd:Vocaloid Motion Data)
 					for(let i=0;i<motionFiles.length; i++){

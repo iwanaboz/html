@@ -4,6 +4,9 @@ var key_on;
 // マウス情報
 var mousex, mousey;
 var mouseDrag=0;
+var touchInfo=[];
+var touchControl=0;
+var touchControlId;
 
 // モーション（仮）
 //var selectmotion = 0;
