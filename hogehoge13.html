@@ -46,11 +46,13 @@
 		<script>
 			script_version = 13;
 			scaleOfWorld =1;
+			var physicsON=true;
 			var UIType = 0;
 			const ua = navigator.userAgent;
 			if (ua.indexOf('iPhone') > -1 || (ua.indexOf('Android') > -1 && ua.indexOf('Mobile') > -1)) {
 			    // スマートフォン
 			    UIType = 1;
+			    physicsON=false;
 			} else if (ua.indexOf('iPad') > -1 || ua.indexOf('Android') > -1) {
 			    // タブレット
 			    UIType = 2;
@@ -292,8 +294,8 @@
 				return true;
 			}
 			
-			LoadCharacter(seiten, false);
-			LoadCharacter(miku, false);
+			LoadCharacter(seiten, physicsON);
+			LoadCharacter(miku, physicsON);
 			//LoadCharacter(seiten2, true);
 			//LoadCharacter(seiten3, true);
 			//
@@ -344,7 +346,7 @@
 
 			// player という名前で作ったobject を1つ用意する
 			player = new MyAgent();
-			player.chara = miku;
+			player.chara = seiten;
 			
 			friend[0] = new MyAgent();
 			friend[1] = new MyAgent();
