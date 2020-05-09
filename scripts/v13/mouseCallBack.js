@@ -49,7 +49,7 @@ canvas2d_.addEventListener("touchmove", function(e) {
 	    			if( ty_control>0) {key_on[83]=1;}else{key_on[87]=1;}
 	    		}
 	    	}
-	    }else{
+	    }else if(touchInfo[i].pageY-canvas2d_.offsetTop < cH*0.75){
 	    	mouseDrag = 1;
 			mousex = touchInfo[i].pageX - cW/2 - canvas2d_.offsetLeft;
 			mousey = touchInfo[i].pageY - cH/2 - canvas2d_.offsetTop;
