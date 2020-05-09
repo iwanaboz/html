@@ -39,10 +39,10 @@
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/ColladaLoader.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/GLTFLoader.js"></script>
 		
-		<script src="./scripts/v10/Common.js"></script>
-		<script src="./scripts/v10/keyCallBack.js"></script>
-		<script src="./scripts/v10/playerAction.js"></script>
-		<script src="./scripts/v10/MainLoop.js"></script>
+		<script src="./scripts/v13/Common.js"></script>
+		<script src="./scripts/v13/keyCallBack.js"></script>
+		<script src="./scripts/v13/playerAction.js"></script>
+		<script src="./scripts/v13/MainLoop.js"></script>
 		<script>
 			script_version = 13;
 			scaleOfWorld =1;
@@ -297,7 +297,7 @@
 			}
 			
 			LoadCharacter(seiten, physicsON);
-			LoadCharacter(miku, physicsON);
+			//LoadCharacter(miku, physicsON);
 			LoadCharacter(t_komainu, physicsON);
 
 			//
@@ -371,6 +371,7 @@
 			// 時計
 			clock = new THREE.Clock();
 			let time =0;
+			let last_frameTime=0;
 			function animate() {
 				window.requestAnimationFrame( animate );
 				// 現在の1フレームの長さを取得
@@ -381,7 +382,16 @@
 				timeOfFriendActionProc		=0;
 				timeOfFriendAnimationProc	=0;
 				//MainLoop.js
-				mainLoop(frameTime);
+				/*
+				let animation_update_=false;
+				if(time%2==0){
+					aframeTime = last_frameTime+frameTime;
+					animation_update_=true;
+				}else{
+					last_frameTime = frameTime;
+				}
+				*/
+				mainLoop(frameTime, true, frameTime);
 				// stats (fpsメーター)
 				stats.update();
 				
@@ -410,7 +420,7 @@
 			
 
 		</script>
-		<script src="./scripts/v10/mouseCallBack.js"></script>
+		<script src="./scripts/v13/mouseCallBack.js"></script>
 	</body>
 </html>
 
