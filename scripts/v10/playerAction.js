@@ -1,6 +1,6 @@
 //プレーヤーの移動
 function userMove(frameTime, agent) {
-	
+	let t0 = performance.now();  
 	if(!agent.mesh){agent.mesh=	agent.chara.mesh;}
 	//　マウス位置で方向転換
 	var canvasWidth = renderer.domElement.offsetWidth;
@@ -146,6 +146,8 @@ function userMove(frameTime, agent) {
 	agent.chara.mesh.position.x = agent.position.x;
 	agent.chara.mesh.position.y = agent.position.y;
 	agent.chara.mesh.position.z = agent.position.z;
+	let t1 = performance.now();  
+	return t1-t0;
 }
 
 
@@ -155,6 +157,7 @@ function userMove(frameTime, agent) {
 //NPCの移動
 function npcMove(frameTime, agent) {
 	
+	let t0 = performance.now();  
 	if(!agent.mesh){agent.mesh=	agent.chara.mesh;}
 
 	// ターゲット決定
@@ -168,7 +171,7 @@ function npcMove(frameTime, agent) {
 	const bsCenterLocal = new THREE.Vector3(bSphere.center.x, bSphere.center.y, bSphere.center.z);
 	const bsCenter = bsCenterLocal.clone().add(agent.position);
 
-	if(!target.chara.mesh){return false;}
+	if(!target.chara.mesh){return 0;}
 	// Rayの向き
 	const bSphere_t = target.chara.mesh.geometry.boundingSphere;
 	let destPosition = target.position;
@@ -293,6 +296,8 @@ function npcMove(frameTime, agent) {
 	agent.chara.mesh.position.x = agent.position.x;
 	agent.chara.mesh.position.y = agent.position.y;
 	agent.chara.mesh.position.z = agent.position.z;
+	let t1 = performance.now();  
+	return t1-t0;
 }
 
 
@@ -317,6 +322,7 @@ function npcMove(frameTime, agent) {
 
 // モーションを更新
 function updateAction(frameTime, agent){
+	let t0 = performance.now();  
 	let actions = agent.chara.actions;
 	// motionが切り替わった時
 	if(agent.lastMotion != agent.selectMotion){
@@ -335,6 +341,9 @@ function updateAction(frameTime, agent){
 	
 	agent.chara.helper.update( frameTime );
 	agent.lastMotion = agent.selectMotion;
+	let t1 = performance.now();  
+	return t1-t0;
+	
 }
 
 

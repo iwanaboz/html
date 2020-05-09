@@ -1,3 +1,11 @@
+
+// time
+var timeOfRendering;
+var timeOfUserActionProc;
+var timeOfUserAnimationProc;
+var timeOfFriendActionProc;
+var timeOfFriendAnimationProc;
+
 //キーボード情報
 var key_on;
 
@@ -53,6 +61,47 @@ var MyAgent = function(){
 		var z_ = Math.cos(this.rotationUp+this.offsetRotationUp) * Math.sin(this.rotationRight+this.offsetRotationRight); 
 		this.viewVect = new THREE.Vector3(x_, y_, z_);
 	}
+	
+}
+
+
+// Agent object
+var MyButton = function(canvas_, X_, Y_, width_, height_, key_ ){
+	this.width = width_;
+	this.height = height_;
+	this.radius = Math.sqrt(width_**2 + height_**2);
+	this.x = X_+canvas2d_.offsetLeft;
+	this.y = Y_+canvas2d_.offsetTop;
+	this.centerX = X_ +  width_/2 +canvas_.offsetLeft;
+	this.centerY = Y_ + height_/2 +canvas_.offsetTop;
+	this.key = key_;
+	this.keyUp=87;	//w
+	this.keyDown=83;	//s
+	this.keyLeft=68;	//a
+	this.keyRight=65;	//d
+	this.touchId;
+	this.resetControl = function(){
+		key_on[this.keyUp]=0;
+		key_on[this.keyDown]=0;
+		key_on[this.keyLeft]=0;
+		key_on[this.keyRight]=0;
+		//console.log(key_on[this.keyRight]);
+	}
+	this.resetButton = function(){
+		key_on[this.key]=0;
+	}
+	this.pushButton = function(){
+		key_on[this.key]=1;
+	}
+	this.onButtonThenPush = function(id_, x_, y_){
+		if( x_ >= this.x && x_ <= this.x+this.width &&
+			y_ >= this.y && y_ <= this.y+this.height ){
+				key_on[this.key]=1;
+				this.touchId = id_;
+				
+		}	
+	}
+
 	
 }
 
