@@ -68,9 +68,10 @@
 			sousa.src = "./canvas/sousa.png";  // 画像のURLを指定
 			const space = new Image();
 			space.src = "./canvas/space.png"; 
-			
+			ctx.font = '10px Times Roman';
 			// スマホなら表示する項目
 			if(UIType>0){
+				ctx.font = '20px Times Roman';
 				sousa.onload = () => {
 					ctx.drawImage(sousa, 0, canvas_.height*0.7,
 								 canvas_.height*0.2, canvas_.height*0.2);
@@ -84,9 +85,9 @@
 			
 			function drawText( str_ ) {
 				ctx.clearRect(0, 0, canvas_.width, canvas_.height*0.1);
-			  	ctx.font = '10px Times Roman';
+			  	
 			  	ctx.fillStyle = 'rgba( 50, 200, 255)';
-			  	ctx.fillText( str_, canvas_.width*0.22, 9);
+			  	ctx.fillText( str_, canvas_.width*0.22, 18);
 			}
 			
 			
