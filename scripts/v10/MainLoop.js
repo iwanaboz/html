@@ -11,10 +11,9 @@ function mainLoop(frameTime) {
 	}else if(player.chara._isLoaded==1 && player.chara.animations[0]){
 		initAction(player.chara);
 		console.log(player);
-		//friend[0].chara = player.chara.clone();
 	}
 	
-	if(script_version>11 && script_version<13){
+	if(script_version>11){
 		for (let i=0;i<1;i++){
 			// 他キャラ
 			if(friend[i].chara._isLoaded>1){
