@@ -3,10 +3,9 @@ function userMove(frameTime, agent) {
 	let t0 = performance.now();  
 	if(!agent.mesh){agent.mesh=	agent.chara.mesh;}
 	//　マウス位置で方向転換
-	var canvasWidth = renderer.domElement.offsetWidth;
-	var canvasHeight = renderer.domElement.offsetHeight;
-	var dest_angleRight = Math.atan2(mousex, canvasWidth);
-	var dest_angleUp 	= Math.atan2(mousey, canvasHeight);
+
+	var dest_angleRight = Math.atan2(mousex, cW);
+	var dest_angleUp 	= Math.atan2(mousey, cH);
 	
 	// 視点変更-------------------------------------------------
 	// 水平方向（マウスを押しているとき）
@@ -104,7 +103,7 @@ function userMove(frameTime, agent) {
 	}
 	
 	// 衝突判定(defined below)
-	if (script_version >= 10 && script_version<14){
+	if (script_version >= 10 ){
 		fieldCollision(agent, direction);
 	}
 	
@@ -350,6 +349,21 @@ function updateAction(frameTime, agent){
 // 衝突判定
 function fieldCollision(agent, direction){
 	// 下準備--------------------------------------------------------------
+	let fLocalGridId;
+
+	if(script_version>12){
+		let fLocalx = Math.floor( (agent.position.x+500)/250);
+		let fLocalz = Math.floor( (agent.position.z+500)/250);
+		if(fLocalx <0){fLocalx=0;}
+		if(fLocalx >3){fLocalx=3;}
+		if(fLocalz <0){fLocalz=0;}
+		if(fLocalz >3){fLocalz=3;}
+		if(mouseDrag>0){
+			//console.log(fLocalx+','+fLocalz);
+		}
+		fLocalGridId = fLocalx + fLocalz*4;
+	}
+		
 	
 	searchLength = 200*scaleOfWorld;
 	// boundingSphere から頭と足もとの位置を決める
@@ -368,10 +382,10 @@ function fieldCollision(agent, direction){
 	const ZRayOrigin = bsCenter.clone().addScaledVector(ZRayVect, -searchLength);
 	const XRayOrigin = bsCenter.clone().addScaledVector(XRayVect, -searchLength);
 	const YRayOrigin = bsCenter.clone().addScaledVector(YRayVect, -searchLength);
-	// 水平2軸は頭と足も用意する
-	let ZRayOriginHead = ZRayOrigin.clone().add(new THREE.Vector3(0,  bSphere.radius*0.9, 0));
+	// 水平2軸は足
+	//let ZRayOriginHead = ZRayOrigin.clone().add(new THREE.Vector3(0,  bSphere.radius*0.9, 0));
 	let ZRayOriginFoot = ZRayOrigin.clone().add(new THREE.Vector3(0, -bSphere.radius*0.7, 0));
-	let XRayOriginHead = XRayOrigin.clone().add(new THREE.Vector3(0,  bSphere.radius*0.9, 0));
+	//let XRayOriginHead = XRayOrigin.clone().add(new THREE.Vector3(0,  bSphere.radius*0.9, 0));
 	let XRayOriginFoot = XRayOrigin.clone().add(new THREE.Vector3(0, -bSphere.radius*0.7, 0));
 	
 	// Ray
@@ -383,8 +397,12 @@ function fieldCollision(agent, direction){
 	//-------------------------------------------------------------------
 	
 	// (1)衝突検出Y-----------------------
-	var intersects = Yray.intersectObjects(fieldObjs.children, true); 
-	
+	if(script_version<13){
+		var intersects = Yray.intersectObjects( fieldObjs.children, true); 
+	}else{
+		//var intersects = Yray.intersectObjects( fieldObjs.children, true);
+		var intersects = Yray.intersectObjects( fieldLocalGrid.children[fLocalGridId], true); 
+	}
 	// 足Y: 足側で最も高いものを探す
 	// 頭Y: 頭側で最も低いものを探す
 	var footHighestYLocal = -searchLength;
@@ -408,6 +426,12 @@ function fieldCollision(agent, direction){
 	var footNearestZLocal =searchLength;
 	if (direction ==1 || direction ==2){
 		intersects = ZrayFoot.intersectObjects(fieldObjs.children, true);
+		if(script_version<13){
+			intersects = ZrayFoot.intersectObjects(fieldObjs.children, true);
+		}else{
+			//intersects = ZrayFoot.intersectObjects(fieldObjs.children, true);
+			intersects = ZrayFoot.intersectObjects(fieldLocalGrid.children[fLocalGridId], true);
+		}
 		// z: 最も距離が近いもの
 		//
 		for (let i = 0; i < intersects.length; i++) {
@@ -435,7 +459,13 @@ function fieldCollision(agent, direction){
 	// (3)衝突検出X-----------------------
 	var footNearestXLocal =searchLength;
 	if (direction ==3){
-		intersects = XrayFoot.intersectObjects(fieldObjs.children, true);
+		
+		if(script_version<13){
+			intersects = XrayFoot.intersectObjects(fieldObjs.children, true);
+		}else{
+			intersects = XrayFoot.intersectObjects(fieldLocalGrid.children[fLocalGridId], true);
+		}
+		
 		var intersectsFX = intersects;
 		// x: 最も距離が近いもの
 		//

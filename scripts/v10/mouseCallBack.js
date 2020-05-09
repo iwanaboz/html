@@ -13,7 +13,7 @@ canvas2d_.addEventListener('mousemove', e => {
 // マウスが押されたとき
 canvas2d_.addEventListener('mousedown', e => {
   	mouseDrag = 1;
-  	//console.log( canvas2d_ );
+  	console.log( player );
 });
 // マウスが離されたとき
 canvas2d_.addEventListener('mouseup', e => {
