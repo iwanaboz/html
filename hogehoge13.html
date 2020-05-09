@@ -84,7 +84,10 @@
 								 canvas_.height*0.14, canvas_.height*0.14);
 				};
 			}
+			//
 			
+			
+			// 2D canvas
 			function drawText( str_ ) {
 				ctx.clearRect(0, 0, canvas_.width, canvas_.height*0.1);
 			  	
@@ -214,7 +217,7 @@
 			 renderer.gammaOutput = true;
 			*/
 			scene.add(fieldObjs);
-			console.log(fieldObjs);
+			//console.log(fieldObjs);
 			
 			
 			// 床グリッドを追加
@@ -242,15 +245,14 @@
 				{filePath : './vmd/Lat式/Idle_resized/idle.vmd',  
 				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1}
 			];
-			console.log(motionFiles.length);
+			
 			// load のためのオブジェクトを作る
 			const loader = new THREE.MMDLoader(); 
 			
 			var seiten 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
 			var miku 	= new MyCharacter('https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd', motionFiles);
-			var seiten2 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
-			var seiten3 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
-			
+			var t_komainu 	= new MyCharacter('./models/t_komainu_ver132/橘狛犬1.323.pmx', motionFiles);
+		
 			// キャラクターのロード
 			function LoadCharacter(chara, physics_){
 				loader.load( chara.modelFile, function (mesh) {
@@ -296,8 +298,8 @@
 			
 			LoadCharacter(seiten, physicsON);
 			LoadCharacter(miku, physicsON);
-			//LoadCharacter(seiten2, true);
-			//LoadCharacter(seiten3, true);
+			LoadCharacter(t_komainu, physicsON);
+
 			//
 			function initAction(chara){
 				scene.add( chara.mesh );
@@ -351,9 +353,8 @@
 			friend[0] = new MyAgent();
 			friend[1] = new MyAgent();
 			friend[2] = new MyAgent();
-			friend[0].chara = miku;
-			//friend[1].chara = seiten2;
-			//friend[2].chara = seiten3;
+			friend[0].chara = t_komainu;
+
 			
 			//カメラの再設置
 			function cameraUpDate(agent) {

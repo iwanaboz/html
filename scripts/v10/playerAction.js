@@ -171,6 +171,16 @@ function npcMove(frameTime, agent) {
 	const bsCenter = bsCenterLocal.clone().add(agent.position);
 
 	if(!target.chara.mesh){return 0;}
+	// ローカル
+	if(script_version>12){
+		let fLocalx = Math.floor( (agent.position.x+500)/250);
+		let fLocalz = Math.floor( (agent.position.z+500)/250);
+		if(fLocalx <0){fLocalx=0;}
+		if(fLocalx >3){fLocalx=3;}
+		if(fLocalz <0){fLocalz=0;}
+		if(fLocalz >3){fLocalz=3;}
+		fLocalGridId = fLocalx + fLocalz*4;
+	}
 	// Rayの向き
 	const bSphere_t = target.chara.mesh.geometry.boundingSphere;
 	let destPosition = target.position;
@@ -184,7 +194,11 @@ function npcMove(frameTime, agent) {
 	let bSphere_o;
 	// 至近距離なら無視
 	if( destlength > bSphere.radius/2 + bSphere_t.radius/2){
-		intersects = Vray.intersectObjects(fieldObjs.children, true); 
+		if(script_version>12){
+			intersects = Vray.intersectObjects(fieldLocalGrid.children[fLocalGridId], true); 
+		}else{
+			intersects = Vray.intersectObjects(fieldObjs.children, true); 
+		}	
 	}
 	
 	// 処理
