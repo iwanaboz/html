@@ -249,9 +249,10 @@
 			// load のためのオブジェクトを作る
 			const loader = new THREE.MMDLoader(); 
 			
-			var seiten 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
+			var seiten 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12_fewbones.pmx', motionFiles);
 			var miku 	= new MyCharacter('https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd', motionFiles);
 			var t_komainu 	= new MyCharacter('./models/t_komainu_ver132/橘狛犬1.323.pmx', motionFiles);
+			var oyuki 	= new MyCharacter('./models/oyuki/おゆきver1.1.pmx', motionFiles);
 		
 			// キャラクターのロード
 			function LoadCharacter(chara, physics_){
@@ -268,12 +269,10 @@
 						array.push( m );
 					}
 					mesh.material = array;
-					let bones = mesh.geometry.bones;
-					if(bones.length>250){
-						bones.splice(250, bones.length-250);
-						mesh.skeleton.bones.splice(250, bones.length-250);
-					}
 					
+					//let skeleton = mesh.skeleton;
+					//numBones = skeleton.bones.length;
+			
 					chara.mesh = mesh;
 					// モーションファイル(vmd:Vocaloid Motion Data)
 					for(let i=0;i<motionFiles.length; i++){
