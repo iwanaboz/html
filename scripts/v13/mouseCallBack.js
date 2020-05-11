@@ -93,7 +93,6 @@ canvas2d_.addEventListener("touchend", function(e) {
 	let touchControl_exist = 0;
 	
 	// 全てリセット
-	Bcontrol.resetControl();
 	mouseDrag = 0;
 	key_on[Bspace.key] = 0;
 		
@@ -111,7 +110,7 @@ canvas2d_.addEventListener("touchend", function(e) {
 	}
 
 	//
-	if(	touchControl_exist ==0 ){touchControl=0;}
+	if(	touchControl_exist ==0 ){touchControl=0;Bcontrol.resetControl();}
 	//console.log(touchControl);
 	
 }, false);
