@@ -23,11 +23,11 @@ function userMove(frameTime, agent) {
 	agent.updateView();
 	//--------------------------------------------------------------
 	var isMove_ = 0;
-	var speed = 48*scaleOfWorld;
+	agent.speed = 48*scaleOfWorld;
 	
 	// 歩く
 	if(key_on[16]>0){
-		speed = 16*scaleOfWorld;
+		agent.speed = 16*scaleOfWorld;
 	}
 	
 	// Jump
@@ -49,38 +49,38 @@ function userMove(frameTime, agent) {
 	
 	// WASD----------------------------------------------------------
 	var dest_lookRight;
-	let direction = 0; //stop
+	agent.direction = 0; //stop
 	//w (前進)
 	if(key_on[87]>0){
-		agent.position.z += frameTime * speed * agent.viewVect.z;
-		agent.position.x += frameTime * speed * agent.viewVect.x;
+		agent.position.z += frameTime * agent.speed * agent.viewVect.z;
+		agent.position.x += frameTime * agent.speed * agent.viewVect.x;
 		dest_lookRight = agent.rotationRight;
-		direction = 1;
+		agent.direction = 1;
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
 		
 	}else
 	//a
 	if(key_on[65]>0){
-		agent.position.z -= frameTime * speed * agent.viewVect.x;
-		agent.position.x += frameTime * speed * agent.viewVect.z;
+		agent.position.z -= frameTime * agent.speed * agent.viewVect.x;
+		agent.position.x += frameTime * agent.speed * agent.viewVect.z;
 		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( -90 );
-		direction = 3;
+		agent.direction = 3;
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
 	}else
 	//s (後退)
 	if(key_on[83]>0){
-		agent.position.z -= frameTime * speed * agent.viewVect.z;
-		agent.position.x -= frameTime * speed * agent.viewVect.x;
+		agent.position.z -= frameTime * agent.speed * agent.viewVect.z;
+		agent.position.x -= frameTime * agent.speed * agent.viewVect.x;
 		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( -180 );
-		direction = 2;
+		agent.direction = 2;
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
 	}else
 	//d (右)
 	if(key_on[68]>0){
-		agent.position.z += frameTime * speed * agent.viewVect.x;
-		agent.position.x -= frameTime * speed * agent.viewVect.z;
+		agent.position.z += frameTime * agent.speed * agent.viewVect.x;
+		agent.position.x -= frameTime * agent.speed * agent.viewVect.z;
 		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( +90 );
-		direction = 3;
+		agent.direction = 4;
 		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
 	}
 	//--------------------------------------------------------------
@@ -104,7 +104,7 @@ function userMove(frameTime, agent) {
 	
 	// 衝突判定(defined below)
 	if (script_version >= 10 ){
-		fieldCollision(agent, direction);
+		fieldCollision(agent, agent.direction);
 	}
 	
 	// 最下点着地
@@ -118,6 +118,7 @@ function userMove(frameTime, agent) {
 		agent.isStop=0;
 	}else if(agent.isStop==0 && isMove_ == 0){
 		agent.isStop=1;
+		
 	}
 
 	//
@@ -231,7 +232,7 @@ function npcMove(frameTime, agent) {
 	}
 	//-----------------------------------------------------------------
 	var isMove_ = 0;
-	var speed = 40*scaleOfWorld;
+	agent.speed = 40*scaleOfWorld;
 
 	
 	
@@ -245,14 +246,14 @@ function npcMove(frameTime, agent) {
 	let lengthNear = 4*scaleOfWorld + bSphere.radius + bSphere_t.radius/2;
 	if( destlength > lengthNear ){
 		if( destlength < lengthNear){
-			speed = 16*scaleOfWorld;
+			agent.speed = 16*scaleOfWorld;
 			isMove_ = 2;
 		}else{
 			isMove_ = 1;
 		}
-		agent.position.z += frameTime * speed * agent.viewVect.z;
-		agent.position.x += frameTime * speed * agent.viewVect.x;
-		direction = 1;
+		agent.position.z += frameTime * agent.speed * agent.viewVect.z;
+		agent.position.x += frameTime * agent.speed * agent.viewVect.x;
+		agent.direction = 1;
 	}
 	
 	
@@ -261,6 +262,7 @@ function npcMove(frameTime, agent) {
 	if(agent.isOnGround==0){
 		agent.ySpeed -= 300*frameTime;
 		agent.position.y += agent.ySpeed*frameTime;
+		
 	}else{
 		agent.ySpeed = 0;
 	}
@@ -472,7 +474,7 @@ function fieldCollision(agent, direction){
 	*/
 	// (3)衝突検出X-----------------------
 	var footNearestXLocal =searchLength;
-	if (direction ==3){
+	if (direction >=3){
 		
 		if(script_version<13){
 			intersects = XrayFoot.intersectObjects(fieldObjs.children, true);
@@ -508,13 +510,13 @@ function fieldCollision(agent, direction){
 	
 	// 処理をかく
 	// 足もとに踏み越えられない壁がある場合、近ければ押し戻す------------------------------------
-	//  radius*30%の高さにZ衝突面がある場合、近ければ押し出す
 	
+	//  radius*30%の高さにZ衝突面がある場合、近ければ押し出す
 	if ( Math.abs(footNearestZLocal) < bSphere.radius*0.2){
-		if(footNearestZLocal>0){
+		if(agent.direction==1){
 			agent.position.x -= bSphere.radius*0.2 * ZRayVect.x;
 			agent.position.z -= bSphere.radius*0.2 * ZRayVect.z;
-		}else{
+		}else if(agent.direction==2){
 			agent.position.x += bSphere.radius*0.2 * ZRayVect.x;
 			agent.position.z += bSphere.radius*0.2 * ZRayVect.z;
 		}
@@ -522,10 +524,10 @@ function fieldCollision(agent, direction){
 	
 	// radius*30%の高さにX衝突面がある場合、近ければ押し出す
 	if ( Math.abs(footNearestXLocal) < bSphere.radius*0.2){
-		if(footNearestXLocal>0){
+		if(agent.direction==4){
 			agent.position.z -= bSphere.radius*0.2 * ZRayVect.x;
 			agent.position.x -= bSphere.radius*0.2 * ZRayVect.z;
-		}else{
+		}else if(agent.direction==3){
 			agent.position.z += bSphere.radius*0.2 * ZRayVect.x;
 			agent.position.x += bSphere.radius*0.2 * ZRayVect.z;
 		}

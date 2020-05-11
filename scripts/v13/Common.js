@@ -53,6 +53,8 @@ var MyAgent = function(){
 	this.selectMotion=0;
 	this.isOnGround =1;
 	this.ySpeed = 0;
+	this.speed = 0;
+	this.direction = 0;
 	
 	// 向いている角度から向いている方向を計算する
 	this.updateView = function(){
