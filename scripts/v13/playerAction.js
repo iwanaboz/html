@@ -512,24 +512,24 @@ function fieldCollision(agent, direction){
 	// 足もとに踏み越えられない壁がある場合、近ければ押し戻す------------------------------------
 	
 	//  radius*30%の高さにZ衝突面がある場合、近ければ押し出す
-	if ( Math.abs(footNearestZLocal) < bSphere.radius*0.2){
+	if ( Math.abs(footNearestZLocal) < bSphere.radius*0.25){
 		if(agent.direction==1){
-			agent.position.x -= bSphere.radius*0.2 * ZRayVect.x;
-			agent.position.z -= bSphere.radius*0.2 * ZRayVect.z;
+			agent.position.x -= bSphere.radius*0.25 * ZRayVect.x;
+			agent.position.z -= bSphere.radius*0.25 * ZRayVect.z;
 		}else if(agent.direction==2){
-			agent.position.x += bSphere.radius*0.2 * ZRayVect.x;
-			agent.position.z += bSphere.radius*0.2 * ZRayVect.z;
+			agent.position.x += bSphere.radius*0.25 * ZRayVect.x;
+			agent.position.z += bSphere.radius*0.25 * ZRayVect.z;
 		}
 	}
 	
 	// radius*30%の高さにX衝突面がある場合、近ければ押し出す
 	if ( Math.abs(footNearestXLocal) < bSphere.radius*0.2){
 		if(agent.direction==4){
-			agent.position.z -= bSphere.radius*0.2 * ZRayVect.x;
-			agent.position.x -= bSphere.radius*0.2 * ZRayVect.z;
+			agent.position.z -= bSphere.radius*0.25 * ZRayVect.x;
+			agent.position.x -= bSphere.radius*0.25 * ZRayVect.z;
 		}else if(agent.direction==3){
-			agent.position.z += bSphere.radius*0.2 * ZRayVect.x;
-			agent.position.x += bSphere.radius*0.2 * ZRayVect.z;
+			agent.position.z += bSphere.radius*0.25 * ZRayVect.x;
+			agent.position.x += bSphere.radius*0.25 * ZRayVect.z;
 		}
 	}
 	
