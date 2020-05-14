@@ -12,7 +12,7 @@ function TDSLoad( loadobj, scale_, rotationX_, rotationY_, rotationZ_, fieldSet_
 				fldChild[i].rotation.x = THREE.Math.degToRad( rotationX_ );
 				fldChild[i].rotation.y = THREE.Math.degToRad( rotationY_ );
 				fldChild[i].rotation.z = THREE.Math.degToRad( rotationZ_ );
-
+				//
 				fldChild[i].scale.x = scale_;
 				fldChild[i].scale.y = scale_;
 				fldChild[i].scale.z = scale_;
