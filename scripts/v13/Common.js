@@ -27,9 +27,18 @@ var MyCharacter = function(modelFile_, motionFiles_){
 	this.animations = [];	// 切り出すキーとなるvmd(後で破棄してもよい)
 	this.actions=[];		// 切り出したaction
 	this._isLoaded = 0;	//最低限変数がつくられているか
+	this._isAdded=0;
 	this.helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
 	
 }
+
+var MyLoadObject = function(filePath_){
+	this.filePath = filePath_;
+	this.object;
+	this._isLoaded = 0;
+	this._isAdded=0;
+}
+
 // Agent object
 var MyAgent = function(){
 	this.mesh;
@@ -114,3 +123,4 @@ var player;
 var friend =[];
 var enemy =[];
 var scaleOfWorld;
+var field_isLoaded =0;

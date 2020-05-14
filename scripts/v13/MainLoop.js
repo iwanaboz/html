@@ -12,6 +12,7 @@ function mainLoop(frameTime, update_action_, aframeTime) {
 		
 	}else if(player.chara._isLoaded==1 && player.chara.animations[0]){
 		initAction(player.chara);
+		scene.add( player.chara.mesh );
 		console.log(player);
 	}
 	
@@ -26,6 +27,7 @@ function mainLoop(frameTime, update_action_, aframeTime) {
 					}
 			}else if(friend[i].chara._isLoaded==1 && friend[i].chara.animations[i]){
 				initAction(friend[i].chara);
+				scene.add( friend[i].chara.mesh );
 				console.log(friend[i]);
 			}
 		}
