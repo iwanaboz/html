@@ -46,7 +46,7 @@
 		<script src="./scripts/v13/MainLoop.js"></script>
 		<script src="./scripts/v13/LoadFuncs.js"></script>
 		<script>
-			script_version = 13;
+			script_version = 14;
 			scaleOfWorld =1;
 			var physicsON=true;
 			var UIType = 0;
@@ -104,7 +104,7 @@
 			var scene = new THREE.Scene();
 			
 			//光源を用意してシーンに追加
-			const light = new THREE.DirectionalLight(0xFFFFFF, 1);
+			const light = new THREE.DirectionalLight(0x161616, 1);
 			light.position.x=0.2;
 			light.position.z=0.2;
   			scene.add(light);
@@ -133,21 +133,6 @@
 			document.getElementById('canvas3d').appendChild( renderer.domElement );
 
 			
-			// 箱の形を用意
-			var geometry = new THREE.BoxGeometry();
-			// 表面の素材を用意
-			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-			material.side = THREE.DoubleSide;
-			// 形と素材を指定した cubeをつくってシーンに追加
-			var cube = new THREE.Mesh( geometry, material );
-			cube.position.x = 50*scaleOfWorld;
-			cube.position.z = -30*scaleOfWorld;
-			cube.position.y = 10*scaleOfWorld;
-			cube.scale.x = 20*scaleOfWorld;
-			cube.scale.y = 15*scaleOfWorld;
-			cube.scale.z = 25*scaleOfWorld
-			fieldObjs.add( cube );
-			//https://blackthread.io/gltf-converter/
 			
 			//フィールドマップの読み込み
 			

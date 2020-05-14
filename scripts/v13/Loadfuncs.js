@@ -74,6 +74,12 @@ function LoadCharacter(chara, physics_){
 		for ( let i = 0, il = materials.length; i < il; i ++ ) {
 			let m = new THREE.MeshToonMaterial();
 			m.copy( materials[ i ] );
+			if(script_version<14){
+			}else{
+				m.emissive.r=0;
+				m.emissive.g=0;
+				m.emissive.b=0;
+			}
 			//m.needsUpdate = true;
 			array.push( m );
 		}
