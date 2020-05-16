@@ -64,11 +64,18 @@ var MyAgent = function(){
 	this.isOnGround =1;
 	this.ySpeed = 0;
 	this.speed = 0;
+	
 	this.direction = 0;
 	
 	//
+	this.zspeed = 0;
+	this.xspeed = 0;
 	this.stopTime = 0;
+	this.knockTime = 0;
 	this.actTime = 0;
+	this.knocked = new Array(5).fill(0);
+	this.isKnocked = 0;
+	this.weapon = new MyWeapon();
 	
 	// 向いている角度から向いている方向を計算する
 	this.updateView = function(){
@@ -86,6 +93,18 @@ var MyAgent = function(){
 	}
 	
 }
+
+
+// Agent object
+var MyWeapon = function(){
+	this.position = new THREE.Vector3(0, 0, 0);
+	this.knock = 500;
+	this.knockTime = 0.02;
+	this.stopTime  = 1.8;
+	this.size  = 4;
+	
+}
+
 
 
 // Agent object

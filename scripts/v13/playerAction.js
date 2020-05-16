@@ -100,6 +100,8 @@ function userMove(frameTime, agent) {
 		agent.speed = 8*scaleOfWorld;
 		z_component=1* lookVect.z;
 		x_component=1* lookVect.x;
+		agent.weapon.position.z = agent.position.z+  10 * lookVect.z;
+		agent.weapon.position.x = agent.position.x+  10 * lookVect.x;
 		if(agent.actTime<=0){
 			agent.actTime=0;
 		}
@@ -110,8 +112,18 @@ function userMove(frameTime, agent) {
 		agent.stopTime -=frameTime;
 		if(agent.stopTime<=0){
 			agent.stopTime=0;
+			agent.zspeed = 0;
+			agent.xspeed = 0;
+			agent.knocked.fill(0);
+			agent.isKnocked=0;
 		}
-		//console.log(agent.actTime);
+		if( agent.knockTime > 0){
+			agent.knockTime -=frameTime;
+			agent.position.z += frameTime * agent.zspeed;
+			agent.position.x += frameTime * agent.xspeed;
+			agent.direction = 2;
+		}
+		if(agent.isKnocked>0){isMove_=5;}
 	}
 		
 	// attack
@@ -144,6 +156,14 @@ function userMove(frameTime, agent) {
 
 	}
 	
+	// 当たり判定
+	if(script_version>13){
+		if(enemy[0].actTime>0 && agent.knocked[0] ==0){
+			let hit = hitAction(frameTime, agent, enemy[0]);
+			agent.knocked[0] = hit;
+		}
+	}
+	
 	// 衝突判定(defined below)
 	if (script_version >= 10 ){
 		fieldCollision(agent, agent.direction, frameTime);
@@ -172,7 +192,7 @@ function userMove(frameTime, agent) {
 		if(isMove_==1){agent.selectMotion = 1;}	//run
 		if(isMove_==3){agent.selectMotion = 2;}	//jump
 		if(isMove_==4){agent.selectMotion = 3;} //attack
-		
+		if(isMove_==5){agent.selectMotion = 5;} //attacked
 	}	
 
 	// 反映する
@@ -308,30 +328,82 @@ function npcMove(frameTime, agent) {
 	
 	//　向きを更新
 	agent.viewVect = destVect;
+	//agent.lookVect = destVect;
 	let vVectZX = new THREE.Vector3(destVect.x, 0, destVect.z).normalize();
+	let ZRayVect = new THREE.Vector3( agent.viewVect.x, 0, agent.viewVect.z).normalize();
 	agent.rotationRight = Math.atan2(vVectZX.z, vVectZX.x) - agent.offsetRotationRight;
 	agent.lookingRight = agent.rotationRight;
 	
-	// 移動
-	let lengthNear = 4*scaleOfWorld + bSphere.radius + bSphere_t.radius/2;
-	let lengthFar = 150;
 	
-	let ZRayVect = new THREE.Vector3( agent.viewVect.x, 0, agent.viewVect.z).normalize();
-	if( destlength > lengthNear ){
-		if( destlength < lengthNear ){
-			agent.speed = 16*scaleOfWorld;
-			isMove_ = 2;
-		}else if( destlength > lengthFar){
-			agent.speed = 6*scaleOfWorld;
-			isMove_ = 2;
-		}else{
-			isMove_ = 1;
+	
+	//-----------------------------------------------------------------
+	// on action
+	if(agent.actTime > 0){
+		isMove_ = 4;
+		agent.actTime -=frameTime;
+		agent.speed = 8*scaleOfWorld;
+		agent.weapon.position.z = agent.position.z+  bSphere.radius * 0.8 * ZRayVect.z;
+		agent.weapon.position.x = agent.position.x+  bSphere.radius * 0.8 * ZRayVect.x;
+		if(agent.actTime<=0){
+			agent.actTime=0;
 		}
-		agent.position.z += frameTime * agent.speed * ZRayVect.z;
-		agent.position.x += frameTime * agent.speed * ZRayVect.x;
-		agent.direction = 1;
 	}
 	
+	// cannot control
+	if(agent.stopTime > 0){
+		agent.stopTime -=frameTime;
+		if(agent.stopTime<=0){
+			agent.stopTime=0;
+			agent.zspeed = 0;
+			agent.xspeed = 0;
+			agent.knocked.fill(0);
+			agent.isKnocked=0;
+		}
+		if( agent.knockTime > 0){
+			agent.knockTime -=frameTime;
+			agent.position.z += frameTime * agent.zspeed;
+			agent.position.x += frameTime * agent.xspeed;
+			agent.direction = 2;
+		}
+		if(agent.isKnocked>0){isMove_=5;}
+	}
+		
+		
+	// 行動--------------------------------------------------------------------
+	let lengthNear = bSphere.radius*0.8 + bSphere_t.radius*0.8;
+	let lengthFar = 150;
+	
+	
+
+	if( agent.stopTime <=0){
+		// attack
+		if( destlength <= lengthNear+Math.random()*3 ){
+			if(agent.type==1 && target == player){}else{
+				isMove_ = 4;
+				agent.stopTime=1.0;
+				agent.weapon.stopTime=1.0;
+				agent.actTime =0.6;
+				
+			}
+			if(agent.type==2){agent.weapon.size = bSphere.radius*0.25;}
+		
+		// 移動
+		}else{
+			if( destlength < lengthNear+3*scaleOfWorld ){
+				agent.speed = 16*scaleOfWorld;
+				isMove_ = 2;
+			}else if( destlength > lengthFar){
+				agent.speed = 6*scaleOfWorld;
+				isMove_ = 2;
+			}else{
+				isMove_ = 1;
+			}
+			agent.position.z += frameTime * agent.speed * ZRayVect.z;
+			agent.position.x += frameTime * agent.speed * ZRayVect.x;
+			agent.direction = 1;
+		}
+	
+	}
 	
 	
 	// 落下 or jump(高さの計算)
@@ -343,7 +415,25 @@ function npcMove(frameTime, agent) {
 		agent.ySpeed = 0;
 	}
 	
-	
+	// 当たり判定
+	let hit;
+	if(script_version>13){
+		if(agent.type==2){
+			if(player.actTime>0 && agent.knocked[0]==0){
+				hit = hitAction(frameTime, agent, player);
+				agent.knocked[0] = hit;
+			}
+			if(friend[0].actTime>0 && agent.knocked[1]==0){
+				hit = hitAction(frameTime, agent, friend[0]);
+				agent.knocked[1] = hit;
+			}
+		}else{
+			if(enemy[0].actTime>0 && agent.knocked[0]==0 ){
+				hit = hitAction(frameTime, agent, enemy[0]);
+				agent.knocked[0] = hit;
+			}
+		}
+	}
 	// 衝突判定(defined below)
 	if (script_version >= 10){
 		// とりあえず上下だけ
@@ -373,6 +463,7 @@ function npcMove(frameTime, agent) {
 		if(isMove_==1){agent.selectMotion = 1;}	//run
 		if(isMove_==3){agent.selectMotion = 2;}	//jump
 		if(isMove_==4){agent.selectMotion = 3;} //attack
+		if(isMove_==5){agent.selectMotion = 5;} //attacked
 		
 	}	
 	
@@ -393,9 +484,30 @@ function npcMove(frameTime, agent) {
 
 
 
-
-
-
+// 当たり判定
+function hitAction(frameTime, agent, actor){
+	
+	let weapon = actor.weapon;
+	let destPosition = weapon.position;
+	let destlength = destPosition.clone().sub(agent.position).length();
+	//
+	const bSphere = agent.chara.mesh.geometry.boundingSphere;	
+	// hit
+	//console.log(destlength);
+	//console.log(bSphere.radius + weapon.size);
+	if( destlength <= bSphere.radius + weapon.size ){
+		let lookVect = actor.getLookingVect();
+		agent.stopTime = weapon.stopTime;
+		agent.knockTime = weapon.knockTime;
+		agent.zspeed = weapon.knock * lookVect.z;
+		agent.xspeed = weapon.knock * lookVect.x;
+		agent.speed = weapon.knock;
+		agent.isKnocked = 1;
+		return 1;
+	}
+	return 0;
+	
+}
 
 
 
