@@ -53,40 +53,76 @@ function userMove(frameTime, agent) {
 	let z_component=0;
 	let x_component=0;
 	let ZRayVect = new THREE.Vector3( agent.viewVect.x, 0, agent.viewVect.z).normalize();
+	var dest_lookRight = agent.lookingRight;
 	
-	//w (前進)
-	if(key_on[87]>0){
-		z_component=1* ZRayVect.z;
-		x_component=1* ZRayVect.x;
-		dest_lookRight = agent.rotationRight;
-		agent.direction = 1;
-		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
-		
-	}else
-	//a
-	if(key_on[65]>0){
-		z_component=-1* ZRayVect.x;
-		x_component=1* ZRayVect.z;
-		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( -90 );
-		agent.direction = 3;
-		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
-	}else
-	//s (後退)
-	if(key_on[83]>0){
-		z_component=-1* ZRayVect.z;
-		x_component=-1* ZRayVect.x;
-		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( -180 );
-		agent.direction = 2;
-		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
-	}else
-	//d (右)
-	if(key_on[68]>0){
-		z_component=1* ZRayVect.x;
-		x_component=-1* ZRayVect.z;
-		dest_lookRight = agent.rotationRight+THREE.Math.degToRad( +90 );
-		agent.direction = 4;
-		if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
+	if(agent.stopTime <= 0){
+		//w (前進)
+		if(key_on[87]>0){
+			z_component=1* ZRayVect.z;
+			x_component=1* ZRayVect.x;
+			dest_lookRight = agent.rotationRight;
+			agent.direction = 1;
+			if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
+			
+		}else
+		//a
+		if(key_on[65]>0){
+			z_component=-1* ZRayVect.x;
+			x_component=1* ZRayVect.z;
+			dest_lookRight = agent.rotationRight+THREE.Math.degToRad( -90 );
+			agent.direction = 3;
+			if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
+		}else
+		//s (後退)
+		if(key_on[83]>0){
+			z_component=-1* ZRayVect.z;
+			x_component=-1* ZRayVect.x;
+			dest_lookRight = agent.rotationRight+THREE.Math.degToRad( -180 );
+			agent.direction = 2;
+			if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
+		}else
+		//d (右)
+		if(key_on[68]>0){
+			z_component=1* ZRayVect.x;
+			x_component=-1* ZRayVect.z;
+			dest_lookRight = agent.rotationRight+THREE.Math.degToRad( +90 );
+			agent.direction = 4;
+			if(key_on[16]>0){ isMove_ = 2;}else{isMove_ = 1;}
+		}
+	}// stop
+	
+	
+	let lookVect = agent.getLookingVect();
+	// on action
+	if(agent.actTime > 0){
+		isMove_ = 4;
+		agent.actTime -=frameTime;
+		agent.speed = 8*scaleOfWorld;
+		z_component=1* lookVect.z;
+		x_component=1* lookVect.x;
+		if(agent.actTime<=0){
+			agent.actTime=0;
+		}
 	}
+	
+	// cannot control
+	if(agent.stopTime > 0){
+		agent.stopTime -=frameTime;
+		if(agent.stopTime<=0){
+			agent.stopTime=0;
+		}
+		//console.log(agent.actTime);
+	}
+		
+	// attack
+	if(key_on[70]>0 && agent.stopTime <=0){
+		//isMove_ = 4;
+		agent.stopTime=1.0;
+		agent.actTime =0.6;
+	}
+	
+	
+	
 	agent.position.z += z_component * frameTime * agent.speed;
 	agent.position.x += x_component * frameTime * agent.speed;
 	//--------------------------------------------------------------
@@ -120,16 +156,8 @@ function userMove(frameTime, agent) {
 	}
 	
 	// 状態確定---------------------------------
-	if(agent.isStop==1 && isMove_ > 0){
-		agent.isStop=0;
-	}else if(agent.isStop==0 && isMove_ == 0){
-		agent.isStop=1;
-		
-	}
-
 	//
 	if(agent.isOnGround==0){
-		agent.isStop=0;
 		if ( agent.ySpeed >0 ){
 			isMove_=3;
 		}else{
@@ -138,12 +166,12 @@ function userMove(frameTime, agent) {
 	}
 		
 	// walk
-	if(agent.isStop==1 && script_version >= 10){agent.selectMotion = 4;}
-	if(agent.isStop==0){
-		if(isMove_==2){agent.selectMotion = 0;}
-		if(isMove_==1){agent.selectMotion = 1;}
-		if(isMove_==3){agent.selectMotion = 2;}
-		if(isMove_==4){agent.selectMotion = 3;}
+	if( isMove_ == 0 && script_version >= 10){agent.selectMotion = 4;} //idle
+	if( isMove_ >0){
+		if(isMove_==2){agent.selectMotion = 0;} //walk
+		if(isMove_==1){agent.selectMotion = 1;}	//run
+		if(isMove_==3){agent.selectMotion = 2;}	//jump
+		if(isMove_==4){agent.selectMotion = 3;} //attack
 		
 	}	
 
@@ -289,15 +317,8 @@ function npcMove(frameTime, agent) {
 	}
 	
 	// 状態確定---------------------------------
-	if(agent.isStop==1 && isMove_ > 0){
-		agent.isStop=0;
-	}else if(agent.isStop==0 && isMove_ == 0){
-		agent.isStop=1;
-	}
-
 	//
 	if(agent.isOnGround==0){
-		agent.isStop=0;
 		if ( agent.ySpeed >0 ){
 			isMove_=3;
 		}else{
@@ -306,14 +327,15 @@ function npcMove(frameTime, agent) {
 	}
 		
 	// walk
-	if(agent.isStop==1 && script_version >= 10){agent.selectMotion = 4;}
-	if(agent.isStop==0){
-		if(isMove_==2){agent.selectMotion = 0;}
-		if(isMove_==1){agent.selectMotion = 1;}
-		if(isMove_==3){agent.selectMotion = 2;}
-		if(isMove_==4){agent.selectMotion = 3;}
+	if( isMove_ == 0 && script_version >= 10){agent.selectMotion = 4;} //idle
+	if( isMove_ >0){
+		if(isMove_==2){agent.selectMotion = 0;} //walk
+		if(isMove_==1){agent.selectMotion = 1;}	//run
+		if(isMove_==3){agent.selectMotion = 2;}	//jump
+		if(isMove_==4){agent.selectMotion = 3;} //attack
 		
 	}	
+	
 
 	// 反映する
 	agent.chara.mesh.rotation.y = -agent.lookingRight;

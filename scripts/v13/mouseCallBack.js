@@ -22,8 +22,11 @@ canvas2d_.addEventListener('mouseup', e => {
 
 //------------------------------------------------------------------------------
 
+				
 Bcontrol = new MyButton(canvas2d_, 0, cH*0.7, cH*0.2, cH*0.2, 0 );
-Bspace = new MyButton(canvas2d_, cH*0.25, cH*0.75, cH*0.14, cH*0.14, 32 );
+Bspace = new MyButton(canvas2d_, cW*0.4, cH*0.75, cH*0.14, cH*0.14, 32 );
+BF= new MyButton(canvas2d_, cW*0.65, cH*0.78, cH*0.09, cH*0.09, 70 );
+BG= new MyButton(canvas2d_, cW*0.85, cH*0.78, cH*0.09, cH*0.09, 71 );
 
 
 // タッチでドラッグされたとき
@@ -76,6 +79,8 @@ canvas2d_.addEventListener("touchstart", function(e) {
 	    	touchControlId = touchInfo[i].identifier;
 	    }else{
 	    	Bspace.onButtonThenPush(touchInfo[i].identifier, touchInfo[i].pageX, touchInfo[i].pageY);
+	    	BF.onButtonThenPush(touchInfo[i].identifier, touchInfo[i].pageX, touchInfo[i].pageY);
+	    	BG.onButtonThenPush(touchInfo[i].identifier, touchInfo[i].pageX, touchInfo[i].pageY);
 	    }
 	}
 
@@ -95,7 +100,9 @@ canvas2d_.addEventListener("touchend", function(e) {
 	// 全てリセット
 	mouseDrag = 0;
 	key_on[Bspace.key] = 0;
-		
+	key_on[BF.key] = 0;
+	key_on[BG.key] = 0;
+			
 	for (let i = 0; i <touch_Num; i++) {
 		// 離れたときに残ったものしか格納されない
 	    touchInfo[i] = e.touches[i];   

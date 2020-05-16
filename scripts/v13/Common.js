@@ -53,10 +53,10 @@ var MyAgent = function(){
 	this.offsetPosition = new THREE.Vector3(0, 0, 0);
 	this.offsetRotationUp	= 0;
 	this.offsetRotationRight= THREE.Math.degToRad( 90 );
-	
+	//
 	this.isJoin = 0;
-	this.isRunning =0;
-	this.isWalking =0;
+	//this.isRunning =0;
+	//this.isWalking =0;
 	this.isStop =1;
 	this.lastMotion=0;
 	this.selectMotion=0;
@@ -65,12 +65,23 @@ var MyAgent = function(){
 	this.speed = 0;
 	this.direction = 0;
 	
+	//
+	this.stopTime = 0;
+	this.actTime = 0;
+	
 	// 向いている角度から向いている方向を計算する
 	this.updateView = function(){
 		var y_ = Math.sin(this.rotationUp+this.offsetRotationUp);
 		var x_ = Math.cos(this.rotationUp+this.offsetRotationUp) * Math.cos(this.rotationRight+this.offsetRotationRight);
 		var z_ = Math.cos(this.rotationUp+this.offsetRotationUp) * Math.sin(this.rotationRight+this.offsetRotationRight); 
 		this.viewVect = new THREE.Vector3(x_, y_, z_);
+	}
+	
+	this.getLookingVect = function(){
+		var y_ = Math.sin(this.lookingUp+this.offsetRotationUp);
+		var x_ = Math.cos(this.lookingUp+this.offsetRotationUp) * Math.cos(this.lookingRight+this.offsetRotationRight);
+		var z_ = Math.cos(this.lookingUp+this.offsetRotationUp) * Math.sin(this.lookingRight+this.offsetRotationRight); 
+		return new THREE.Vector3(x_, y_, z_);
 	}
 	
 }
