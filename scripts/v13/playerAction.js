@@ -370,7 +370,7 @@ function npcMove(frameTime, agent) {
 		
 		
 	// 行動--------------------------------------------------------------------
-	let lengthNear = bSphere.radius*0.8 + bSphere_t.radius*0.8;
+	let lengthNear = bSphere.radius*0.75 + bSphere_t.radius*0.75;
 	let lengthFar = 150;
 	
 	
@@ -495,7 +495,7 @@ function hitAction(frameTime, agent, actor){
 	// hit
 	//console.log(destlength);
 	//console.log(bSphere.radius + weapon.size);
-	if( destlength <= bSphere.radius + weapon.size ){
+	if( destlength <= bSphere.radius*0.8 + weapon.size ){
 		let lookVect = actor.getLookingVect();
 		agent.stopTime = weapon.stopTime;
 		agent.knockTime = weapon.knockTime;
