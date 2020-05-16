@@ -113,8 +113,15 @@
 			  	ctx.fillStyle = 'rgba( 50, 200, 255)';
 			  	ctx.fillText( str_, canvas_.width*0.22, 18);
 			}
+			// 2D canvas
+			function drawGuide( str_ ) {
+				ctx.clearRect(0, canvas_.height*0.20, canvas_.width, canvas_.height*0.30);
+			  	
+			  	ctx.fillStyle = 'rgba( 50, 200, 255)';
+			  	ctx.fillText( str_, canvas_.width*0.4, canvas_.height*0.25);
+			}
 			
-			
+			drawGuide('adhishdoiahsi');
 			// Our Javascript will go here.
 			console.log("ﾄﾞｯ！");
 			//シーンを用意
@@ -226,12 +233,28 @@
 				{filePath : './vmd/Lat式/Idle_resized/idle.vmd',  
 				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1}
 			];
+			// モーションファイル２
+			var motionFiles2 = [
+				{filePath : './vmd/牛鬼モーション/牛鬼移動(壱).vmd', 
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },	
+				{filePath : './vmd/牛鬼モーション/牛鬼移動(壱).vmd', 
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },
+				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/jump_斉天大聖ver1.12.vmd',  
+				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.6, timeScale: 0.8},
+				{filePath : './vmd/格闘簡易作成用モーション/Albert-combo1.vmd',  
+				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1},
+				{filePath : './vmd/Lat式/Idle_resized/idle.vmd',  
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1}
+			];
 			
 			// load のためのオブジェクトを作る			
 			var seiten 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12_fewbones.pmx', motionFiles);
 			var miku 	= new MyCharacter('https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd', motionFiles);
 			var t_komainu 	= new MyCharacter('./models/t_komainu_ver132/橘狛犬1.323.pmx', motionFiles);
 			var oyuki 	= new MyCharacter('./models/oyuki/おゆきver1.1.pmx', motionFiles);
+			
+			//
+			var ushioni	= new MyCharacter('./models/ushioni/牛鬼.pmx', motionFiles2);
 			
 			if(physicsON==true){
 				seiten = new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
@@ -240,7 +263,7 @@
 			
 			
 			LoadCharacter(seiten, physicsON);
-			//LoadCharacter(miku, physicsON);
+			LoadCharacter(ushioni, physicsON);
 			LoadCharacter(t_komainu, physicsON);
 
 			//
@@ -254,10 +277,16 @@
 			player.chara = seiten;
 			
 			friend[0] = new MyAgent();
-			friend[1] = new MyAgent();
-			friend[2] = new MyAgent();
 			friend[0].chara = t_komainu;
-
+			friend[0].type = 1;
+			friend[0].isJoin = 1;
+			
+			enemy[0] = new MyAgent();
+			enemy[0].chara = ushioni;
+			enemy[0].offsetPosition.y = -30;
+			enemy[0].position = new THREE.Vector3(40, 200, -300);
+			enemy[0].type = 2;
+			enemy[0].isJoin = 1;
 			
 			//カメラの再設置
 			function cameraUpDate(agent) {

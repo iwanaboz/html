@@ -29,7 +29,7 @@ var MyCharacter = function(modelFile_, motionFiles_){
 	this._isLoaded = 0;	//最低限変数がつくられているか
 	this._isAdded=0;
 	this.helper = new THREE.MMDAnimationHelper({ afterglow: 2.0, resetPhysicsOnLoop: true });
-	
+	this.offsetPosition = new THREE.Vector3(0, 0, 0);
 }
 
 var MyLoadObject = function(filePath_){
@@ -43,7 +43,8 @@ var MyLoadObject = function(filePath_){
 var MyAgent = function(){
 	this.mesh;
 	this.chara = new MyCharacter(null, null);
-	
+	this.type =0; //0:player, 1 friend, 2:enemy
+		
 	this.position = new THREE.Vector3(0, 0, 0);	// 場所
 	this.viewVect = new THREE.Vector3(0, 0, 0); // 向いている方向
 	this.rotationUp = 0;						// 向いている上下の角度

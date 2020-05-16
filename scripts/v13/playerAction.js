@@ -177,9 +177,9 @@ function userMove(frameTime, agent) {
 
 	// 反映する
 	agent.chara.mesh.rotation.y = -agent.lookingRight;
-	agent.chara.mesh.position.x = agent.position.x;
-	agent.chara.mesh.position.y = agent.position.y;
-	agent.chara.mesh.position.z = agent.position.z;
+	agent.chara.mesh.position.x = agent.position.x+ agent.offsetPosition.x;
+	agent.chara.mesh.position.y = agent.position.y+ agent.offsetPosition.y;
+	agent.chara.mesh.position.z = agent.position.z+ agent.offsetPosition.z;
 	let t1 = performance.now();  
 	return t1-t0;
 }
@@ -192,16 +192,51 @@ function userMove(frameTime, agent) {
 function npcMove(frameTime, agent) {
 	
 	let t0 = performance.now();  
-	if(!agent.mesh){agent.mesh=	agent.chara.mesh;}
-
-	// ターゲット決定
+	//if(!agent.mesh){agent.mesh=	agent.chara.mesh;}
+	
+	// ターゲット決定	
 	let target = player;
+	let target_distance=200;
+	let target_id = -1;
+	let distance;
+	if (script_version>12){
+		//friend
+		if(agent.type==1){
+			// for all enemies
+			if(enemy[0].isJoin>0){
+				distance = enemy[0].position.clone().sub(agent.position).length();
+				if(distance < target_distance){
+					target_distance =distance;
+					target_id = 0;
+				}
+			}
+			if(target_id>=0){target = enemy[target_id];}else{}
+			//if(mouseDrag>0){console.log(distance);}
+		}
+		
+		// enemy
+		if(agent.type==2){
+			target_distance = player.position.clone().sub(agent.position).length();
+			// for all enemies
+			if(friend[0].isJoin>0){
+				distance = friend[0].position.clone().sub(agent.position).length();
+				if(distance < target_distance){
+					target_distance =distance;
+					target_id = 0;
+				}
+			}
+			if(target_id>=0){target = friend[target_id];}else{}
+			
+		}
+	}
+
+	
 		
 	// 目標地点設定------------------------------
 	
 	searchLength = 200*scaleOfWorld;
 	// boundingSphere
-	const bSphere = agent.mesh.geometry.boundingSphere;
+	const bSphere = agent.chara.mesh.geometry.boundingSphere;
 	const bsCenterLocal = new THREE.Vector3(bSphere.center.x, bSphere.center.y, bSphere.center.z);
 	const bsCenter = bsCenterLocal.clone().add(agent.position);
 
@@ -279,10 +314,15 @@ function npcMove(frameTime, agent) {
 	
 	// 移動
 	let lengthNear = 4*scaleOfWorld + bSphere.radius + bSphere_t.radius/2;
+	let lengthFar = 150;
+	
 	let ZRayVect = new THREE.Vector3( agent.viewVect.x, 0, agent.viewVect.z).normalize();
 	if( destlength > lengthNear ){
-		if( destlength < lengthNear){
+		if( destlength < lengthNear ){
 			agent.speed = 16*scaleOfWorld;
+			isMove_ = 2;
+		}else if( destlength > lengthFar){
+			agent.speed = 6*scaleOfWorld;
 			isMove_ = 2;
 		}else{
 			isMove_ = 1;
@@ -339,9 +379,9 @@ function npcMove(frameTime, agent) {
 
 	// 反映する
 	agent.chara.mesh.rotation.y = -agent.lookingRight;
-	agent.chara.mesh.position.x = agent.position.x;
-	agent.chara.mesh.position.y = agent.position.y;
-	agent.chara.mesh.position.z = agent.position.z;
+	agent.chara.mesh.position.x = agent.position.x + agent.offsetPosition.x;
+	agent.chara.mesh.position.y = agent.position.y + agent.offsetPosition.y;
+	agent.chara.mesh.position.z = agent.position.z + agent.offsetPosition.z;
 	let t1 = performance.now();  
 	return t1-t0;
 }
@@ -414,7 +454,7 @@ function fieldCollision(agent, direction, frameTime){
 	
 	searchLength = 200*scaleOfWorld;
 	// boundingSphere から頭と足もとの位置を決める
-	const bSphere = agent.mesh.geometry.boundingSphere;
+	const bSphere = agent.chara.mesh.geometry.boundingSphere;
 	const bsCenterLocal = new THREE.Vector3(bSphere.center.x, bSphere.center.y, bSphere.center.z);
 	const bsCenter = bsCenterLocal.clone().add(agent.position);
 	let bsHead = bsCenter.clone().add(new THREE.Vector3(0,  bSphere.radius, 0));
