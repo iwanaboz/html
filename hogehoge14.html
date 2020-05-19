@@ -47,7 +47,9 @@
 		<script src="./scripts/v13/MainLoop.js"></script>
 		<script src="./scripts/v13/LoadFuncs.js"></script>
 		<script>
-		//https://www.autodesk.com/developer-network/platform-technologies/fbx-converter-archives
+		// chara や loadObject にmeshを持たせて非同期でロード、 (ステージごとの)初期化はanimateでロード完了を監視する。
+		
+		
 			script_version = 14;
 			scaleOfWorld =1;
 			var physicsON=true;
@@ -129,7 +131,7 @@
 			var scene = new THREE.Scene();
 			
 			//光源を用意してシーンに追加
-			const light = new THREE.DirectionalLight(0x333333, 1);
+			const light = new THREE.DirectionalLight(0x444444, 1);
 			light.position.x=0.2;
 			light.position.z=0.2;
   			scene.add(light);
@@ -180,6 +182,7 @@
 			fieldLocalGrid.children=[];
 			let fLocalGrid = [-375, -125, 125, 375];
 			
+			// フィールドの準備
 			function initfieldObjs(){
 				//
 				for (let ig = 0; ig < 16; ig++){
@@ -209,10 +212,6 @@
 			GTLFLoad( barrel, 8, 90, 0, 0 );
 			
 			
-			// 床グリッドを追加
-			//var gridHelper = new THREE.GridHelper(350*scaleOfWorld, 100*scaleOfWorld);
-			//scene.add(gridHelper);
-
 			
 			// pmd/pmxファイルの読み込み
 			var mesh_loaded = 0;
@@ -265,17 +264,13 @@
 			if(physicsON==true){
 				seiten = new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
 			}
-			
-			
-			
+						
+			// 
 			LoadCharacter(seiten, physicsON);
 			LoadCharacter(ushioni, physicsON);
 			LoadCharacter(t_komainu, physicsON);
 
-			//
-		
 
-					
 
 
 			// player という名前で作ったobject を1つ用意する
@@ -293,6 +288,12 @@
 			enemy[0].position = new THREE.Vector3(40, 200, -300);
 			enemy[0].type = 2;
 			enemy[0].isJoin = 1;
+			
+			
+			staticItem[0] = new MyItem();
+			staticItem[0].loadObj = barrel;
+			staticItem[0].offsetPosition.y = 4;
+			
 			
 			//カメラの再設置
 			function cameraUpDate(agent) {
@@ -320,15 +321,8 @@
 				timeOfFriendActionProc		=0;
 				timeOfFriendAnimationProc	=0;
 				//MainLoop.js
-				/*
-				let animation_update_=false;
-				if(time%2==0){
-					aframeTime = last_frameTime+frameTime;
-					animation_update_=true;
-				}else{
-					last_frameTime = frameTime;
-				}
-				*/
+				
+				//
 				mainLoop(frameTime, true, frameTime);
 				// stats (fpsメーター)
 				stats.update();
@@ -338,13 +332,16 @@
 				renderer.render( scene, camera );
 				let t1 = performance.now(); 
 				
+				// フィールドの準備
 				if (field_isLoaded ==1){
 					initfieldObjs();
 				}
 				
-				if (barrel._isLoaded==1 && barrel._isAdded==0){
-					scene.add(barrel.object);
-					barrel._isAdded=1;
+				// アイテムの準備（仮）
+				if (staticItem[0].loadObj._isLoaded==1 && staticItem[0]._isAdded==0){
+					scene.add(staticItem[0].loadObj.object );
+					staticItem[0]._isAdded=1;
+					staticItem[0].updatePosition();
 				}
 				
 				

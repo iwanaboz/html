@@ -36,7 +36,7 @@ var MyLoadObject = function(filePath_){
 	this.filePath = filePath_;
 	this.object;
 	this._isLoaded = 0;
-	this._isAdded=0;
+	
 }
 
 // Agent object
@@ -105,7 +105,22 @@ var MyWeapon = function(){
 	
 }
 
-
+// item object
+var MyItem = function(){
+	this.loadObj;
+	this.position = new THREE.Vector3(0, 0, 0);
+	this.offsetPosition = new THREE.Vector3(0, 0, 0);
+	this.offsetRotationUp	= 0;
+	this.offsetRotationRight= THREE.Math.degToRad( 90 );
+	this._isAdded=0;
+	this.type = 0;
+	this.state = 0; // 0:dropped, 1:have 2:throw
+	this.updatePosition = function(){
+		this.loadObj.object.position.x = this.position.y + this.offsetPosition.x;
+		this.loadObj.object.position.y = this.position.y + this.offsetPosition.y;
+		this.loadObj.object.position.z = this.position.y + this.offsetPosition.z;
+	}
+}
 
 // Agent object
 var MyButton = function(canvas_, X_, Y_, width_, height_, key_ ){
@@ -153,5 +168,9 @@ var fieldObjs = new THREE.Group();
 var player;
 var friend =[];
 var enemy =[];
+var staticItem = [];
 var scaleOfWorld;
 var field_isLoaded =0;
+
+
+
