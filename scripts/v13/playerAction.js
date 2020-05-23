@@ -1,3 +1,8 @@
+// function userMove(frameTime, agent)
+// function npcMove(frameTime, agent) 
+// function hitAction(frameTime, agent, actor)
+// function fieldCollision(agent, direction, frameTime)
+
 //プレーヤーの移動
 function userMove(frameTime, agent) {
 	let t0 = performance.now();  
@@ -131,6 +136,8 @@ function userMove(frameTime, agent) {
 		//isMove_ = 4;
 		agent.stopTime=1.0;
 		agent.actTime =0.6;
+		agent.weapon.position.z = agent.position.z+  10 * lookVect.z;
+		agent.weapon.position.x = agent.position.x+  10 * lookVect.x;
 	}
 	
 	
@@ -382,6 +389,8 @@ function npcMove(frameTime, agent) {
 				isMove_ = 4;
 				agent.stopTime=1.0;
 				agent.weapon.stopTime=1.0;
+				agent.weapon.position.z = agent.position.z+  bSphere.radius * 0.8 * ZRayVect.z;
+				agent.weapon.position.x = agent.position.x+  bSphere.radius * 0.8 * ZRayVect.x;
 				agent.actTime =0.6;
 				
 			}

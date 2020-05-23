@@ -53,5 +53,9 @@ function mainLoop(frameTime, update_action_, aframeTime) {
 		}
 	}
 	
+	// Item
+	if(script_version>13){
+		ItemListener(frameTime);
+	}
 	
 }

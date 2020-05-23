@@ -106,21 +106,40 @@ var MyWeapon = function(){
 }
 
 // item object
-var MyItem = function(){
+var itemText = ['G：拾う', '', ];
+var itemHoldText = ['G：投げる', '', ];
+
+
+var MyItem = function(id_){
+	this.id = id_;
 	this.loadObj;
 	this.position = new THREE.Vector3(0, 0, 0);
+	//this.rotation = new THREE.Vector3(0, 0, 0);
 	this.offsetPosition = new THREE.Vector3(0, 0, 0);
-	this.offsetRotationUp	= 0;
-	this.offsetRotationRight= THREE.Math.degToRad( 90 );
+	this.holdDirection = 1;
 	this._isAdded=0;
 	this.type = 0;
-	this.state = 0; // 0:dropped, 1:have 2:throw
-	this.updatePosition = function(){
-		this.loadObj.object.position.x = this.position.y + this.offsetPosition.x;
-		this.loadObj.object.position.y = this.position.y + this.offsetPosition.y;
-		this.loadObj.object.position.z = this.position.y + this.offsetPosition.z;
+	this.state = 0; // 0:dropped, 1:have 2:hold 3:throw
+	this.ySpeed = 0;
+	this.speed = 0;
+	this.isOnGround=1;
+	this.thrownVect;
+		
+	
+	this.updatePosition = function(offset_){
+		if(offset_){}else{offset_ = this.offsetPosition;}
+		let offsetLocal = offset_.clone().applyQuaternion(this.loadObj.object.quaternion);
+		this.loadObj.object.position.x = this.position.x + offsetLocal.x;
+		this.loadObj.object.position.y = this.position.y + offsetLocal.y;
+		this.loadObj.object.position.z = this.position.z + offsetLocal.z;
+	}
+	this.updateRotation = function(lookVect){
+		this.loadObj.object.lookAt(lookVect.multiplyScalar(10000*this.holdDirection));
+		
 	}
 }
+
+
 
 // Agent object
 var MyButton = function(canvas_, X_, Y_, width_, height_, key_ ){
@@ -171,6 +190,6 @@ var enemy =[];
 var staticItem = [];
 var scaleOfWorld;
 var field_isLoaded =0;
-
+var displayedItemId=-1;
 
 
