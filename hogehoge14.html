@@ -25,7 +25,9 @@
 		<a href="https://github.com/miu200521358/vmd_sizing/blob/master/README.md" target="_blank">vmd_sizing</a>
 		<p>WASD:走る、 SHIFT+WASD:歩く、スペース:ジャンプ、クリック(ドラッグ)で視点移動、F：攻撃</p>
 		</div>
-		
+		<div id="videos" style="visibility:hidden;" >
+			<video id="video0" src="effects/test.mp4" playsinline muted></video>
+		</div>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/libs/stats.min.js"></script>
 
@@ -291,11 +293,21 @@
 			enemy[0].isJoin = 1;
 			
 			
+			//
+			video = document.getElementById("video0");
+			pEffect[0] = new MyEffectObj(0, video, 80);
+			pEffect[0].offsetPosition.y=20;
+			console.log(pEffect[0] );
+			scene.add(pEffect[0].sprite);
+
+
+			//
 			staticItem[0] = new MyItem(0);
 			staticItem[0].loadObj = barrel;
-			//staticItem[0].offsetPosition.z = 3;
 			staticItem[0].position.y = 3;
+			staticItem[0].initPosition.y = 3;
 			staticItem[0].holdDirection = -1;
+			staticItem[0].effect = pEffect[0];
 			
 			//カメラの再設置
 			function cameraUpDate(agent) {
@@ -307,6 +319,9 @@
 				let lookPosition = agent.position.clone().add(new THREE.Vector3(0, agent.mesh.geometry.boundingSphere.radius, 0));
 				camera.lookAt( lookPosition );
 			}
+			
+			//
+			
 			
 			
 			// 時計
@@ -325,6 +340,7 @@
 				//MainLoop.js
 				
 				//
+				pEffect[0].sprite.material.map.needsUpdate = true;
 				mainLoop(frameTime, true, frameTime);
 				// stats (fpsメーター)
 				stats.update();

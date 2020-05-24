@@ -113,18 +113,22 @@ var itemHoldText = ['G：投げる', '', ];
 var MyItem = function(id_){
 	this.id = id_;
 	this.loadObj;
+	this.initPosition = new THREE.Vector3(0, 0, 0);
 	this.position = new THREE.Vector3(0, 0, 0);
 	//this.rotation = new THREE.Vector3(0, 0, 0);
 	this.offsetPosition = new THREE.Vector3(0, 0, 0);
 	this.holdDirection = 1;
 	this._isAdded=0;
 	this.type = 0;
-	this.state = 0; // 0:dropped, 1:have 2:hold 3:throw
+	this.state = 0; // 0:dropped, 1:have 2:hold 3:throw 4:wait repop
 	this.ySpeed = 0;
 	this.speed = 0;
+	this.angle = 0;
 	this.direction=1;
 	this.isOnGround=1;
 	this.thrownVect;
+	this.coolDown=0;
+	this.effect;
 		
 	
 	this.updatePosition = function(offset_){
@@ -138,6 +142,43 @@ var MyItem = function(id_){
 		this.loadObj.object.lookAt(lookVect.multiplyScalar(10000*this.holdDirection));
 		
 	}
+}
+
+// Effect
+
+var MyEffectObj = function(id_, video_, scale_){
+	this.id = id_;
+	this.type = 0;
+	this.time=0;
+	this.video;
+	this.position = new THREE.Vector3(0, 0, 0);
+	this.offsetPosition = new THREE.Vector3(0, 0, 0);
+	this.scale;
+	// 
+	this.video = video_;
+	let texture = new THREE.VideoTexture(this.video);
+	let material = new THREE.SpriteMaterial({
+	  color: 0xffffff,
+	  opacity:0.8,
+	  visible: false,
+	  //side: THREE.FrontSide,
+	  map: texture,
+	  depthTest: true,
+	  transparent: true,
+	  blending: THREE.AdditiveBlending
+	});
+	
+	this.sprite = new THREE.Sprite(material);
+	this.sprite.scale.y = scale_;
+	this.sprite.scale.x = scale_;
+	this.sprite.scale.z = scale_;
+	this.updatePosition = function(){
+		this.sprite.position.x = this.position.x +this.offsetPosition.x;
+		this.sprite.position.y = this.position.y +this.offsetPosition.y;
+		this.sprite.position.z = this.position.z +this.offsetPosition.z;
+	}
+	
+	
 }
 
 
@@ -189,6 +230,8 @@ var player;
 var friend =[];
 var enemy =[];
 var staticItem = [];
+var pEffect = [];
+
 var scaleOfWorld;
 var field_isLoaded =0;
 var displayedItemId=-1;

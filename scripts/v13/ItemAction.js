@@ -18,7 +18,21 @@ function ItemAction(frameTime, item){
 			check_all_ = 0;
 		}
 	}
+	//
+	if(item.coolDown>0){
+		item.coolDown -=frameTime;
+		if(item.coolDown<=0){
+			item.state = 0;
+			item.position = item.initPosition;
+			item.updatePosition(new THREE.Vector3(0,0,0));
+			scene.add(item.loadObj.object);
+			item.effect.sprite.material.visible=false;
+			item.effect.video.pause();
+		}
+	}
 	
+	
+	//
 	if(check_all_==0){
 		if(item.id == displayedItemId){
 			let localWristPosition = new THREE.Vector3(0,0,0);
@@ -56,7 +70,7 @@ function ItemAction(frameTime, item){
 			//設置されている
 			if(item.state==0){
 				let distance = player.position.clone().sub(item.position).length();
-				if(distance < 7 ){
+				if(distance < 9 ){
 					displayedItemId = item.id;
 					drawGuide(itemText[item.type]);
 					// Gキーが押されているとき
@@ -71,11 +85,15 @@ function ItemAction(frameTime, item){
 			}else if(item.state==3){
 				// 投てき
 				if(item.isOnGround==0){
+					// position
 					item.ySpeed -= 300*frameTime*scaleOfWorld;
 					item.position.y += item.ySpeed*frameTime;
 					item.position.z += item.speed *frameTime * item.thrownVect.z;
 					item.position.x += item.speed *frameTime * item.thrownVect.x;
-					//item.updateRotation(armVect);
+					// rotation
+					item.angle += frameTime * Math.PI*2;
+					let viewVect = new THREE.Vector3(Math.sin(item.angle) * item.thrownVect.x, Math.cos(item.angle), Math.sin(item.angle) * item.thrownVect.z);
+					item.updateRotation(viewVect);
 					//drawGuide(item.position.x);
 					item.updatePosition(new THREE.Vector3(0,0,0));
 					// 衝突判定
@@ -84,10 +102,19 @@ function ItemAction(frameTime, item){
 					if ( item.position.y <= 0){
 						item.position.y =0;
 						item.isOnGround =1;
-						item.updateRotation(new THREE.Vector3(0,1,0));
 					}
 					// 着弾
-					if(item.isOnGround ==1){item.state = 0;displayedItemId =-1;}
+					if(item.isOnGround ==1){
+						item.state = 4;displayedItemId =-1;
+						item.updateRotation(new THREE.Vector3(0,1,0));
+						item.coolDown = 5;
+						item.effect.position = item.position;
+						item.effect.video.load();
+						item.effect.sprite.material.visible=true;
+						item.effect.video.play(); 
+						item.effect.updatePosition();
+						scene.remove(item.loadObj.object);
+					}
 						
 				}else{
 					item.ySpeed = 0;

@@ -7,6 +7,7 @@ function TDSLoad( loadobj, scale_, rotationX_, rotationY_, rotationZ_, fieldSet_
 				var m = new THREE.MeshLambertMaterial();
 				m.copy( fldChild[i].material );
 				m.side = THREE.DoubleSide;
+				m.transparent = false;
 				m.opacity = 1;
 				fldChild[i].material = m;
 				fldChild[i].rotation.x = THREE.Math.degToRad( rotationX_ );
