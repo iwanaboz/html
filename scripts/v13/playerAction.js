@@ -608,7 +608,6 @@ function fieldCollision(agent, direction, frameTime){
 	if(script_version<13){
 		var intersects = Yray.intersectObjects( fieldObjs.children, true); 
 	}else{
-		//var intersects = Yray.intersectObjects( fieldObjs.children, true);
 		var intersects = Yray.intersectObjects( fieldLocalGrid.children[fLocalGridId], true); 
 	}
 	// 足Y: 足側で最も高いものを探す
@@ -633,7 +632,6 @@ function fieldCollision(agent, direction, frameTime){
 	// (2)衝突検出Z-----------------------
 	var footNearestZLocal =searchLength;
 	if (direction ==1 || direction ==2){
-		intersects = ZrayFoot.intersectObjects(fieldObjs.children, true);
 		if(script_version<13){
 			intersects = ZrayFoot.intersectObjects(fieldObjs.children, true);
 		}else{
@@ -707,10 +705,10 @@ function fieldCollision(agent, direction, frameTime){
 	let collisionRadius = Math.max(bSphere.radius*0.25, agent.speed*frameTime);
 	//  radius*30%の高さにZ衝突面がある場合、近ければ押し出す
 	if ( Math.abs(footNearestZLocal) < collisionRadius){
-		if(agent.direction==1){
+		if(direction==1){
 			agent.position.x -= collisionRadius * ZRayVect.x;
 			agent.position.z -= collisionRadius * ZRayVect.z;
-		}else if(agent.direction==2){
+		}else if(direction==2){
 			agent.position.x += collisionRadius * ZRayVect.x;
 			agent.position.z += collisionRadius * ZRayVect.z;
 		}
@@ -718,10 +716,10 @@ function fieldCollision(agent, direction, frameTime){
 	
 	// radius*30%の高さにX衝突面がある場合、近ければ押し出す
 	if ( Math.abs(footNearestXLocal) < collisionRadius){
-		if(agent.direction==4){
+		if(direction==4){
 			agent.position.z -= collisionRadius * ZRayVect.x;
 			agent.position.x -= collisionRadius * ZRayVect.z;
-		}else if(agent.direction==3){
+		}else if(direction==3){
 			agent.position.z += collisionRadius * ZRayVect.x;
 			agent.position.x += collisionRadius * ZRayVect.z;
 		}

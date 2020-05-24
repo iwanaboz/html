@@ -122,6 +122,7 @@ var MyItem = function(id_){
 	this.state = 0; // 0:dropped, 1:have 2:hold 3:throw
 	this.ySpeed = 0;
 	this.speed = 0;
+	this.direction=1;
 	this.isOnGround=1;
 	this.thrownVect;
 		
