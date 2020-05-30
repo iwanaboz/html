@@ -10,37 +10,43 @@ function eventLoop(frameTime, update_action_, aframeTime) {
 	if(player.chara._isLoaded>1 && enemy[0].chara._isLoaded>1){
 		player.selectMotion = 4;
 		if(eventTime> 2.0){
-
-			if(eventTime< 9.0){
+			if(eventTime< 5.0){
+				timeOfUserAnimationProc	= updateAction(aframeTime, player);
+			}else if(eventTime< 9.0){
 				if(eventStep==0){
 					fogLookAt( new THREE.Vector3(10, 0, -1000) );
 					fogSetPosition( new THREE.Vector3( 0, 75, 0), new THREE.Vector3( 100, 75, 75));
 					eventStep=1;
+					scene.fog = darkFog;
 					setEventAgent(enemy[0].chara.mesh, eventTime, 5.0, 9.0,  new THREE.Vector3( 50, 3, -350), new THREE.Vector3( 0, 3, -350), new THREE.Vector3(10, 3, 250));
 				}
 				let sin2_ = Math.sin(eventTime*5)*Math.sin(eventTime*50);
-				scene.fog = darkFog;
-				let intensity_ = 0.9+0.2*sin2_;
+				
+				let intensity_ = 0.9+0.05*sin2_;
 				light.intensity = intensity_;
 				setEventCamera(eventTime, 5.0, 9.0,  new THREE.Vector3(-10, 50, 150), new THREE.Vector3(-40, 50, 150), new THREE.Vector3(10, 0, -100));
 				setEventAgent(player.chara.mesh, eventTime, 5.0, 9.0,  new THREE.Vector3( 0, 3, -16), new THREE.Vector3( 0, 3, -80), new THREE.Vector3(10, 3, -100));
 				player.selectMotion = 0;
 				fogAnimate(frameTime, 0, 0, 0.3);
+				timeOfUserAnimationProc	= updateAction(aframeTime, player);
+				
 			}else if(eventTime< 14.0){
 				if(eventStep==1){
 					fogLookAt( new THREE.Vector3(1000, -200, -120) );
-					fogSetPosition( new THREE.Vector3( 0, 10, -120), new THREE.Vector3( 50, 20, 70));
+					fogSetPosition( new THREE.Vector3( 0, 50, -120), new THREE.Vector3( 50, 50, 75));
 					eventStep=2;
+					darkFog.far = 100;
 					player.selectMotion = 4;
 				}
 				let sin2_ = Math.sin(eventTime*5)*Math.sin(eventTime*50);
-				scene.fog = darkFog;
-				let intensity_ = 0.3+0.07*sin2_;
+				let intensity_ = 0.3+0.01*sin2_;
 				light.intensity = intensity_;
-				setEventCamera(eventTime, 9.0, 14.0,  new THREE.Vector3( -30, 12, -80), new THREE.Vector3( -30, 12, -160), new THREE.Vector3(1000, -200, -120));
+				setEventCamera(eventTime, 9.0, 14.0,  new THREE.Vector3( -35, 12, -80), new THREE.Vector3( -35, 12, -160), new THREE.Vector3(1000, -200, -120));
 				setEventAgent(player.chara.mesh, eventTime, 9.0, 14.0,  new THREE.Vector3( 0, 3, -80), new THREE.Vector3( 0, 3, -160), new THREE.Vector3(10, 3, -250));
 				player.selectMotion = 0;
 				fogAnimate(frameTime, 0, 0, 0.3);
+				timeOfUserAnimationProc	= updateAction(aframeTime, player);
+				
 			}else if(eventTime< 18.0){
 				if(eventStep==2){
 					fogLookAt( new THREE.Vector3(10, 0, -1000) );
@@ -51,8 +57,8 @@ function eventLoop(frameTime, update_action_, aframeTime) {
 					enemy[0].selectMotion = 4;
 				}
 				let sin2_ = Math.sin(eventTime*5)*Math.sin(eventTime*50);
-				scene.fog = darkFog;
-				let intensity_ = (eventTime-14 + 2*sin2_)*0.05;
+				darkFog.far = 0+(eventTime-14)*30;
+				let intensity_ = (eventTime-14 + 2*sin2_)*0.1;
 				light.intensity = 0;
 				spotlight.intensity = intensity_;
 				
@@ -74,11 +80,12 @@ function eventLoop(frameTime, update_action_, aframeTime) {
 			}else if(eventTime< 20.0){
 				if(eventStep==3){
 					eventStep=4;
+					darkFog.far =150;
 					enemy[0].selectMotion = 0;
 				}
 				let sin2_ = Math.sin(eventTime*5)*Math.sin(eventTime*50);
-				scene.fog = darkFog;
-				let intensity_ = (eventTime-18)*0.05 + 0.2 + 0.2*sin2_;
+				
+				let intensity_ = (eventTime-18)*0.1 + 0.2 + 0.2*sin2_;
 				light.intensity = (eventTime-18)*0.05;
 				spotlight.intensity = intensity_;
 				
@@ -88,17 +95,15 @@ function eventLoop(frameTime, update_action_, aframeTime) {
 				fogAnimate(frameTime, 0, 0, 0.3);
 				//
 				let localReyePosition = new THREE.Vector3(0,0,0);
-				let localLeyePosition = new THREE.Vector3(0,0,0);
 				// 仮
 				enemy[0].chara.mesh.skeleton.bones[18].localToWorld(localReyePosition);
-				enemy[0].chara.mesh.skeleton.bones[20].localToWorld(localLeyePosition);
 				spotlight.position.set( localReyePosition.x, localReyePosition.y, localReyePosition.z+2 );
 				eventStep=4;
 					
 				timeOfUserAnimationProc	= updateAction(aframeTime, enemy[0]);
 			}
 		}
-		timeOfUserAnimationProc	= updateAction(aframeTime, player);
+		
 		eventTime+=frameTime;
 		
 	}else if(player.chara._isLoaded==1 && player.chara.animations[0]){
