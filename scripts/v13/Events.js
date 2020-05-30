@@ -90,7 +90,7 @@ function eventLoop(frameTime, update_action_, aframeTime) {
 				spotlight.intensity = intensity_;
 				
 				setEventCamera(eventTime, 18.0, 21.0,  new THREE.Vector3( 30, 20, -250), new THREE.Vector3( 30, 20, -260), new THREE.Vector3(50, 0, -400));
-				setEventAgent(enemy[0].chara.mesh, eventTime, 18.0, 21.0,  new THREE.Vector3( 50, 3, -350), new THREE.Vector3( 30, 3, -290), new THREE.Vector3(10, 3, 250));
+				setEventAgent(enemy[0].chara.mesh, eventTime, 18.0, 21.0,  new THREE.Vector3( 50, 3, -350), new THREE.Vector3( 30, 3, -280), new THREE.Vector3(10, 3, 250));
 				//player.selectMotion = 0;
 				fogAnimate(frameTime, 0, 0, 0.3);
 				//
