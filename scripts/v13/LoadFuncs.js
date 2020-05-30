@@ -99,7 +99,7 @@ function LoadCharacter(chara, physics_){
 	      animation: chara.animations,
 	      physics: physics_,
 	      //warmup  : 6,
-	      //unitStep : 1/120
+	      unitStep : 1/80
 	    });
 	    chara._isLoaded =1;
 	        

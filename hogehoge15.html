@@ -164,27 +164,56 @@
 			document.getElementById('canvas3d').appendChild( renderer.domElement );
 
 			
-			// 形状データを作成
-			var geometry = new THREE.Geometry();
-			var numParticles = 20000;
-			for(var i = 0 ; i < numParticles ; i++) {
-			  geometry.vertices.push(new THREE.Vector3(
-			    Math.random() * 200 - 100,
-			    Math.random() * 100 - 100,
-			    Math.random() * 200 - 100));
-			}
-			 
+
 			// マテリアルを作成
-			var texture =THREE.ImageUtils.loadTexture('canvas/F.png');
-			var material = new THREE.ParticleBasicMaterial({
-			  size: 0.5, color: 0x888888, blending: THREE.AdditiveBlending,
-			  transparent: true, depthTest: false, map: texture });
-			 
+			var texture =THREE.ImageUtils.loadTexture('effects/fog.png');
+			var material = new THREE.MeshLambertMaterial({
+			  color: 0x666666, 
+			  blending: THREE.AdditiveBlending,
+			  transparent: true, depthTest: false, map: texture, side : THREE.DoubleSide });
+			
 			// 物体を作成
-			var mesh = new THREE.ParticleSystem(geometry, material);
-			mesh.position = new THREE.Vector3(0, 0, -1200);
-			mesh.sortParticles = false;
-			scene.add(mesh);
+			var fogObject = new THREE.Group();
+			
+			fogObject.position = new THREE.Vector3(0, 0, -0);
+
+			// 形状データを作成
+			var numParticles = 250;
+			for(var i = 0 ; i < numParticles ; i++) {
+				var geometry = new THREE.PlaneGeometry(80,80);
+				// 0, 75, 0 +-
+				var mesh = new THREE.Mesh(geometry, material);
+				mesh.sortParticles = false;
+			  	fogObject.add(mesh);
+			}
+			scene.add(fogObject);
+			console.log(fogObject);
+			
+			function fogAnimate(frameTime, x_, y_, z_){
+				let rotationX, rotationY, rotationZ;  
+				for(let i = 0 ; i < fogObject.children.length ; i++) {
+					rotationX =  x_ *frameTime * (Math.random()+1)/2; 
+					rotationY =  y_ *frameTime * (Math.random()+1)/2; 
+					rotationZ =  z_ *frameTime * (Math.random()+1)/2;   
+					fogObject.children[i].rotation.x += rotationX;
+					fogObject.children[i].rotation.y += rotationY;
+					fogObject.children[i].rotation.z += rotationZ;
+				}
+			}
+			function fogLookAt( vector ){
+				for(let i = 0 ; i < fogObject.children.length ; i++) {
+					fogObject.children[i].lookAt( vector );
+				}
+			}
+			function fogSetPosition( center, ranges){
+				for(let i = 0 ; i < fogObject.children.length ; i++) {
+					fogObject.children[i].position.set(
+						Math.random() * ranges.x*2 - ranges.x + center.x,
+					    Math.random() * ranges.y*2 - ranges.y + center.y,
+					    Math.random() * ranges.z*2 - ranges.z + center.z);
+				}
+			}
+			
 			
 			//フィールドマップの読み込み
 			
@@ -247,7 +276,7 @@
 			
 			// モーションファイル (vmd:Vocaloid Motion Data)
 			var motionFiles = [
-				{filePath : './vmd/walk/walk_short.vmd', 
+				{filePath : './vmd/walk/walk.vmd', 
 				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },	
 				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12_short.vmd',  
 				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },
@@ -278,7 +307,7 @@
 			];
 			
 			// load のためのオブジェクトを作る			
-			var seiten 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12_fewbones.pmx', motionFiles);
+			var seiten;
 			var miku 	= new MyCharacter('https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd', motionFiles);
 			var t_komainu 	= new MyCharacter('./models/t_komainu_ver132/橘狛犬1.323.pmx', motionFiles);
 			var oyuki 	= new MyCharacter('./models/oyuki/おゆきver1.1.pmx', motionFiles);
@@ -288,6 +317,8 @@
 			
 			if(physicsON==true){
 				seiten = new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
+			}else{
+				seiten = new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12_fewbones.pmx', motionFiles);
 			}
 						
 			// 

@@ -534,7 +534,7 @@ function updateAction(frameTime, agent){
 	// motionが切り替わった時
 	if(agent.lastMotion != agent.selectMotion){
 		 //
-		 actions[agent.lastMotion].weight =0.3;
+		 actions[agent.lastMotion].weight =0.6;
 		 agent.chara.helper.update( frameTime );
 		 actions[agent.lastMotion].fadeOut(agent.chara.motionFiles[agent.lastMotion].fadeOut);
 		 //
