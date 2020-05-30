@@ -2,7 +2,7 @@ var flareColor = new THREE.Color(0xffaacc);
 const spotlight = new THREE.PointLight(0xff0000, 1, 50, 1.0);
 var darkFog = new THREE.Fog(0x222222, 0.1, 300);
 //main loop
-let eventTime=0;
+eventTime=0;
 let eventStep=0; 
 function eventLoop(frameTime, update_action_, aframeTime) {
 	
@@ -11,6 +11,7 @@ function eventLoop(frameTime, update_action_, aframeTime) {
 		player.selectMotion = 4;
 		if(eventTime> 2.0){
 			if(eventTime< 5.0){
+				player.chara.actions[player.selectMotion].weight =0.5;
 				timeOfUserAnimationProc	= updateAction(aframeTime, player);
 			}else if(eventTime< 9.0){
 				if(eventStep==0){
@@ -31,6 +32,7 @@ function eventLoop(frameTime, update_action_, aframeTime) {
 				timeOfUserAnimationProc	= updateAction(aframeTime, player);
 				
 			}else if(eventTime< 14.0){
+				player.selectMotion = 0;
 				if(eventStep==1){
 					fogLookAt( new THREE.Vector3(1000, -200, -120) );
 					fogSetPosition( new THREE.Vector3( 0, 50, -120), new THREE.Vector3( 50, 50, 75));
@@ -43,7 +45,7 @@ function eventLoop(frameTime, update_action_, aframeTime) {
 				light.intensity = intensity_;
 				setEventCamera(eventTime, 9.0, 14.0,  new THREE.Vector3( -35, 12, -80), new THREE.Vector3( -35, 12, -160), new THREE.Vector3(1000, -200, -120));
 				setEventAgent(player.chara.mesh, eventTime, 9.0, 14.0,  new THREE.Vector3( 0, 3, -80), new THREE.Vector3( 0, 3, -160), new THREE.Vector3(10, 3, -250));
-				player.selectMotion = 0;
+				
 				fogAnimate(frameTime, 0, 0, 0.3);
 				timeOfUserAnimationProc	= updateAction(aframeTime, player);
 				

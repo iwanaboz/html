@@ -235,5 +235,5 @@ var pEffect = [];
 var scaleOfWorld;
 var field_isLoaded =0;
 var displayedItemId=-1;
-
+var eventTime=0;
 
