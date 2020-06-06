@@ -172,9 +172,9 @@ function userMove(frameTime, agent) {
 	}
 	
 	// 衝突判定(defined below)
-	if (script_version >= 10 ){
-		fieldCollision(agent, agent.direction, frameTime);
-	}
+
+	fieldCollision(agent, agent.direction, frameTime);
+
 	
 	// 最下点着地
 	if ( agent.position.y <= 0){
@@ -559,18 +559,18 @@ function fieldCollision(agent, direction, frameTime){
 	// 下準備--------------------------------------------------------------
 	let fLocalGridId;
 
-	if(script_version>12){
-		let fLocalx = Math.floor( (agent.position.x+500)/250);
-		let fLocalz = Math.floor( (agent.position.z+500)/250);
-		if(fLocalx <0){fLocalx=0;}
-		if(fLocalx >3){fLocalx=3;}
-		if(fLocalz <0){fLocalz=0;}
-		if(fLocalz >3){fLocalz=3;}
-		if(mouseDrag>0){
-			//console.log(fLocalx+','+fLocalz);
-		}
-		fLocalGridId = fLocalx + fLocalz*4;
+	// grid
+	let fLocalx = Math.floor( (agent.position.x+500)/250);
+	let fLocalz = Math.floor( (agent.position.z+500)/250);
+	if(fLocalx <0){fLocalx=0;}
+	if(fLocalx >3){fLocalx=3;}
+	if(fLocalz <0){fLocalz=0;}
+	if(fLocalz >3){fLocalz=3;}
+	if(mouseDrag>0){
+		//console.log(fLocalx+','+fLocalz);
 	}
+	fLocalGridId = fLocalx + fLocalz*4;
+	
 		
 	
 	searchLength = 200*scaleOfWorld;
@@ -605,11 +605,8 @@ function fieldCollision(agent, direction, frameTime){
 	//-------------------------------------------------------------------
 	
 	// (1)衝突検出Y-----------------------
-	if(script_version<13){
-		var intersects = Yray.intersectObjects( fieldObjs.children, true); 
-	}else{
-		var intersects = Yray.intersectObjects( fieldLocalGrid.children[fLocalGridId], true); 
-	}
+	var intersects = Yray.intersectObjects( fieldLocalGrid.children[fLocalGridId], true); 
+
 	// 足Y: 足側で最も高いものを探す
 	// 頭Y: 頭側で最も低いものを探す
 	var footHighestYLocal = -searchLength;
@@ -632,12 +629,8 @@ function fieldCollision(agent, direction, frameTime){
 	// (2)衝突検出Z-----------------------
 	var footNearestZLocal =searchLength;
 	if (direction ==1 || direction ==2){
-		if(script_version<13){
-			intersects = ZrayFoot.intersectObjects(fieldObjs.children, true);
-		}else{
-			//intersects = ZrayFoot.intersectObjects(fieldObjs.children, true);
-			intersects = ZrayFoot.intersectObjects(fieldLocalGrid.children[fLocalGridId], true);
-		}
+		
+		intersects = ZrayFoot.intersectObjects(fieldLocalGrid.children[fLocalGridId], true);
 		// z: 最も距離が近いもの
 		//
 		for (let i = 0; i < intersects.length; i++) {
@@ -666,11 +659,7 @@ function fieldCollision(agent, direction, frameTime){
 	var footNearestXLocal =searchLength;
 	if (direction >=3){
 		
-		if(script_version<13){
-			intersects = XrayFoot.intersectObjects(fieldObjs.children, true);
-		}else{
-			intersects = XrayFoot.intersectObjects(fieldLocalGrid.children[fLocalGridId], true);
-		}
+		intersects = XrayFoot.intersectObjects(fieldLocalGrid.children[fLocalGridId], true);
 		
 		var intersectsFX = intersects;
 		// x: 最も距離が近いもの
@@ -716,12 +705,12 @@ function fieldCollision(agent, direction, frameTime){
 	
 	// radius*30%の高さにX衝突面がある場合、近ければ押し出す
 	if ( Math.abs(footNearestXLocal) < collisionRadius){
-		if(direction==4){
-			agent.position.z -= collisionRadius * ZRayVect.x;
-			agent.position.x -= collisionRadius * ZRayVect.z;
-		}else if(direction==3){
-			agent.position.z += collisionRadius * ZRayVect.x;
+		if(direction==4){ //d
+			//agent.position.z -= collisionRadius * ZRayVect.x;
 			agent.position.x += collisionRadius * ZRayVect.z;
+		}else if(direction==3){ //a
+			//agent.position.z += collisionRadius * ZRayVect.x;
+			agent.position.x -= collisionRadius * ZRayVect.z;
 		}
 	}
 	

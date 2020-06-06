@@ -240,6 +240,10 @@ var eventTime=0;
 var physicsON=true;
 var loading=1;
 
+var eventOn=0;
+
+
+
 // detect UI
 var UIType = 0;
 const ua = navigator.userAgent;

@@ -51,6 +51,7 @@
 		<script src="./scripts/v16/LoadFuncs.js"></script>
 		<script src="./scripts/v16/ItemAction.js"></script>
 		<script src="./scripts/v16/Contents.js"></script>
+		<script src="./scripts/v16/StageSelect.js"></script>
 		<script>
 		// chara や loadObject にmeshを持たせて非同期でロード、 (ステージごとの)完全な初期化はanimateでロード完了を監視する。
 		
@@ -168,9 +169,11 @@
 				promises[4] = LoadCharacter(t_komainu, physicsON);
 				await Promise.all(promises);
 				console.log("loaded" );
-				loading=0;
-				ctx.clearRect(0, 0, canvas2d_.width, canvas2d_.height);
-				dispButtons();
+				loading=2;
+				drawText( 'Touch to start', canvas2d_.width*0.4, 
+							canvas2d_.height*0.25, canvas2d_.width*0.5, canvas2d_.height*0.30, 
+							18, true);
+
 			}
 			assetInitLoad();
 			
@@ -193,6 +196,7 @@
 				enemy[i].isJoin = 0;
 			}
 			
+			setStage();
 			
 			//
 			video = document.getElementById("video0");
@@ -242,12 +246,15 @@
 				
 				//
 				if(loading <=0){
-					pEffect[0].sprite.material.map.needsUpdate = true;
-					mainLoop(frameTime, true, frameTime);
-					//eventLoop(frameTime, true, frameTime);
+					if(eventOn > 0){
+						//pEffect[0].sprite.material.map.needsUpdate = true;
+						eventLoop(frameTime, true, frameTime);
+					}else{
+						mainLoop(frameTime, true, frameTime);
+					}
 					// stats (fpsメーター)
 					stats.update();
-				}else{
+				}else if(loading==1){
 					let str_;
 					if(time%16<4){str_ = '―';
 					}else if(time%16< 8){str_ = '／';
@@ -257,7 +264,6 @@
 							canvas2d_.height*0.25, canvas2d_.width*0.5, canvas2d_.height*0.30, 
 							12, true);
 
-			  	
 				}
 				
 				// シーンを描画

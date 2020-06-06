@@ -13,7 +13,12 @@ canvas2d_.addEventListener('mousemove', e => {
 // マウスが押されたとき
 canvas2d_.addEventListener('mousedown', e => {
   	mouseDrag = 1;
-  	//console.log( player );
+  	if(loading ==2){
+		ctx.clearRect(0, 0, canvas2d_.width, canvas2d_.height);
+  		loading=0;
+  		eventOn=1;
+  	}
+  	console.log( player.viewVect );
 });
 // マウスが離されたとき
 canvas2d_.addEventListener('mouseup', e => {
@@ -83,7 +88,11 @@ canvas2d_.addEventListener("touchstart", function(e) {
 	    	BG.onButtonThenPush(touchInfo[i].identifier, touchInfo[i].pageX, touchInfo[i].pageY);
 	    }
 	}
-
+	if(loading ==2){
+		ctx.clearRect(0, 0, canvas2d_.width, canvas2d_.height);
+  		loading=0;
+  		eventOn=1;
+	}
 }, false);
 
 
