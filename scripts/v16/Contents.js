@@ -10,32 +10,33 @@ Fbut.src = "./canvas/F.png";
 const Gbut = new Image();
 Gbut.src = "./canvas/G.png"; 
 
-ctx.font = '10px Times Roman';
-// スマホなら表示する項目
-if(UIType>0){
-	ctx.font = '20px Times Roman';
-	// control
-	sousa.onload = () => {
-		ctx.drawImage(sousa, 0, canvas2d_.height*0.7,
-					 canvas2d_.height*0.2, canvas2d_.height*0.2);
-	};
-	// space
-	space.onload = () => {
-		ctx.drawImage(space, canvas2d_.width*0.4, canvas2d_.height*0.75,
-					 canvas2d_.height*0.14, canvas2d_.height*0.14);
-	};
-	// F
-	Fbut.onload = () => {
-		ctx.drawImage(Fbut, canvas2d_.width*0.65, canvas2d_.height*0.78,
-					 canvas2d_.height*0.09, canvas2d_.height*0.09);
-	};
-	// G
-	Gbut.onload = () => {
-		ctx.drawImage(Gbut, canvas2d_.width*0.85, canvas2d_.height*0.78,
-					 canvas2d_.height*0.09, canvas2d_.height*0.09);
-	};
+function dispButtons(){
+	// スマホなら表示する項目
+	ctx.font = '10px Times Roman';
+	if(UIType>0){
+		ctx.font = '20px Times Roman';
+		// control
+		sousa.onload = () => {
+			ctx.drawImage(sousa, 0, canvas2d_.height*0.7,
+						 canvas2d_.height*0.2, canvas2d_.height*0.2);
+		};
+		// space
+		space.onload = () => {
+			ctx.drawImage(space, canvas2d_.width*0.4, canvas2d_.height*0.75,
+						 canvas2d_.height*0.14, canvas2d_.height*0.14);
+		};
+		// F
+		Fbut.onload = () => {
+			ctx.drawImage(Fbut, canvas2d_.width*0.65, canvas2d_.height*0.78,
+						 canvas2d_.height*0.09, canvas2d_.height*0.09);
+		};
+		// G
+		Gbut.onload = () => {
+			ctx.drawImage(Gbut, canvas2d_.width*0.85, canvas2d_.height*0.78,
+						 canvas2d_.height*0.09, canvas2d_.height*0.09);
+		};
+	}
 }
-
 
 //************************************************************
 //シーン**********

@@ -52,15 +52,28 @@
 		<script src="./scripts/v16/ItemAction.js"></script>
 		<script src="./scripts/v16/Contents.js"></script>
 		<script>
-		// chara や loadObject にmeshを持たせて非同期でロード、 (ステージごとの)初期化はanimateでロード完了を監視する。
+		// chara や loadObject にmeshを持たせて非同期でロード、 (ステージごとの)完全な初期化はanimateでロード完了を監視する。
 		
 		
 			script_version = 16;
 			scaleOfWorld =1;
 			
-			
+			// 2D canvas
+			function loadingDisp() {
+				// スマホなら
+				if(UIType>0){ctx.font = '40px Times Roman';}else{ctx.font = '20px Times Roman';}
+				ctx.clearRect(0, 0, canvas2d_.width, canvas2d_.height);
+			  	ctx.rect( 0, 0, canvas2d_.width, canvas2d_.height )
+			  	ctx.fillStyle = 'rgba( 0, 0, 0)';
+			  	ctx.fill();
+			  	ctx.fillStyle = 'rgba( 0, 255, 200)';
+			  	ctx.fillText( 'ヒデオ', 0, 40);
+			}
+
 			// 2D canvas
 			function drawText( str_ ) {
+				// スマホなら
+				if(UIType>0){ctx.font = '20px Times Roman';}else{ctx.font = '10px Times Roman';}
 				ctx.clearRect(0, 0, canvas2d_.width, canvas2d_.height*0.1);
 			  	
 			  	ctx.fillStyle = 'rgba( 50, 200, 255)';
@@ -68,6 +81,8 @@
 			}
 			// 2D canvas
 			function drawGuide( str_ ) {
+				// スマホなら
+				if(UIType>0){ctx.font = '20px Times Roman';}else{ctx.font = '10px Times Roman';}
 				ctx.clearRect(0, canvas2d_.height*0.20, canvas2d_.width, canvas2d_.height*0.30);
 			  	
 			  	ctx.fillStyle = 'rgba( 50, 200, 255)';
@@ -76,6 +91,7 @@
 			
 
 			console.log("ﾄﾞｯ！");
+			
   			console.log(light);
 			console.log(camera);
 			console.log(fogObject);
@@ -130,7 +146,7 @@
 			
 			//
 			// 初期 assetsのよみこみ
-			
+			loadingDisp();
 			async function assetInitLoad() {
 				const promises = [];
 				// 
@@ -142,6 +158,8 @@
 				await Promise.all(promises);
 				console.log("loaded" );
 				loading=0;
+				ctx.clearRect(0, 0, canvas2d_.width, canvas2d_.height);
+				dispButtons();
 			}
 			assetInitLoad();
 			
@@ -218,6 +236,14 @@
 					//eventLoop(frameTime, true, frameTime);
 					// stats (fpsメーター)
 					stats.update();
+				}else{
+					let str_;
+					if(time%16<4){str_ = '―';
+					}else if(time%16< 8){str_ = '／';
+					}else if(time%16<12){str_ = '｜';
+					}else{str_ = '＼';}
+					
+					drawGuide( 'Now Loading...' + str_ );
 				}
 				
 				// シーンを描画
@@ -242,10 +268,12 @@
 				//
 				timeOfRendering = t1-t0;
 				if(time%30==0){
-					drawText( 'R:'+timeOfRendering.toFixed(3)+', '
+					if(loading <=0){
+						drawText( 'R:'+timeOfRendering.toFixed(3)+', '
 							 +', Uc:'+timeOfUserActionProc.toFixed(3)+', Ua:'+timeOfUserAnimationProc.toFixed(3)
 							 +', Fc:'+timeOfFriendActionProc.toFixed(3)+', Fa:'+timeOfFriendAnimationProc.toFixed(3)
 							 );
+					}
 				}
 				time +=1;
 				if(time>10000){time=0;}
