@@ -717,11 +717,11 @@ function fieldCollision(agent, direction, frameTime){
 	// radius*30%の高さにX衝突面がある場合、近ければ押し出す
 	if ( Math.abs(footNearestXLocal) < collisionRadius){
 		if(direction==4){
-			agent.position.z -= collisionRadius * ZRayVect.x;
-			agent.position.x -= collisionRadius * ZRayVect.z;
-		}else if(direction==3){
-			agent.position.z += collisionRadius * ZRayVect.x;
+			//agent.position.z -= collisionRadius * ZRayVect.x;
 			agent.position.x += collisionRadius * ZRayVect.z;
+		}else if(direction==3){
+			//agent.position.z += collisionRadius * ZRayVect.x;
+			agent.position.x -= collisionRadius * ZRayVect.z;
 		}
 	}
 	
