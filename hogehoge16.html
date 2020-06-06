@@ -63,15 +63,26 @@
 				// スマホなら
 				if(UIType>0){ctx.font = '40px Times Roman';}else{ctx.font = '20px Times Roman';}
 				ctx.clearRect(0, 0, canvas2d_.width, canvas2d_.height);
-			  	ctx.rect( 0, 0, canvas2d_.width, canvas2d_.height )
 			  	ctx.fillStyle = 'rgba( 0, 0, 0)';
-			  	ctx.fill();
+			  	ctx.fillRect( 0, 0, canvas2d_.width, canvas2d_.height )
+			  	
 			  	ctx.fillStyle = 'rgba( 0, 255, 200)';
 			  	ctx.fillText( 'ヒデオ', 0, 40);
 			}
-
+			function drawText( str_, x_, y_, w_, h_, size_, fill_) {
+				// スマホなら
+				if(UIType>0){ctx.font = String(2*size_)+'px Times Roman';}else{ctx.font = String(size_)+'px Times Roman';}
+				ctx.clearRect(x_-2*size_, y_-2*size_, w_, h_);
+				if(fill_ ==true){
+					ctx.fillStyle = 'rgba( 0, 0, 0)';
+					ctx.fillRect(x_-2*size_, y_-2*size_, w_, h_);
+				}
+				ctx.fillStyle = 'rgba( 50, 200, 255)';
+			  	ctx.fillText( str_, x_, y_);
+			}
+			
 			// 2D canvas
-			function drawText( str_ ) {
+			function drawProfile( str_ ) {
 				// スマホなら
 				if(UIType>0){ctx.font = '20px Times Roman';}else{ctx.font = '10px Times Roman';}
 				ctx.clearRect(0, 0, canvas2d_.width, canvas2d_.height*0.1);
@@ -242,8 +253,11 @@
 					}else if(time%16< 8){str_ = '／';
 					}else if(time%16<12){str_ = '｜';
 					}else{str_ = '＼';}
-					
-					drawGuide( 'Now Loading...' + str_ );
+					drawText( 'Now Loading...' + str_ , canvas2d_.width*0.4, 
+							canvas2d_.height*0.25, canvas2d_.width*0.5, canvas2d_.height*0.30, 
+							12, true);
+
+			  	
 				}
 				
 				// シーンを描画
@@ -269,7 +283,7 @@
 				timeOfRendering = t1-t0;
 				if(time%30==0){
 					if(loading <=0){
-						drawText( 'R:'+timeOfRendering.toFixed(3)+', '
+						drawProfile( 'R:'+timeOfRendering.toFixed(3)+', '
 							 +', Uc:'+timeOfUserActionProc.toFixed(3)+', Ua:'+timeOfUserAnimationProc.toFixed(3)
 							 +', Fc:'+timeOfFriendActionProc.toFixed(3)+', Fa:'+timeOfFriendAnimationProc.toFixed(3)
 							 );
