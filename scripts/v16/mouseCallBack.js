@@ -1,4 +1,4 @@
-var canvas2d_ = document.getElementById('canvas2d');
+//var canvas2d_ = document.getElementById('canvas2d');
 var cW = canvas2d_.offsetWidth;
 var cH = canvas2d_.offsetHeight;
 let r_control = cH*0.1;

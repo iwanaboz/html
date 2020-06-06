@@ -225,6 +225,7 @@ var MyButton = function(canvas_, X_, Y_, width_, height_, key_ ){
 
 // field
 var script_version = 0; 
+var stageSelect =0;
 var fieldObjs = new THREE.Group();
 var player;
 var friend =[];
@@ -236,4 +237,24 @@ var scaleOfWorld;
 var field_isLoaded =0;
 var displayedItemId=-1;
 var eventTime=0;
+var physicsON=true;
+var loading=1;
 
+// detect UI
+var UIType = 0;
+const ua = navigator.userAgent;
+if (ua.indexOf('iPhone') > -1 || (ua.indexOf('Android') > -1 && ua.indexOf('Mobile') > -1)) {
+    // スマートフォン
+    UIType = 1;
+    physicsON=false;
+} else if (ua.indexOf('iPad') > -1 || ua.indexOf('Android') > -1) {
+    // タブレット
+    UIType = 2;
+} else {
+    // PC
+}
+
+// canvas object for 2d rendering
+var canvas2d_ = document.getElementById('canvas2d');
+canvas2d_.width = window.innerWidth;
+canvas2d_.height = window.innerHeight;

@@ -18,9 +18,9 @@ function mainLoop(frameTime, update_action_, aframeTime) {
 	}
 	
 	// 味方キャラ
-	if(script_version>11){
-		for (let i=0;i<1;i++){
-			// 他キャラ
+	for (let i=0;i<1;i++){
+		// 他キャラ
+		if(friend[i].chara._isJoin>1){
 			if(friend[i].chara._isLoaded>1){
 				// playerAction.js
 					timeOfFriendActionProc += npcMove(frameTime, friend[i]);
@@ -35,10 +35,12 @@ function mainLoop(frameTime, update_action_, aframeTime) {
 		}
 	}
 	
+	
 	// 敵キャラ
-	if(script_version>13){
-		for (let i=0;i<1;i++){
-			// 敵キャラ
+
+	for (let i=0;i<1;i++){
+		// 敵キャラ
+		if(enemy[i].chara._isJoin>1){
 			if(enemy[i].chara._isLoaded>1){
 				// playerAction.js
 					timeOfFriendActionProc += npcMove(frameTime, enemy[i]);
@@ -52,6 +54,7 @@ function mainLoop(frameTime, update_action_, aframeTime) {
 			}
 		}
 	}
+
 	
 	// Item
 	if(script_version>13){

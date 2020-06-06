@@ -103,7 +103,8 @@ function LoadCharacter(chara, physics_){
 		      unitStep : 1/80
 		    });
 		    chara._isLoaded =1;
-		        
+		    resolve(true);
+		    
 	    }, onProgress, onError);
 	});	    
 }

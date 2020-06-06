@@ -50,154 +50,47 @@
 		<script src="./scripts/v16/Events.js"></script>
 		<script src="./scripts/v16/LoadFuncs.js"></script>
 		<script src="./scripts/v16/ItemAction.js"></script>
+		<script src="./scripts/v16/Contents.js"></script>
 		<script>
 		// chara や loadObject にmeshを持たせて非同期でロード、 (ステージごとの)初期化はanimateでロード完了を監視する。
 		
 		
-			script_version = 14;
+			script_version = 16;
 			scaleOfWorld =1;
-			var physicsON=true;
-			var UIType = 0;
-			const ua = navigator.userAgent;
-			if (ua.indexOf('iPhone') > -1 || (ua.indexOf('Android') > -1 && ua.indexOf('Mobile') > -1)) {
-			    // スマートフォン
-			    UIType = 1;
-			    physicsON=false;
-			} else if (ua.indexOf('iPad') > -1 || ua.indexOf('Android') > -1) {
-			    // タブレット
-			    UIType = 2;
-			} else {
-			    // PC
-			}
-
-			let canvas_ = document.getElementById('canvas2d');
-			
-			canvas_.width = window.innerWidth;
-			canvas_.height = window.innerHeight;
-			
-			let ctx = canvas_.getContext("2d");
-			const sousa = new Image();
-			sousa.src = "./canvas/sousa.png";  // 画像のURLを指定
-			const space = new Image();
-			space.src = "./canvas/space.png"; 
-			const Fbut = new Image();
-			Fbut.src = "./canvas/F.png"; 
-			const Gbut = new Image();
-			Gbut.src = "./canvas/G.png"; 
-			
-			ctx.font = '10px Times Roman';
-			// スマホなら表示する項目
-			if(UIType>0){
-				ctx.font = '20px Times Roman';
-				// control
-				sousa.onload = () => {
-					ctx.drawImage(sousa, 0, canvas_.height*0.7,
-								 canvas_.height*0.2, canvas_.height*0.2);
-				};
-				// space
-				space.onload = () => {
-					ctx.drawImage(space, canvas_.width*0.4, canvas_.height*0.75,
-								 canvas_.height*0.14, canvas_.height*0.14);
-				};
-				// F
-				Fbut.onload = () => {
-					ctx.drawImage(Fbut, canvas_.width*0.65, canvas_.height*0.78,
-								 canvas_.height*0.09, canvas_.height*0.09);
-				};
-				// G
-				Gbut.onload = () => {
-					ctx.drawImage(Gbut, canvas_.width*0.85, canvas_.height*0.78,
-								 canvas_.height*0.09, canvas_.height*0.09);
-				};
-			}
-			//
 			
 			
 			// 2D canvas
 			function drawText( str_ ) {
-				ctx.clearRect(0, 0, canvas_.width, canvas_.height*0.1);
+				ctx.clearRect(0, 0, canvas2d_.width, canvas2d_.height*0.1);
 			  	
 			  	ctx.fillStyle = 'rgba( 50, 200, 255)';
-			  	ctx.fillText( str_, canvas_.width*0.22, 18);
+			  	ctx.fillText( str_, canvas2d_.width*0.22, 18);
 			}
 			// 2D canvas
 			function drawGuide( str_ ) {
-				ctx.clearRect(0, canvas_.height*0.20, canvas_.width, canvas_.height*0.30);
+				ctx.clearRect(0, canvas2d_.height*0.20, canvas2d_.width, canvas2d_.height*0.30);
 			  	
 			  	ctx.fillStyle = 'rgba( 50, 200, 255)';
-			  	ctx.fillText( str_, canvas_.width*0.4, canvas_.height*0.25);
+			  	ctx.fillText( str_, canvas2d_.width*0.4, canvas2d_.height*0.25);
 			}
 			
-			//drawGuide('adhishdoiahsi');
-			// Our Javascript will go here.
+
 			console.log("ﾄﾞｯ！");
-			//シーンを用意
-			var scene = new THREE.Scene();
-			
-			//光源を用意してシーンに追加
-			const light = new THREE.DirectionalLight(0x777777, 1);
-			light.position.x=0.2;
-			light.position.z=0.2;
-  			scene.add(light);
   			console.log(light);
-  			
-  			//カメラの場所 (画角、縦横比、写す手前と後ろの限界)
-			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 10, 500 );
-			//カメラの場所（右手座標系）
-			camera.position.x = 0;
-			camera.position.y = 2;
-			camera.position.z = 5;
 			console.log(camera);
-			//
+			console.log(fogObject);
+			console.log(fieldObjs);
+			
+			// fps表示
 			const stats = new Stats();
 			stats.setMode(0);
 			stats.domElement.style.position = "absolute";
 			stats.domElement.style.left = "0px";
 			stats.domElement.style.top  = "0px";
 			document.getElementById('canvas3d').appendChild(stats.domElement);
-			//描画するシステムを用意
-			var renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
-			renderer.setPixelRatio( window.devicePixelRatio );
 			
-			//描画サイズをwindowサイズに
-			renderer.setSize( window.innerWidth, window.innerHeight );
-			document.getElementById('canvas3d').appendChild( renderer.domElement );
-
-			
-
-			// マテリアルを作成
-			var texture =THREE.ImageUtils.loadTexture('effects/fog.png');
-			var material = new THREE.MeshLambertMaterial({
-			  color: 0xeeeeee, 
-			  blending: THREE.AdditiveBlending,
-			  transparent: true, depthTest: false, map: texture, side : THREE.DoubleSide });
-			
-			// 物体を作成
-			var fogObject = new THREE.Group();
-			
-			fogObject.position = new THREE.Vector3(0, 0, -0);
-
-			// 形状データを作成
-			var numParticles = 50;
-			for(var i = 0 ; i < numParticles ; i++) {
-				var geometry = new THREE.PlaneGeometry(160,160);
-				// 0, 75, 0 +-
-				var mesh = new THREE.Mesh(geometry, material);
-				mesh.sortParticles = false;
-			  	fogObject.add(mesh);
-			}
-			console.log(fogObject);
-			
-			
-			
-			
-			//フィールドマップの読み込み
-			
-			var Fld_land = new MyLoadObject('models/field/Cartoon_land.3DS');
-			console.log(Fld_land);
-			TDSLoad( Fld_land, 15, -90, 0, 0, true );
-			
-			
+			//フィールド
+			scene.add(fieldObjs);
 			
 			// 衝突判定のための部分空間
 			// 4x4の空間　フィールドは約1000x1000
@@ -209,12 +102,12 @@
 			の真ん中から200 のboundingboxでobjectを登録する
 			*/
 			var fieldLocalGrid = new THREE.Group();
-			fieldLocalGrid.children=[];
-			let fLocalGrid = [-375, -125, 125, 375];
 			
 			// フィールドの準備
 			function initfieldObjs(){
 				//
+				fieldLocalGrid.children=[];
+				let fLocalGrid = [-375, -125, 125, 375];
 				for (let ig = 0; ig < 16; ig++){
 					let array = [];
 					for (let i = 0; i < fieldObjs.children.length; i++){
@@ -236,73 +129,23 @@
 			}
 			
 			//
-			scene.add(fieldObjs);
-		
-			var barrel = new MyLoadObject('models/winebarrel/winebarrel.glb');
-			GTLFLoad( barrel, 6, 90, 0, 0 );
+			// 初期 assetsのよみこみ
 			
-			
-			
-			// pmd/pmxファイルの読み込み
-			var mesh_loaded = 0;
-				
-			// Load a MMD model
-			//modelFile = './models/seiten_ver112/斉天大聖ver1.12.pmx';
-			//modelFile = 'https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd';
-			
-			// モーションファイル (vmd:Vocaloid Motion Data)
-			var motionFiles = [
-				{filePath : './vmd/walk/walk.vmd', 
-				loop : THREE.LoopRepeat, fadeIn: 0.0, fadeOut: 0.1, timeScale: 1 },	
-				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12_short.vmd',  
-				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },
-				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/jump_斉天大聖ver1.12.vmd',  
-				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.6, timeScale: 0.8},
-				{filePath : './vmd/Kenshi風/sing-kenshi-battle-attack1_resized.vmd',  
-				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1},
-				{filePath : './vmd/Lat式/Idle_resized/idle.vmd',  
-				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1},
-				{filePath : './vmd/格闘簡易作成用モーション/Albert-damaged-face.vmd',  
-				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1}
-			];
-			// モーションファイル２
-			var motionFiles2 = [
-				{filePath : './vmd/牛鬼モーション/牛鬼移動(壱).vmd', 
-				loop : THREE.LoopRepeat, fadeIn: 0.5, fadeOut: 0.1, timeScale: 0.5 },	
-				{filePath : './vmd/牛鬼モーション/牛鬼移動(壱).vmd', 
-				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },
-				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/jump_斉天大聖ver1.12.vmd',  
-				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.6, timeScale: 0.8},
-				{filePath : './vmd/格闘簡易作成用モーション/Albert-combo1.vmd',  
-				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1},
-				{filePath : './vmd/Lat式/Idle_resized/idle.vmd',  
-				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1},
-				{filePath : './vmd/格闘簡易作成用モーション/Albert-damaged-face.vmd',  
-				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1}
-				
-			];
-			
-			// load のためのオブジェクトを作る			
-			var seiten;
-			var miku 	= new MyCharacter('https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd', motionFiles);
-			var t_komainu 	= new MyCharacter('./models/t_komainu_ver132/橘狛犬1.323.pmx', motionFiles);
-			var oyuki 	= new MyCharacter('./models/oyuki/おゆきver1.1.pmx', motionFiles);
-			
-			//
-			var ushioni	= new MyCharacter('./models/ushioni/牛鬼.pmx', motionFiles2);
-			
-			if(physicsON==true){
-				seiten = new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
-			}else{
-				seiten = new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12_fewbones.pmx', motionFiles);
+			async function assetInitLoad() {
+				const promises = [];
+				// 
+				promises[0] = TDSLoad( Fld_land, 15, -90, 0, 0, true );
+				promises[1] = GTLFLoad( barrel, 6, 90, 0, 0 );
+				promises[2] = LoadCharacter(seiten, physicsON);
+				promises[3] = LoadCharacter(ushioni, physicsON);
+				promises[4] = LoadCharacter(t_komainu, physicsON);
+				await Promise.all(promises);
+				console.log("loaded" );
+				loading=0;
 			}
-						
-			// 
-			LoadCharacter(seiten, physicsON);
-			LoadCharacter(ushioni, physicsON);
-			LoadCharacter(t_komainu, physicsON);
-
-
+			assetInitLoad();
+			
+			
 			// player という名前で作ったobject を1つ用意する
 			player = new MyAgent();
 			player.chara = seiten;
@@ -310,14 +153,16 @@
 			friend[0] = new MyAgent();
 			friend[0].chara = t_komainu;
 			friend[0].type = 1;
-			friend[0].isJoin = 1;
+			friend[0].isJoin = 0;
 			
-			enemy[0] = new MyAgent();
-			enemy[0].chara = ushioni;
-			enemy[0].offsetPosition.y = -30;
-			enemy[0].position = new THREE.Vector3(40, 200, -300);
-			enemy[0].type = 2;
-			enemy[0].isJoin = 1;
+			for(let i=0;i<4;i++){
+				enemy[i] = new MyAgent();
+				enemy[i].chara = ushioni;
+				enemy[i].offsetPosition.y = -30;
+				enemy[i].position = new THREE.Vector3(40, 200, -300);
+				enemy[i].type = 2;
+				enemy[i].isJoin = 0;
+			}
 			
 			
 			//
@@ -367,11 +212,13 @@
 				//MainLoop.js
 				
 				//
-				pEffect[0].sprite.material.map.needsUpdate = true;
-				mainLoop(frameTime, true, frameTime);
-				//eventLoop(frameTime, true, frameTime);
-				// stats (fpsメーター)
-				stats.update();
+				if(loading <=0){
+					pEffect[0].sprite.material.map.needsUpdate = true;
+					mainLoop(frameTime, true, frameTime);
+					//eventLoop(frameTime, true, frameTime);
+					// stats (fpsメーター)
+					stats.update();
+				}
 				
 				// シーンを描画
 				let t0 = performance.now(); 
