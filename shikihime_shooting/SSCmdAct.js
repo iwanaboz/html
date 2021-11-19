@@ -174,25 +174,7 @@ function UserAction( frameTime, agent, mapArray){
     }// end if atk
     
     
-    if ( agent.act_key >= 500 ){
-			
-            input_skl = skldata[agent.sklset[agent.act_key-Katk1]];
-            if(agent.mp >= input_skl.mp){
-                agent.action = agent.act_key;            
-                agent.actT = input_skl.actT;
-                agent.stpT = input_skl.stpT;
-                agent.chgT = input_skl.chgT;
-                agent.hit_n = input_skl.hit_n;
-                agent.mp = agent.mp-input_skl.mp;
-                Update_footer();
-                LyrReset( agent.weapon.img , headURL2+input_skl.img , 25, 25)
-                if(agent.chgT>5){
-                    LyrTru("chg"+agent.id);
-                }else{
-                    LyrTru(agent.weapon.img);	
-                }
-            }else{TxtSet("message", 2, "mpが足りません");}
-    } // endif Katk1
+
 
 }
  

@@ -108,6 +108,7 @@ function mainLoop(frameTime, update_action_) {
 	    
 	}
 	// Item
+	Update_footer();
 	ItemAction(player[is], MapTmp, iMapTmp, oMapTmp);
 	       
 	//TxtSet("message", 3, 'fps '+frameRate_+'f '+player[is].stpT);
@@ -250,7 +251,7 @@ function agentCollision( my, ene, mapArray, imapArray){
             		my.stpT = wep.motion.stun*0.4;
             	}
             }
-            Update_footer();
+            //Update_footer();
             if(my.type==1 && my.boss==1){
                 updateBossHP(my);
             }
@@ -356,7 +357,7 @@ function timeAct(frameTime, agent, mapArray){
         TxtSet("txtbox"+agent.id, 3, "");
         return 0;
     }else{
-    	agent.mp += frameTime;
+    	if(agent.action != Katk1){agent.mp += frameTime;}
     	if(agent.mp > agent.maxmp){agent.mp=agent.maxmp;}
     }
     // charge motion--------------------------------------------------
@@ -437,7 +438,7 @@ function timeAct(frameTime, agent, mapArray){
 	        				let shiftedY =  Math.sin(agent.weapon[it].rotationRight+THREE.Math.degToRad(input_motion.shift));
 		        			agent.weapon[it].x = agent.x + frameTime*input_motion.lng * shiftedX ;
 			        		agent.weapon[it].y = agent.y + frameTime*input_motion.lng * shiftedY ;
-			        		Update_footer();
+			        		//Update_footer();
 			        		
 		        		}else{
 		        			//console.log(input_motion.lng);
@@ -476,7 +477,7 @@ function timeAct(frameTime, agent, mapArray){
 	        				let shiftedY =  Math.sin(agent.weapon[it].rotationRight+THREE.Math.degToRad(input_motion.shift));
 		        			agent.weapon[it].x = agent.x + frameTime*input_motion.lng * shiftedX ;
 			        		agent.weapon[it].y = agent.y + frameTime*input_motion.lng * shiftedY ;
-			        		Update_footer();
+			        		//Update_footer();
 			        		
 		        		}else{
 		        			//console.log("fire_c50.gif");
