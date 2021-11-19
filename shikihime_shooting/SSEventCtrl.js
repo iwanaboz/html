@@ -12,7 +12,7 @@ function stageClear(){
 	sound.play();
 	
 	//ending
-	if(event_id==3){event_id=4;}
+	//if(event_id==4){event_id=4;}
 		
     waitID = setTimeout( SSInit , 2000 );
 	
