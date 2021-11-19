@@ -123,7 +123,7 @@ function UserAction( frameTime, agent, mapArray){
     // change target (player)
     if ( agent.act_key == Ktgt ){
     	ChangeTarget();
-		console.log(targetID);
+		//console.log(targetID);
 		agent.act_key=0;
     }
     

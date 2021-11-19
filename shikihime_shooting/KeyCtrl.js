@@ -14,7 +14,7 @@ function keyCallBack_on(e) {
     if ( keycode == 83 ){player[1].act_key=Kdash; } //s
     if ( keycode == 68 ){player[1].act_key=Kdfen; } //d
     if ( keycode == 70 ){player[1].act_key=Ktgt;  } //change target
-	console.log( keycode  );
+	//console.log( keycode  );
 }
 
 function keyCallBack_off(e) {
