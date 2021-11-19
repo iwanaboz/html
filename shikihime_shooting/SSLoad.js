@@ -108,7 +108,7 @@ DivAdd( "footer_stat2", 630, 50);
 DivAdd( "footer_stat3", 530, 150);
 DivAdd( "footer_stat4", 630, 150);
 
-DivAdd( "footer_item",  530, 300);
+DivAdd( "footer_item",  530, 250);
 //message or debug
 DivAdd( "message",  20, 463);
 DivAdd( "header",  630, 0);

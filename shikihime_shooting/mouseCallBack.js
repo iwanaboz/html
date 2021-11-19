@@ -17,8 +17,8 @@ canvas2d_.addEventListener('mousemove', e => {
 });
 // マウスが押されたとき
 canvas2d_.addEventListener('mousedown', e => {
-  	mouseDrag = 1;
-  	//console.log( player.viewVect );
+  	//mouseDrag = 0;
+
 });
 // マウスが離されたとき
 canvas2d_.addEventListener('mouseup', e => {

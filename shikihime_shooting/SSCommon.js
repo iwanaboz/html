@@ -246,8 +246,9 @@ function Update_footer() {
     // item
     var itemtxt = ""
     if (player[1].item > 100 || player[2].item > 100){itemtxt = "かぎ"}
-    TxtSet( "footer_item", 2,"もちもの"+"</br>　"+itemtxt)
-    
+    //TxtSet( "footer_item", 2,"もちもの"+"</br>　"+itemtxt)
+    TxtSet( "footer_item", 2,"左のアイコンをどらっぐで　いどう</br>zxc：こうげき</br>  s : だっしゅ</br>  f : たーげっとへんこう")
+    	
     //LyrFal("kyho<"+(gate_x)+"_"+(gate_y)+">");
     
     //TxtSet( "message", 2,"てすてす")
