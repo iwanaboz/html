@@ -259,7 +259,6 @@ function Update_footer() {
 
 var event_on=0;
 var event_id=0;
-var pause   =1;
 var Init    =0;
 
 // hp, agi, cpulv, btlstyle

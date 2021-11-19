@@ -6,6 +6,7 @@
 
 var timerID, waitID;
 var count=0;
+var pause=1;
 
 clock = new THREE.Clock();
 let time =0;
