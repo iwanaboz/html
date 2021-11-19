@@ -123,7 +123,7 @@ LyrAdd("end",    headURL2+"end.gif",   0,0,768,512,1);
 
 LyrAdd("title",  headURL2+"title2.gif",0,0,768,512);
 
-
+TxtSet("txtbossname", 4, "Now Loading...");
 
 
 // fps表示
