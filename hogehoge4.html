@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>windowの名前</title>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+	</head>
+	<body>
+		<p>WASDでうごきます</p>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.min.js"></script>
+		<script src="./scripts/v9/keyCallBack.js"></script>
+		<script>
+			// Our Javascript will go here.
+			console.log("ﾄﾞｯ！");
+			//シーンを用意
+			var scene = new THREE.Scene();
+			//光源を用意してシーンに追加
+			const ambient = new THREE.AmbientLight(0xeeeeee);
+  			scene.add(ambient);
+  			//カメラの場所 (画角、縦横比、写す手前と後ろの限界)
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			//カメラの場所（右手座標系）
+			camera.position.x = 0;
+			camera.position.y = 2;
+			camera.position.z = 5;
+			
+			//描画するシステムを用意
+			var renderer = new THREE.WebGLRenderer();
+			//描画サイズをwindowサイズに
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+			
+			// 箱の形を用意
+			var geometry = new THREE.BoxGeometry();
+			// 表面の素材を用意
+			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+			// 形と素材を指定した cubeをつくってシーンに追加
+			var cube = new THREE.Mesh( geometry, material );
+			scene.add( cube );
+			
+			// 床グリッドを追加
+			var gridHelper = new THREE.GridHelper(500, 100);
+			scene.add(gridHelper);
+			
+			// rendererの情報を表示
+			console.log( renderer );
+			
+			// マウス情報
+			var mousex, mousey;
+			var mouseDrag=0;
+			
+			
+			function userMove(frameTime) {
+				//w
+				if(key_on[87]>0){cube.position.z -= frameTime * 5;}
+				//a
+				if(key_on[65]>0){cube.position.x -= frameTime * 5;}
+				//s
+				if(key_on[83]>0){cube.position.z += frameTime * 5;}
+				//d
+				if(key_on[68]>0){cube.position.x += frameTime * 5;}
+			}
+			
+			// 時計
+			clock = new THREE.Clock();
+			function animate() {
+				window.requestAnimationFrame( animate );
+				// 現在の1フレームの長さを取得
+				var frameTime = clock.getDelta();
+				
+				cube.rotation.x += frameTime * THREE.Math.degToRad( 20 );
+				cube.rotation.y += frameTime * THREE.Math.degToRad( 20 );
+				userMove(frameTime);
+				// シーンを描画
+				renderer.render( scene, camera );
+			}
+			animate();
+			
+			
+					 
+   
+		</script>
+		<script src="./scripts/v9/mouseCallBack.js"></script>
+	</body>
+</html>

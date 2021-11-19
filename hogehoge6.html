@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>windowの名前</title>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+	</head>
+	<body>
+		<p>WASDで動きます。クリックで視点移動</p>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/105/three.min.js"></script>
+		<script src="./scripts/v9/keyCallBack.js"></script>
+		<script>
+			// Our Javascript will go here.
+			console.log("ﾄﾞｯ！");
+			//シーンを用意
+			var scene = new THREE.Scene();
+			//光源を用意してシーンに追加
+			const ambient = new THREE.AmbientLight(0xeeeeee);
+  			scene.add(ambient);
+  			//カメラの場所 (画角、縦横比、写す手前と後ろの限界)
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			//カメラの場所（右手座標系）
+			camera.position.x = 0;
+			camera.position.y = 2;
+			camera.position.z = 5;
+			
+			//描画するシステムを用意
+			var renderer = new THREE.WebGLRenderer();
+			//描画サイズをwindowサイズに
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+			
+			// 箱の形を用意
+			var geometry = new THREE.BoxGeometry();
+			// 表面の素材を用意
+			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+			// 形と素材を指定した cubeをつくってシーンに追加
+			var cube = new THREE.Mesh( geometry, material );
+			scene.add( cube );
+			// 床グリッドを追加
+			var gridHelper = new THREE.GridHelper(500, 100);
+			scene.add(gridHelper);
+			
+			
+			// マウス情報
+			var mousex, mousey;
+			var mouseDrag=0;
+			
+			// object をつくる
+			var MyAgent = function(){
+				this.position = new THREE.Vector3(0, 0, 0);	// 場所
+				this.viewVect = new THREE.Vector3(0, 0, 0); // 向いている方向
+				this.rotationUp = 0;						// 向いている上下の角度
+				this.rotationRight = THREE.Math.degToRad( -90 );// 向いている水平方向の角度
+				
+				// 向いている角度から向いている方向を計算する
+				this.updateView = function(){
+					var y_ = Math.sin(this.rotationUp);
+					var x_ = Math.cos(this.rotationUp) * Math.cos(this.rotationRight);
+					var z_ = Math.cos(this.rotationUp) * Math.sin(this.rotationRight); 
+					this.viewVect = new THREE.Vector3(x_, y_, z_);
+				}
+			}
+			// player という名前で作ったobject を1つ用意する
+			player = new MyAgent();
+			console.log( player );
+			
+			player.position = cube.position;
+			
+			
+			//カメラの再設置
+			function cameraUpDate(agent) {
+				// カメラの場所をプレイヤーの後ろに
+				camera.position.x = agent.position.x -agent.viewVect.x *5;
+				camera.position.y = agent.position.y -agent.viewVect.y *5+2;
+				camera.position.z = agent.position.z -agent.viewVect.z *5;
+				// プレイヤーの方向を向く
+				camera.lookAt( agent.position);
+			}
+			
+			//プレーヤーの移動
+			function userMove(frameTime, mesh, agent) {
+				
+				//　マウス位置で方向転換
+				canvasWidth = renderer.domElement.offsetWidth;
+				canvasHeight = renderer.domElement.offsetHeight;
+				dest_angleRight = Math.atan2(mousex, canvasWidth);
+				dest_angleUp 	= Math.atan2(mousey, canvasHeight);
+				// 水平方向（マウスを押しているとき）
+				if( dest_angleRight && mouseDrag>0){
+					player.rotationRight += frameTime * dest_angleRight *5;
+				}
+				// 上下（マウスを押しているとき）
+				if( Math.abs(dest_angleUp) > THREE.Math.degToRad( 5 ) && 
+					Math.abs(dest_angleRight) < Math.abs(dest_angleUp) && mouseDrag>0){
+					player.rotationUp 	-= frameTime * dest_angleUp *4;
+					if(player.rotationUp >= THREE.Math.degToRad( 45 )){player.rotationUp= THREE.Math.degToRad( 45 );}
+					if(player.rotationUp <= THREE.Math.degToRad( -60 )){player.rotationUp= THREE.Math.degToRad( -60 );}
+				}
+				//　向きを更新
+				agent.updateView();
+				//w (前進)
+				if(key_on[87]>0){
+					agent.position.z += frameTime * 5 * agent.viewVect.z;
+					agent.position.x += frameTime * 5 * agent.viewVect.x;
+				}
+				//a
+				if(key_on[65]>0){
+					agent.position.z -= frameTime * 5 * agent.viewVect.x;
+					agent.position.x += frameTime * 5 * agent.viewVect.z;
+				}
+				//s (後退)
+				if(key_on[83]>0){
+					agent.position.z -= frameTime * 5 * agent.viewVect.z;
+					agent.position.x -= frameTime * 5 * agent.viewVect.x;
+				}
+				//d (右)
+				if(key_on[68]>0){
+					agent.position.z += frameTime * 5 * agent.viewVect.x;
+					agent.position.x -= frameTime * 5 * agent.viewVect.z;
+				}
+				
+				// 反映する
+				mesh.rotation.y = -agent.rotationRight;
+				mesh.position.x = agent.position.x;
+				mesh.position.y = agent.position.y;
+				mesh.position.z = agent.position.z;
+			}
+			
+			// 時計
+			clock = new THREE.Clock();
+			function animate() {
+				window.requestAnimationFrame( animate );
+				// 現在の1フレームの長さを取得
+				var frameTime = clock.getDelta();
+				
+				//player.rotationRight += frameTime * THREE.Math.degToRad( 20 );
+				
+				userMove(frameTime, cube, player);
+				cameraUpDate(player);
+				// シーンを描画
+				renderer.render( scene, camera );
+			}
+			animate();
+			
+			
+					 
+   
+		</script>
+		<script src="./scripts/v9/mouseCallBack.js"></script>
+	</body>
+</html>

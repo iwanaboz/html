@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>windowの名前</title>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+	</head>
+	<body>
+		
+		<div id="canvas3d" style="position:fixed; top:60px; left:0px; width:100%; height:100%; z-index: 1; background-color: #000000;"></div>
+		<canvas id="canvas2d" style="position:fixed; top:60px; left:0px; z-index: 100; background-color:rgba(0,0,0,0);"></canvas>
+		<div id="info">
+		Copyright
+		<a href="https://github.com/takahirox/MMDLoader-app#readme" target="_blank">MMD Assets license</a>
+		<a href="https://www.turbosquid.com/ja/3d-model/free/city" target="_blank">Field Map Data</a>
+		<a href="https://seiga.nicovideo.jp/seiga/im7587363" target="_blank">Model Data</a>
+		<a href="https://seiga.nicovideo.jp/seiga/im6805222" target="_blank">Model Data</a>
+		<a href="http://www.nicovideo.jp/mylist/1713647" target="_blank">Motion Data</a>
+		<a href="https://bowlroll.net/file/154665" target="_blank">Motion Data</a>
+		<a href="https://github.com/miu200521358/vmd_sizing/blob/master/README.md" target="_blank">vmd_sizing</a>
+		<p>WASD:走る、 SHIFT+WASD:歩く、スペース:ジャンプ、クリック(ドラッグ)で視点移動</p>
+		</div>
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/libs/stats.min.js"></script>
+
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/libs/mmdparser.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r103/examples/js/libs/ammo.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/TGALoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/MMDLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/animation/MMDAnimationHelper.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/effects/OutlineEffect.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/animation/CCDIKSolver.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/animation/MMDPhysics.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/TDSLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/ColladaLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/GLTFLoader.js"></script>
+		
+		<script src="./scripts/v13/Common.js"></script>
+		<script src="./scripts/v13/keyCallBack.js"></script>
+		<script src="./scripts/v13/playerAction.js"></script>
+		<script src="./scripts/v13/MainLoop.js"></script>
+		<script src="./scripts/v13/LoadFuncs.js"></script>
+		<script>
+			script_version = 13;
+			scaleOfWorld =1;
+			var physicsON=true;
+			var UIType = 0;
+			const ua = navigator.userAgent;
+			if (ua.indexOf('iPhone') > -1 || (ua.indexOf('Android') > -1 && ua.indexOf('Mobile') > -1)) {
+			    // スマートフォン
+			    UIType = 1;
+			    physicsON=false;
+			} else if (ua.indexOf('iPad') > -1 || ua.indexOf('Android') > -1) {
+			    // タブレット
+			    UIType = 2;
+			} else {
+			    // PC
+			}
+
+			let canvas_ = document.getElementById('canvas2d');
+			
+			canvas_.width = window.innerWidth;
+			canvas_.height = window.innerHeight;
+			
+			let ctx = canvas_.getContext("2d");
+			const sousa = new Image();
+			sousa.src = "./canvas/sousa.png";  // 画像のURLを指定
+			const space = new Image();
+			space.src = "./canvas/space.png"; 
+			ctx.font = '10px Times Roman';
+			// スマホなら表示する項目
+			if(UIType>0){
+				ctx.font = '20px Times Roman';
+				sousa.onload = () => {
+					ctx.drawImage(sousa, 0, canvas_.height*0.7,
+								 canvas_.height*0.2, canvas_.height*0.2);
+				};
+				
+				space.onload = () => {
+					ctx.drawImage(space, canvas_.width*0.4, canvas_.height*0.75,
+								 canvas_.height*0.14, canvas_.height*0.14);
+				};
+			}
+			//
+			
+			
+			// 2D canvas
+			function drawText( str_ ) {
+				ctx.clearRect(0, 0, canvas_.width, canvas_.height*0.1);
+			  	
+			  	ctx.fillStyle = 'rgba( 50, 200, 255)';
+			  	ctx.fillText( str_, canvas_.width*0.22, 18);
+			}
+			
+			
+			// Our Javascript will go here.
+			console.log("ﾄﾞｯ！");
+			//シーンを用意
+			var scene = new THREE.Scene();
+			
+			//光源を用意してシーンに追加
+			const light = new THREE.DirectionalLight(0xFFFFFF, 1);
+			light.position.x=0.2;
+			light.position.z=0.2;
+  			scene.add(light);
+  			
+  			
+  			//カメラの場所 (画角、縦横比、写す手前と後ろの限界)
+			var camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 10, 300 );
+			//カメラの場所（右手座標系）
+			camera.position.x = 0;
+			camera.position.y = 2;
+			camera.position.z = 5;
+			
+			//
+			const stats = new Stats();
+			stats.setMode(0);
+			stats.domElement.style.position = "absolute";
+			stats.domElement.style.left = "0px";
+			stats.domElement.style.top  = "0px";
+			document.getElementById('canvas3d').appendChild(stats.domElement);
+			//描画するシステムを用意
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setPixelRatio( window.devicePixelRatio );
+			
+			//描画サイズをwindowサイズに
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.getElementById('canvas3d').appendChild( renderer.domElement );
+
+			
+			// 箱の形を用意
+			var geometry = new THREE.BoxGeometry();
+			// 表面の素材を用意
+			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+			material.side = THREE.DoubleSide;
+			// 形と素材を指定した cubeをつくってシーンに追加
+			var cube = new THREE.Mesh( geometry, material );
+			cube.position.x = 50*scaleOfWorld;
+			cube.position.z = -30*scaleOfWorld;
+			cube.position.y = 10*scaleOfWorld;
+			cube.scale.x = 20*scaleOfWorld;
+			cube.scale.y = 15*scaleOfWorld;
+			cube.scale.z = 25*scaleOfWorld
+			fieldObjs.add( cube );
+			//https://blackthread.io/gltf-converter/
+			
+			//フィールドマップの読み込み
+			
+			var Fld_land = new MyLoadObject('models/field/Cartoon_land.3DS');
+			console.log(Fld_land);
+			TDSLoad( Fld_land, 15, -90, 0, 0, true );
+			
+			
+			
+			// 衝突判定のための部分空間
+			// 4x4の空間　フィールドは約1000x1000
+			/*
+			|00|01|02|03|
+			|04|05|06|07|
+			|08|09|10|11|
+			|12|13|14|15|
+			の真ん中から200 のboundingboxでobjectを登録する
+			*/
+			var fieldLocalGrid = new THREE.Group();
+			fieldLocalGrid.children=[];
+			let fLocalGrid = [-375, -125, 125, 375];
+			
+			function initfieldObjs(){
+				//
+				for (let ig = 0; ig < 16; ig++){
+					let array = [];
+					for (let i = 0; i < fieldObjs.children.length; i++){
+						var bbx = fieldObjs.children[i].geometry.boundingSphere;
+						var bbo = fieldObjs.children[i].localToWorld( bbx.center.clone() );	
+						//console.log(bbo );
+					
+						let ix = ig%4;
+						let iz = Math.floor(ig/4);
+						let lengthWLocalGrid = Math.sqrt( (bbo.x - fLocalGrid[ix])**2 + (bbo.z - fLocalGrid[iz])**2 );
+						if(lengthWLocalGrid<200 || fieldObjs.children[i].name=='Landscape0'){
+							 array.push(fieldObjs.children[i]);
+						}
+					}
+					fieldLocalGrid.children.push(array);
+				}
+				field_isLoaded = 2;
+				console.log(fieldLocalGrid );
+			}
+			
+			//
+			scene.add(fieldObjs);
+		
+			var barrel = new MyLoadObject('models/winebarrel/winebarrel.glb');
+			GTLFLoad( barrel, 10, 0, 0, 0 );
+			
+			
+			// 床グリッドを追加
+			//var gridHelper = new THREE.GridHelper(350*scaleOfWorld, 100*scaleOfWorld);
+			//scene.add(gridHelper);
+
+			
+			// pmd/pmxファイルの読み込み
+			var mesh_loaded = 0;
+				
+			// Load a MMD model
+			//modelFile = './models/seiten_ver112/斉天大聖ver1.12.pmx';
+			//modelFile = 'https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd';
+			
+			// モーションファイル (vmd:Vocaloid Motion Data)
+			var motionFiles = [
+				{filePath : './vmd/walk/walk_short.vmd', 
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },	
+				{filePath : './vmd/Lat式/Run_resized/run_斉天大聖ver1.12_short.vmd',  
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1 },
+				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/jump_斉天大聖ver1.12.vmd',  
+				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.6, timeScale: 0.8},
+				{filePath : './vmd/Lat式/Jump_resized/1.段差に飛び乗る/3.着地_(8f_移動なし).vmd',  
+				loop : THREE.LoopOnce, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1},
+				{filePath : './vmd/Lat式/Idle_resized/idle.vmd',  
+				loop : THREE.LoopRepeat, fadeIn: 0.1, fadeOut: 0.1, timeScale: 1}
+			];
+			
+			// load のためのオブジェクトを作る			
+			var seiten 	= new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12_fewbones.pmx', motionFiles);
+			var miku 	= new MyCharacter('https://cdn.rawgit.com/mrdoob/three.js/r87/examples/models/mmd/miku/miku_v2.pmd', motionFiles);
+			var t_komainu 	= new MyCharacter('./models/t_komainu_ver132/橘狛犬1.323.pmx', motionFiles);
+			var oyuki 	= new MyCharacter('./models/oyuki/おゆきver1.1.pmx', motionFiles);
+			
+			if(physicsON==true){
+				seiten = new MyCharacter('./models/seiten_ver112/斉天大聖ver1.12.pmx', motionFiles);
+			}
+			
+			
+			
+			LoadCharacter(seiten, physicsON);
+			//LoadCharacter(miku, physicsON);
+			LoadCharacter(t_komainu, physicsON);
+
+			//
+		
+
+					
+
+
+			// player という名前で作ったobject を1つ用意する
+			player = new MyAgent();
+			player.chara = seiten;
+			
+			friend[0] = new MyAgent();
+			friend[1] = new MyAgent();
+			friend[2] = new MyAgent();
+			friend[0].chara = t_komainu;
+
+			
+			//カメラの再設置
+			function cameraUpDate(agent) {
+				// カメラの場所をプレイヤーの後ろに
+				camera.position.x = agent.position.x - agent.viewVect.x *50*scaleOfWorld;
+				camera.position.y = agent.position.y -(agent.viewVect.y *50-15)*scaleOfWorld;
+				camera.position.z = agent.position.z - agent.viewVect.z *50*scaleOfWorld;
+				// プレイヤーの方向を向く
+				let lookPosition = agent.position.clone().add(new THREE.Vector3(0, agent.mesh.geometry.boundingSphere.radius, 0));
+				camera.lookAt( lookPosition );
+			}
+			
+			
+			// 時計
+			clock = new THREE.Clock();
+			let time =0;
+			let last_frameTime=0;
+			function animate() {
+				window.requestAnimationFrame( animate );
+				// 現在の1フレームの長さを取得
+				var frameTime = Math.min(clock.getDelta(), 0.05);
+				//
+				timeOfUserActionProc		=0;
+				timeOfUserAnimationProc		=0;
+				timeOfFriendActionProc		=0;
+				timeOfFriendAnimationProc	=0;
+				//MainLoop.js
+				/*
+				let animation_update_=false;
+				if(time%2==0){
+					aframeTime = last_frameTime+frameTime;
+					animation_update_=true;
+				}else{
+					last_frameTime = frameTime;
+				}
+				*/
+				mainLoop(frameTime, true, frameTime);
+				// stats (fpsメーター)
+				stats.update();
+				
+				// シーンを描画
+				let t0 = performance.now(); 
+				renderer.render( scene, camera );
+				let t1 = performance.now(); 
+				
+				if (field_isLoaded ==1){
+					initfieldObjs();
+				}
+				
+				if (barrel._isLoaded==1 && barrel._isAdded==0){
+					scene.add(barrel.object);
+					barrel._isAdded=1;
+				}
+				
+				
+				//
+				timeOfRendering = t1-t0;
+				if(time%30==0){
+					drawText( 'R:'+timeOfRendering.toFixed(3)+', '
+							 +', Uc:'+timeOfUserActionProc.toFixed(3)+', Ua:'+timeOfUserAnimationProc.toFixed(3)
+							 +', Fc:'+timeOfFriendActionProc.toFixed(3)+', Fa:'+timeOfFriendAnimationProc.toFixed(3)
+							 );
+				}
+				time +=1;
+				if(time>10000){time=0;}
+			}
+			animate();
+			
+			
+
+		</script>
+		<script src="./scripts/v13/mouseCallBack.js"></script>
+	</body>
+</html>
+

@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>windowの名前</title>
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+	</head>
+	<body>
+		
+		<div id="canvas3d" style="position:fixed; top:60px; left:0px; width:100%; height:100%; z-index: 1; background-color: #000000;"></div>
+		<canvas id="canvas2d" style="position:fixed; top:60px; left:0px; z-index: 100; background-color:rgba(0,0,0,0);"></canvas>
+		<div id="info">
+		Copyright
+		<a href="https://github.com/takahirox/MMDLoader-app#readme" target="_blank">MMD Assets license</a>
+		<a href="https://www.turbosquid.com/ja/3d-model/free/city" target="_blank">Field Map Data</a>
+		<a href="https://seiga.nicovideo.jp/seiga/im7587363" target="_blank">Model Data</a>
+		<a href="https://seiga.nicovideo.jp/seiga/im6805222" target="_blank">Model Data</a>
+		<a href="https://seiga.nicovideo.jp/seiga/im5641418" target="_blank">Model Data</a>
+		<a href="http://www.nicovideo.jp/mylist/1713647" target="_blank">Motion Data</a>
+		<a href="https://bowlroll.net/file/154665" target="_blank">Motion Data</a>
+		<a href="https://github.com/miu200521358/vmd_sizing/blob/master/README.md" target="_blank">vmd_sizing</a>
+		<p>WASD:走る、 SHIFT+WASD:歩く、スペース:ジャンプ、クリック(ドラッグ)で視点移動、F：攻撃</p>
+		</div>
+		<div id="videos" style="visibility:hidden;" >
+			<video id="video0" src="effects/test.mp4" playsinline muted></video>
+		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/libs/stats.min.js"></script>
+
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r106/examples/js/libs/mmdparser.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r103/examples/js/libs/ammo.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/TGALoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/MMDLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/animation/MMDAnimationHelper.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/effects/OutlineEffect.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/animation/CCDIKSolver.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/animation/MMDPhysics.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/TDSLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/ColladaLoader.js"></script>
+		<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/loaders/GLTFLoader.js"></script>
+		
+		<script src="./scripts/v16/Common.js"></script>
+		<script src="./scripts/v16/keyCallBack.js"></script>
+		<script src="./scripts/v16/playerAction.js"></script>
+		<script src="./scripts/v16/MainLoop.js"></script>
+		<script src="./scripts/v16/Events.js"></script>
+		<script src="./scripts/v16/LoadFuncs.js"></script>
+		<script src="./scripts/v16/ItemAction.js"></script>
+		<script src="./scripts/v16/Contents.js"></script>
+		<script src="./scripts/v16/StageSelect.js"></script>
+		<script>
+		// chara や loadObject にmeshを持たせて非同期でロード、 (ステージごとの)完全な初期化はanimateでロード完了を監視する。
+		
+		
+			script_version = 16;
+			scaleOfWorld =1;
+			
+			// 2D canvas
+			function loadingDisp() {
+				// スマホなら
+				if(UIType>0){ctx.font = '40px Times Roman';}else{ctx.font = '20px Times Roman';}
+				ctx.clearRect(0, 0, canvas2d_.width, canvas2d_.height);
+			  	ctx.fillStyle = 'rgba( 0, 0, 0)';
+			  	ctx.fillRect( 0, 0, canvas2d_.width, canvas2d_.height )
+			  	
+			  	ctx.fillStyle = 'rgba( 0, 255, 200)';
+			  	ctx.fillText( 'ヒデオ', 0, 40);
+			}
+			function drawText( str_, x_, y_, w_, h_, size_, fill_) {
+				// スマホなら
+				if(UIType>0){ctx.font = String(2*size_)+'px Times Roman';}else{ctx.font = String(size_)+'px Times Roman';}
+				ctx.clearRect(x_-2*size_, y_-2*size_, w_, h_);
+				if(fill_ ==true){
+					ctx.fillStyle = 'rgba( 0, 0, 0)';
+					ctx.fillRect(x_-2*size_, y_-2*size_, w_, h_);
+				}
+				ctx.fillStyle = 'rgba( 50, 200, 255)';
+			  	ctx.fillText( str_, x_, y_);
+			}
+			
+			// 2D canvas
+			function drawProfile( str_ ) {
+				// スマホなら
+				if(UIType>0){ctx.font = '20px Times Roman';}else{ctx.font = '10px Times Roman';}
+				ctx.clearRect(0, 0, canvas2d_.width, canvas2d_.height*0.1);
+			  	
+			  	ctx.fillStyle = 'rgba( 50, 200, 255)';
+			  	ctx.fillText( str_, canvas2d_.width*0.22, 18);
+			}
+			// 2D canvas
+			function drawGuide( str_ ) {
+				// スマホなら
+				if(UIType>0){ctx.font = '20px Times Roman';}else{ctx.font = '10px Times Roman';}
+				ctx.clearRect(0, canvas2d_.height*0.20, canvas2d_.width, canvas2d_.height*0.30);
+			  	
+			  	ctx.fillStyle = 'rgba( 50, 200, 255)';
+			  	ctx.fillText( str_, canvas2d_.width*0.4, canvas2d_.height*0.25);
+			}
+			
+
+			console.log("ﾄﾞｯ！");
+			
+  			console.log(light);
+			console.log(camera);
+			console.log(fogObject);
+			console.log(fieldObjs);
+			
+			// fps表示
+			const stats = new Stats();
+			stats.setMode(0);
+			stats.domElement.style.position = "absolute";
+			stats.domElement.style.left = "0px";
+			stats.domElement.style.top  = "0px";
+			document.getElementById('canvas3d').appendChild(stats.domElement);
+			
+			//フィールド
+			scene.add(fieldObjs);
+			
+			// 衝突判定のための部分空間
+			// 4x4の空間　フィールドは約1000x1000
+			/*
+			|00|01|02|03|
+			|04|05|06|07|
+			|08|09|10|11|
+			|12|13|14|15|
+			の真ん中から200 のboundingboxでobjectを登録する
+			*/
+			var fieldLocalGrid = new THREE.Group();
+			
+			// フィールドの準備
+			function initfieldObjs(){
+				//
+				fieldLocalGrid.children=[];
+				let fLocalGrid = [-375, -125, 125, 375];
+				for (let ig = 0; ig < 16; ig++){
+					let array = [];
+					for (let i = 0; i < fieldObjs.children.length; i++){
+						var bbx = fieldObjs.children[i].geometry.boundingSphere;
+						var bbo = fieldObjs.children[i].localToWorld( bbx.center.clone() );	
+						//console.log(bbo );
+					
+						let ix = ig%4;
+						let iz = Math.floor(ig/4);
+						let lengthWLocalGrid = Math.sqrt( (bbo.x - fLocalGrid[ix])**2 + (bbo.z - fLocalGrid[iz])**2 );
+						if(lengthWLocalGrid<200 || fieldObjs.children[i].name=='Landscape0'){
+							 array.push(fieldObjs.children[i]);
+						}
+					}
+					fieldLocalGrid.children.push(array);
+				}
+				field_isLoaded = 2;
+				console.log(fieldLocalGrid );
+			}
+			
+			//
+			// 初期 assetsのよみこみ
+			loadingDisp();
+			async function assetInitLoad() {
+				const promises = [];
+				// 
+				promises[0] = TDSLoad( Fld_land, 15, -90, 0, 0, true );
+				promises[1] = GTLFLoad( barrel, 6, 90, 0, 0 );
+				promises[2] = LoadCharacter(seiten, physicsON);
+				promises[3] = LoadCharacter(ushioni, physicsON);
+				promises[4] = LoadCharacter(t_komainu, physicsON);
+				await Promise.all(promises);
+				console.log("loaded" );
+				loading=2;
+				drawText( 'Touch to start', canvas2d_.width*0.4, 
+							canvas2d_.height*0.25, canvas2d_.width*0.5, canvas2d_.height*0.30, 
+							18, true);
+
+			}
+			assetInitLoad();
+			
+			
+			// player という名前で作ったobject を1つ用意する
+			player = new MyAgent();
+			player.chara = seiten;
+			
+			friend[0] = new MyAgent();
+			friend[0].chara = t_komainu;
+			friend[0].type = 1;
+			friend[0].isJoin = 0;
+			
+			for(let i=0;i<4;i++){
+				enemy[i] = new MyAgent();
+				enemy[i].chara = ushioni;
+				enemy[i].offsetPosition.y = -30;
+				enemy[i].position = new THREE.Vector3(40, 200, -300);
+				enemy[i].type = 2;
+				enemy[i].isJoin = 0;
+			}
+			
+			setStage();
+			
+			//
+			video = document.getElementById("video0");
+			pEffect[0] = new MyEffectObj(0, video, 80);
+			pEffect[0].offsetPosition.y=20;
+			console.log(pEffect[0] );
+			scene.add(pEffect[0].sprite);
+
+
+			//
+			staticItem[0] = new MyItem(0);
+			staticItem[0].loadObj = barrel;
+			staticItem[0].position.y = 3;
+			staticItem[0].initPosition.y = 3;
+			staticItem[0].holdDirection = -1;
+			staticItem[0].effect = pEffect[0];
+			
+			//カメラの再設置
+			function cameraUpDate(agent) {
+				// カメラの場所をプレイヤーの後ろに
+				camera.position.x = agent.position.x - agent.viewVect.x *50*scaleOfWorld;
+				camera.position.y = agent.position.y -(agent.viewVect.y *50-15)*scaleOfWorld;
+				camera.position.z = agent.position.z - agent.viewVect.z *50*scaleOfWorld;
+				// プレイヤーの方向を向く
+				let lookPosition = agent.position.clone().add(new THREE.Vector3(0, agent.mesh.geometry.boundingSphere.radius, 0));
+				camera.lookAt( lookPosition );
+			}
+			
+			//
+			
+			
+			
+			// 時計
+			clock = new THREE.Clock();
+			let time =0;
+			let last_frameTime=0;
+			function animate() {
+				window.requestAnimationFrame( animate );
+				// 現在の1フレームの長さを取得
+				var frameTime = Math.min(clock.getDelta(), 0.05);
+				//
+				timeOfUserActionProc		=0;
+				timeOfUserAnimationProc		=0;
+				timeOfFriendActionProc		=0;
+				timeOfFriendAnimationProc	=0;
+				//MainLoop.js
+				
+				//
+				if(loading <=0){
+					if(eventOn > 0){
+						//pEffect[0].sprite.material.map.needsUpdate = true;
+						eventLoop(frameTime, true, frameTime);
+					}else{
+						mainLoop(frameTime, true, frameTime);
+					}
+					// stats (fpsメーター)
+					stats.update();
+				}else if(loading==1){
+					let str_;
+					if(time%16<4){str_ = '―';
+					}else if(time%16< 8){str_ = '／';
+					}else if(time%16<12){str_ = '｜';
+					}else{str_ = '＼';}
+					drawText( 'Now Loading...' + str_ , canvas2d_.width*0.4, 
+							canvas2d_.height*0.25, canvas2d_.width*0.5, canvas2d_.height*0.30, 
+							12, true);
+
+				}
+				
+				// シーンを描画
+				let t0 = performance.now(); 
+				renderer.render( scene, camera );
+				let t1 = performance.now(); 
+				
+				// フィールドの準備
+				if (field_isLoaded ==1){
+					initfieldObjs();
+				}
+				
+				// アイテムの準備（仮）
+				
+				if (staticItem[0].loadObj._isLoaded==1 && staticItem[0]._isAdded==0){
+					scene.add(staticItem[0].loadObj.object );
+					staticItem[0]._isAdded=1;
+					staticItem[0].updatePosition(staticItem[0].offsetPosition);
+					console.log(staticItem[0]);
+				}
+				
+				//
+				timeOfRendering = t1-t0;
+				if(time%30==0){
+					if(loading <=0){
+						drawProfile( 'R:'+timeOfRendering.toFixed(3)+', '
+							 +', Uc:'+timeOfUserActionProc.toFixed(3)+', Ua:'+timeOfUserAnimationProc.toFixed(3)
+							 +', Fc:'+timeOfFriendActionProc.toFixed(3)+', Fa:'+timeOfFriendAnimationProc.toFixed(3)
+							 );
+					}
+				}
+				time +=1;
+				if(time>10000){time=0;}
+			}
+			animate();
+			
+			
+
+		</script>
+		<script src="./scripts/v16/mouseCallBack.js"></script>
+	</body>
+</html>
+

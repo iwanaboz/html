@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+
+<head>  
+<title>DGTest</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r110/examples/js/libs/stats.min.js"></script>
+<script type="text/javascript" src="./shikihime_shooting/astar.js"></script>
+<script type="text/javascript" src="./shikihime_shooting/DivCtrl.js" charset="UTF-8"></script>
+<script type="text/javascript" src="./shikihime_shooting/SSData.js" charset="UTF-8"></script>
+<!--
+-->
+<script language="Javascript">
+
+	function LoadScript( _name ){
+		var script = document.createElement('script');
+		script.src = _name;
+		script.charset = "UTF-8";
+		document.head.appendChild(script);
+		return script;		
+	}
+ 	var headb_url = "./shikihime_shooting/";
+
+ 		LoadScript(headb_url+"SSCommon.js");
+ 		LoadScript(headb_url+"SSLoad.js");
+ 		LoadScript(headb_url+"SSCmdAct.js");
+ 		LoadScript(headb_url+"SSMainLoop.js");
+ 		LoadScript(headb_url+"KeyCtrl.js");
+ 		LoadScript(headb_url+"mouseCallBack.js");
+ 		LoadScript(headb_url+"EventCtrl.js");
+ 
+</script>
+</head>
+<body>
+
+	<canvas id="canvas2d" style="position:fixed; top:0px; left:0px; z-index: 100; background-color:rgba(0,0,0,0);"></canvas>
+	<div id="maindisp" style="position:absolute; left:0px; top:0px; width: 768px; height: 512px; overflow: hidden;">
+ 	</div>
+ 	<div id="stat_but" style="position:absolute; left:600px; top:480px; z-index: 101;">
+  		<input type="button" onclick="SSInit()" value="Start">
+ 	</div>
+
+</body>
+</html>
