@@ -67,7 +67,6 @@ LyrAdd("oyuki",  headURL2+"oyukIC1.gif",25,50,25,25,1);
 //cursor
 LyrAdd("hyde",  headURL2+"hyde1.gif",   5,10,25,25,1);
 LyrAdd("csor",  headURL2+"csor_c40.gif",   5,10,40,40);
-LyrAdd("zbut",  headURL2+"csor_c40.gif",   5,10,40,40);
 
 
 // append parent layer of block and item
