@@ -34,6 +34,7 @@ var key_on;
 // Mouse info
 var mousex, mousey;
 var mouseDrag=0;
+var mouse_on =0;
 
 // Key names
 var N=0;	//up

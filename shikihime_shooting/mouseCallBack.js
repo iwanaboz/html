@@ -14,15 +14,19 @@ canvas2d_.addEventListener('mousemove', e => {
     //mousey = e.clientY - canvas2d_.offsetHeight/2 - canvas2d_.offsetTop;
     mousex = e.clientX - Bcontrol.centerX;
     mousey = e.clientY - Bcontrol.centerY;
-    mouseDrag = 1;
+    if(mouse_on==1){
+    	mouseDrag = 1;
+	}
 });
 // マウスが押されたとき
 canvas2d_.addEventListener('mousedown', e => {
   	//mouseDrag = 0;
+  	mouse_on=1;
 
 });
 // マウスが離されたとき
 canvas2d_.addEventListener('mouseup', e => {
+	mouse_on=0;
   	mouseDrag = 0;
 });
 
