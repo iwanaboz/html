@@ -66,6 +66,7 @@ function LyrAdd(_id, _img, _x, _y, _w, _h, _opt) {
 	img.width  = _w;
 	img.height = _h;
 	img.alt    = "Img";
+	img_tmp.draggable="false";
 	div.appendChild(img);
 	//div.innerHTML = '<img src='+(_img)+' width="'+(_w)+'" height="'+(_h)+'">';	
 	//document.body.appendChild(div);
@@ -110,6 +111,7 @@ function CreateMap(lyr, omapArray, fhead, bsize){
 				img_tmp.width  = bsize;
 				img_tmp.height = bsize;
 				img_tmp.alt    = "Img";
+				img_tmp.draggable="false";
 				div_tmp.appendChild(img_tmp);
 				jQuery("#"+lyr).append(div_tmp);
 				jQuery("#"+lyr).overflow = "hidden";
@@ -143,6 +145,7 @@ function UpdateMapItem(lyr, imapArray, fhead, bsize){
 				img_tmp.width  = bsize;
 				img_tmp.height = bsize;
 				img_tmp.alt    = "Img";
+				img_tmp.draggable="false";
 				div_tmp.appendChild(img_tmp);
 				jQuery("#"+lyr).append(div_tmp);
 			}
