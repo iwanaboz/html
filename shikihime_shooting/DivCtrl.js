@@ -66,7 +66,7 @@ function LyrAdd(_id, _img, _x, _y, _w, _h, _opt) {
 	img.width  = _w;
 	img.height = _h;
 	img.alt    = "Img";
-	img_tmp.draggable="false";
+	img.draggable="false";
 	div.appendChild(img);
 	//div.innerHTML = '<img src='+(_img)+' width="'+(_w)+'" height="'+(_h)+'">';	
 	//document.body.appendChild(div);
