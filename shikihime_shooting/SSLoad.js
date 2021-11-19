@@ -85,13 +85,7 @@ LyrAdd("xbut",  headURL3+"xbut.gif",590,400,50,50);
 LyrAdd("cbut",  headURL3+"cbut.gif",660,400,50,50);
 LyrAdd("sbut",  headURL3+"sbut.gif",590,330,50,50);
 LyrAdd("fbut",  headURL3+"fbut.gif",660,330,50,50);
-if(UIType>0){
-	LyrTru("zbut");
-	LyrTru("xbut");
-	LyrTru("cbut");
-	LyrTru("sbut");
-	LyrTru("fbut");
-}
+
 
 DivAdd("txtbossname", 50, 0, 0);
 for (var id=1; id < 16; id++) {

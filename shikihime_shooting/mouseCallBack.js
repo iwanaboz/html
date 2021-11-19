@@ -32,11 +32,11 @@ var touchControl=0;
 var touchControlId;				
 Bcontrol = new MyButton(canvas2d_, 0, 360, 100, 100, 0 );	     //csor
 
-BZ= new MyButton(canvas2d_, 520,400,50,50, 70 );//
-BX= new MyButton(canvas2d_, 590,400,50,50, 71 );//
-BC= new MyButton(canvas2d_, 660,400,50,50, 73 );//
-BS= new MyButton(canvas2d_, 590,330,50,50, 74 );//
-BF= new MyButton(canvas2d_, 660,330,50,50, 75 );//
+BZ= new MyButton(canvas2d_, 520,400,50,50, 90 );//
+BX= new MyButton(canvas2d_, 590,400,50,50, 88 );//
+BC= new MyButton(canvas2d_, 660,400,50,50, 67 );//
+BS= new MyButton(canvas2d_, 590,330,50,50, 83 );//
+BF= new MyButton(canvas2d_, 660,330,50,50, 70 );//
 
 
 // タッチでドラッグされたとき
