@@ -78,7 +78,7 @@ DivAdd( "map_item", 0, 0);
 
 LyrAdd("frame",  headURL2+"frame.gif",0,0,768,512);
 LyrAdd("msgwin",  headURL2+"msgwin.gif",0,0,768,512,1);
-LyrAdd("sousa",  headURL3+"sousa2.gif",0,360,100,100);
+LyrAdd("sousa",  headURL3+"sousa2.gif",50,360,100,100);
 LyrAdd("zbut",  headURL3+"zbut.gif",520,400,50,50);
 LyrAdd("xbut",  headURL3+"xbut.gif",590,400,50,50);
 LyrAdd("cbut",  headURL3+"cbut.gif",660,400,50,50);

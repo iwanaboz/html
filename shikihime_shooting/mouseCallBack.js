@@ -35,7 +35,7 @@ canvas2d_.addEventListener('mouseup', e => {
 var touchInfo=[];
 var touchControl=0;
 var touchControlId;				
-Bcontrol = new MyButton(canvas2d_, 0, 360, 100, 100, 0 );	     //csor
+Bcontrol = new MyButton(canvas2d_, 50, 360, 100, 100, 0 );	     //csor
 
 BZ= new MyButton(canvas2d_, 520,400,50,50, 90 );//
 BX= new MyButton(canvas2d_, 590,400,50,50, 88 );//
@@ -89,6 +89,14 @@ canvas2d_.addEventListener("touchstart", function(e) {
 	    	BC.onButtonThenPush(touchInfo[i].identifier, touchInfo[i].pageX, touchInfo[i].pageY);
 	    	BS.onButtonThenPush(touchInfo[i].identifier, touchInfo[i].pageX, touchInfo[i].pageY);
 	    	BF.onButtonThenPush(touchInfo[i].identifier, touchInfo[i].pageX, touchInfo[i].pageY);
+
+			if ( key_on[90] == 1 ){player[1].act_key=Katk1; } //z
+		    if ( key_on[88] == 1 ){player[1].act_key=Katk2; } //x
+		    if ( key_on[67] == 1 ){player[1].act_key=Katk3; } //c
+		    if ( key_on[83] == 1 ){player[1].act_key=Kdash; } //s
+		    if ( key_on[68] == 1 ){player[1].act_key=Kdfen; } //d
+		    if ( key_on[70] == 1 ){player[1].act_key=Ktgt;  } //change target
+    
 	    }
 	}
 	//if(loading ==2){
@@ -127,6 +135,7 @@ canvas2d_.addEventListener("touchend", function(e) {
 
 	// reset WASD
 	if(	touchControl_exist ==0 ){touchControl=0;Bcontrol.resetControl();}
+	if(key_on[90]+key_on[88]+key_on[67]+key_on[83]+key_on[68] <=0){player[1].act_key=0;}
 	//console.log(touchControl);
 	
 }, false);
