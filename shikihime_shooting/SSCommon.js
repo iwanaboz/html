@@ -21,7 +21,7 @@ var timeOfFriendAnimationProc;
 var canvas2d_ = document.getElementById('canvas2d');
 //canvas2d_.width = window.innerWidth;
 //canvas2d_.height = window.innerHeight;
-canvas2d_.width = 768;
+canvas2d_.width = 1280;
 canvas2d_.height = 512;
 var ctx = canvas2d_.getContext("2d");
 
