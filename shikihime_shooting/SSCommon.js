@@ -57,15 +57,50 @@ var user_act=0;	// reflect key of action
 // detect UI
 var UIType = 0;
 const ua = navigator.userAgent;
-if (ua.indexOf('iPhone') > -1 || (ua.indexOf('Android') > -1 && ua.indexOf('Mobile') > -1)) {
+// iPhone
+var isiPhone = (ua.indexOf('iphone') > -1);
+// iPad
+var isiPad = (ua.indexOf('ipad') > -1);
+// Android
+var isAndroid = (ua.indexOf('android') > -1) && (ua.indexOf('mobile') > -1);
+// Android Tablet
+var isAndroidTablet = (ua.indexOf('android') > -1) && (ua.indexOf('mobile') == -1);
+
+if (isiPhone || isAndroid) {
     // smart phone
     UIType = 1;
-} else if (ua.indexOf('iPad') > -1 || ua.indexOf('Android') > -1) {
+} else if ( isiPad || isAndroidTablet ) {
     // tablet
     UIType = 2;
 } else {
     // PC (0)
 }
+ 
+// iOS
+if(isiPhone || isiPad) {
+    window.onorientationchange = directionCheck;
+}
+// Android
+if(isAndroid || isAndroidTablet) {
+    window.onresize = directionCheck;
+}
+
+function directionCheck() {
+    var direction = Math.abs(window.orientation);
+    if(direction == 90 || direction == -90 ){
+		//
+        canvas2d_.width = 1280;
+        console.log('90');
+    } else {
+        canvas2d_.width = 768;
+        console.log('0');
+    }
+}
+
+directionCheck();
+ 
+
+
 //console.log(UIType);
 
 
