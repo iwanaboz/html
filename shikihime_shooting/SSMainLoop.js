@@ -446,8 +446,8 @@ function timeAct(frameTime, agent, mapArray){
 	        				let shiftedY =  Math.sin(agent.weapon[it].rotationRight+THREE.Math.degToRad(input_motion.shift));
 		        			agent.weapon[it].x += frameTime*input_motion.lng * shiftedX ;
 			        		agent.weapon[it].y += frameTime*input_motion.lng * shiftedY ;
-			        		wep_x = Math.floor(agent.weapon[it].x);
-			        		wep_y = Math.floor(agent.weapon[it].y);
+			        		wep_x = Math.max(Math.floor(agent.weapon[it].x),0);
+			        		wep_y = Math.max(Math.floor(agent.weapon[it].y),0);
 			        		if(mapArray[wep_x][wep_y] < 1 ){
 								if(input_motion.type==2){
 									if(agent.weapon[it].actT >= 0.5){
