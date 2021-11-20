@@ -1,4 +1,4 @@
-var event_cnt=0;
+
 var charge_cnt=1;
 let vol=0.1;
 
@@ -83,6 +83,7 @@ function eventStart( frameTime, _id){
     		}
     	}else{
     			LyrTru("defeated");
+    			event_id=0;
     	}
     }
     

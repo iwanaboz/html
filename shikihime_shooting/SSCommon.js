@@ -298,6 +298,7 @@ function Update_footer() {
 
 var event_on=0;
 var event_id=0;
+var event_cnt=0;
 var Init    =0;
 
 // hp, agi, cpulv, btlstyle
@@ -366,6 +367,7 @@ function StageSet(){
 // init stage
 function SSInit() {
 	LyrFal("title");
+	LyrFal("defeated");
 	if(sound.isPlaying){sound.stop();}
 	StageSet();
 	//console.log(costMap[event_id])
@@ -379,6 +381,7 @@ function SSInit() {
     Update_footer();
     
 	// event start
+	event_cnt=0;
 	event_on=1;
     pause=0;
     //console.log(player[1]);
