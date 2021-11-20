@@ -84,6 +84,7 @@ function eventStart( frameTime, _id){
     	}else{
     			LyrTru("defeated");
     			event_id=0;
+    			event_on=0;
     	}
     }
     
