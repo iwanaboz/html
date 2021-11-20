@@ -21,7 +21,7 @@ var timeOfFriendAnimationProc;
 var canvas2d_ = document.getElementById('canvas2d');
 //canvas2d_.width = window.innerWidth;
 //canvas2d_.height = window.innerHeight;
-canvas2d_.width = 1280;
+canvas2d_.width = 768;
 canvas2d_.height = 512;
 var ctx = canvas2d_.getContext("2d");
 
@@ -87,14 +87,17 @@ if(isAndroid || isAndroidTablet) {
 
 function directionCheck() {
     var direction = Math.abs(window.orientation);
+    var viewportContent;
     if(direction == 90 || direction == -90 ){
-		//
-        canvas2d_.width = 1280;
+		//yoko
+		viewportContent = "width=640, initial-scale=1, viewport-fit=cover, shrink-to-fit=yes";
         console.log('90');
     } else {
-        canvas2d_.width = 768;
+        viewportContent = "width=device-width, initial-scale=1, viewport-fit=cover, shrink-to-fit=yes";
         console.log('0');
     }
+    document.querySelector("meta[name='viewport']").setAttribute("content", viewportContent);
+    
 }
 
 directionCheck();
