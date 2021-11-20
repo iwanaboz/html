@@ -74,7 +74,7 @@ function eventStart( frameTime, _id){
     		TxtSet("txtbox"+player[1].id, 2, "……ひぎり……");	 
     		if(sound.isPlaying){sound.stop();} 
 		}else if(event_cnt <= 3.0){
-			event_id=0;
+			//event_id=0;
 	    	if(sound.isPlaying==false){
 	    		sound.setBuffer( bgmBuffer[4] );//stage1
 	    		sound.setVolume( 0.1 );
