@@ -219,7 +219,7 @@ console.log(bgmBuffer)
  skldata[2] = new SKLDATA("skew_c50.gif",  1, 0.8, 0.5,  0,  0,   1, [3,0,0,0], "", ""); //gre
  skldata[3] = new SKLDATA("skew_c50.gif",  1, 1.6, 0.5,  0,  0,   4, [4,5,6,7], "", ""); //missile
  skldata[4] = new SKLDATA("exp_c50.gif",   3, 0.5, 1.0,  0,  0,   1, [8,0,0,0], "", "びんた");//びんた
- skldata[5] = new SKLDATA("mioc_c40.gif",  3, 6.0, 1.0, 10,  0,   4, [9,10,11,12], "", "しんきろう！");
+ skldata[5] = new SKLDATA("mioc_c40.gif",  3, 6.0, 1.0, 15,  0,   4, [9,10,11,12], "", "しんきろう！");
  
 
 
