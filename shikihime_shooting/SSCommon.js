@@ -90,9 +90,10 @@ function directionCheck() {
     var viewportContent;
     if(direction == 90 || direction == -90 ){
 		//yoko
-		viewportContent = "width=device-width, initial-scale=0.5";
+		viewportContent = "width=device-width, initial-scale=0.6,user-scalable=no";
         console.log('90');
     } else {
+    	// default
         viewportContent = "width=device-width, initial-scale=1, viewport-fit=cover, shrink-to-fit=yes";
         console.log('0');
     }
